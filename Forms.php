@@ -273,7 +273,7 @@ class scbForms {
 			$$key = &$val;
 		unset( $val );
 
-		if ( FALSE === strpos( $name, '[' ) )
+		if ( !isset( $extra['id'] ) && FALSE === strpos( $name, '[' ) )
 			$extra['id'] = $name;
 
 		return self::_input_gen( $args );
