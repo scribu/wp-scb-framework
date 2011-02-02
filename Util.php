@@ -44,6 +44,11 @@ class scbUtil {
 		add_action( 'uninstall_' . plugin_basename( $plugin ), $callback );
 	}
 
+	// Get the current, full URL
+	static function get_current_url() {
+		return ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	}
+
 	// Apply a function to each element of a ( nested ) array recursively
 	static function array_map_recursive( $callback, $array ) {
 		array_walk_recursive( $array, array( __CLASS__, 'array_map_recursive_helper' ), $callback );
