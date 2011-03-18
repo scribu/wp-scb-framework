@@ -17,6 +17,7 @@ abstract class scbAdminPage {
 	 * $page_slug string  ( default: sanitized $page_title )
 	 * $nonce string  ( default: $page_slug )
 	 * $action_link string|bool  Text of the action link on the Plugins page ( default: 'Settings' )
+	 * $admin_action_priority int The priority that the admin_menu action should be executed at ( default: 10 )
 	 */
 	protected $args;
 
@@ -97,7 +98,7 @@ abstract class scbAdminPage {
 				add_action( 'admin_notices', 'settings_errors' );
 		}
 
-		add_action( 'admin_menu', array( $this, 'page_init' ) );
+		add_action( 'admin_menu', array( $this, 'page_init' ), $this->args['admin_action_priority'] );
 		add_filter( 'contextual_help', array( $this, '_contextual_help' ), 10, 2 );
 
 		if ( $this->args['action_link'] )
@@ -367,6 +368,7 @@ abstract class scbAdminPage {
 			'nonce' => '',
 			'action_link' => __( 'Settings', $this->textdomain ),
 			'ajax_submit' => false, 
+			'admin_action_priority' => 10,
 		) );
 
 		if ( empty( $this->args['page_slug'] ) )
