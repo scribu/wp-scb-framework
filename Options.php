@@ -1,7 +1,7 @@
 <?php
 
 // Documentation: http://scribu.net/wordpress/scb-framework/scb-options.html
-
+echo 'hi';
 class scbOptions {
 
 	protected $key;			// the option name
@@ -21,7 +21,7 @@ class scbOptions {
 		$this->key = $key;
 		$this->defaults = $defaults;
 
-		scbUtil::add_activation_hook( $file, array( $this, '_update_reset' ) );
+		scbUtil::add_activation_hook( $file, array( $this, '_activation' ) );
 
 		scbUtil::add_uninstall_hook( $file, array( $this, 'delete' ) );
 	}
@@ -36,15 +36,14 @@ class scbOptions {
 	/**
 	 * Get option values for one, many or all fields
 	 *
-	 * @param string|array $field The field( s ) to get
+	 * @param string|array $field The field(s) to get
 	 * @return mixed Whatever is in those fields
 	 */
 	public function get( $field = '' ) {
-		$data = get_option( $this->key );
+		$data = get_option( $this->key, array() );
 
-		if ( is_array( $this->defaults ) )
-			$data = ( array ) $data;
-	
+		$data = array_merge( $this->defaults, $data );
+
 		return $this->_get( $field, $data );
 	}
 
@@ -119,21 +118,17 @@ class scbOptions {
 //_____INTERNAL METHODS_____
 
 
-	// Add new fields with their default values
-	function _update_reset() {
-		if ( is_array( $this->defaults ) )
-			$this->update( array_merge( $this->defaults, $this->get() ) );
-		else
-			add_option( $this->key, $this->defaults );
+	// Saves an extra query
+	function _activation() {
+		add_option( $this->key, $this->defaults );
 	}
 
+	// Keep only the keys defined in $this->defaults
 	private function _clean( $data ) {
-		if ( !is_array( $data ) || !is_array( $this->defaults ) )
-			return $data;
-
 		$r = array();
 		foreach ( array_keys( $this->defaults ) as $key )
-			$r[$key] = @$data[$key];
+			if ( isset( $data[$key] ) )
+				$r[$key] = $data[$key];
 
 		return $r;
 	}
