@@ -1,7 +1,7 @@
 <?php
 
 // Documentation: http://scribu.net/wordpress/scb-framework/scb-options.html
-echo 'hi';
+
 class scbOptions {
 
 	protected $key;			// the option name
