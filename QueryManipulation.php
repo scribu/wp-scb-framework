@@ -16,6 +16,8 @@ class scbQueryManipulation {
 	);
 
 	public function __construct( $callback, $once = true ) {
+		_deprecated_function( 'scbQueryManipulation', '3.1', "'posts_clauses' filter" );
+	
 		global $wp_version;
 
 		if ( version_compare( $wp_version, '3.1-alpha', '>=' ) ) {
