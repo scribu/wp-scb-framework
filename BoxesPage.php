@@ -111,7 +111,7 @@ abstract class scbBoxesPage extends scbAdminPage {
 						$this->args['column_widths'] = array( 98 );
 					$hide2 = $hide3 = $hide4 = 'display:none;';
 			}
-			
+
 			$this->args['column_widths'] = array_pad( $this->args['column_widths'], 4, 0 );
 		}
 ?>
@@ -178,8 +178,6 @@ abstract class scbBoxesPage extends scbAdminPage {
 	}
 
 	function boxes_init() {
-		wp_enqueue_script( 'common' );
-		wp_enqueue_script( 'wp-lists' );
 		wp_enqueue_script( 'postbox' );
 
 		$registered = array();
