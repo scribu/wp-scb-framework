@@ -130,7 +130,7 @@ class scbForms {
 
 	// From multiple inputs to single inputs
 	private static function _input() {
-		extract( wp_parse_args( self::$args, array( 
+		extract( wp_parse_args( self::$args, array(
 			'name' => NULL,
 			'value' => NULL,
 			'desc' => NULL,
@@ -171,7 +171,7 @@ class scbForms {
 			}
 			elseif ( $m_name ) {
 				$_after = $desc;
-				$args['desc'] = $desc = $name;			
+				$args['desc'] = $desc = $name;
 			}
 		}
 
@@ -236,7 +236,7 @@ class scbForms {
 
 	// Handle args for checkboxes and radio inputs
 	private static function _checkbox_single( $args, $data ) {
-		$args = wp_parse_args( $args, array( 
+		$args = wp_parse_args( $args, array(
 			'name' => NULL,
 			'value' => true,
 			'desc_pos' => 'after',
@@ -263,7 +263,7 @@ class scbForms {
 
 	// Handle args for text inputs
 	private static function _input_single( $args, $data ) {
-		$args = wp_parse_args( $args, array( 
+		$args = wp_parse_args( $args, array(
 			'value' => $data,
 			'desc_pos' => 'after',
 			'extra' => array( 'class' => 'regular-text' ),
@@ -281,7 +281,7 @@ class scbForms {
 
 	// Generate html with the final args
 	private static function _input_gen( $args ) {
-		extract( wp_parse_args( $args, array( 
+		extract( wp_parse_args( $args, array(
 			'name' => NULL,
 			'value' => NULL,
 			'desc' => NULL,
@@ -303,7 +303,7 @@ class scbForms {
 	}
 
 	private static function _select() {
-		extract( wp_parse_args( self::$args, array( 
+		extract( wp_parse_args( self::$args, array(
 			'name' => '',
 			'value' => array(),
 			'text' => '',
@@ -328,17 +328,32 @@ class scbForms {
 		else
 			$cur_val = $selected;
 
-		if ( false === $text ) {
-			$opts = '';
-		} else {
-			$opts = "\t<option value=''" . selected( $cur_val, array( 'foo' ), false ) . ">{$text}</option>\n";
+		$options = array();
+
+		if ( false !== $text ) {
+			$options[] = array(
+				'value' => '',
+				'selected' => $cur_val == array( 'foo' ),
+				'title' => $text
+			);
 		}
 
-		foreach ( $value as $key => $value ) {
-			if ( empty( $key ) || empty( $value ) )
+		foreach ( $value as $value => $title ) {
+			if ( empty( $value ) || empty( $title ) )
 				continue;
 
-			$opts .= "\t<option value='{$key}'" . selected( (string) $key, (string) $cur_val, false) . '>' . $value . "</option>\n";
+			$options[] = array(
+				'value' => $value,
+				'selected' => ( (string) $value == (string) $cur_val ),
+				'title' => $title
+			);
+		}
+
+		$opts = '';
+		foreach( $options as $option ) {
+			extract( $option );
+
+			$opts .= "\t<option value='{$value}'" . selected($selected, true, false) . '>' . $value . "</option>\n";
 		}
 
 		if ( !is_array( $extra ) )
@@ -346,7 +361,7 @@ class scbForms {
 		$extra = self::array_to_attr( $extra );
 
 		$input =  "<select name='{$name}'$extra>\n{$opts}</select>";
-		
+
 		return self::add_label( $input, $desc, $desc_pos );
 	}
 
