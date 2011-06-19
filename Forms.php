@@ -303,6 +303,33 @@ class scbForms {
 		return self::add_label( $input, $desc, $desc_pos );
 	}
 
+	private static function add_label( $input, $desc, $desc_pos ) {
+		if ( empty( $desc_pos ) )
+			$desc_pos = 'after';
+
+		$label = '';
+		if ( false === strpos( $desc, self::token ) ) {
+			switch ( $desc_pos ) {
+				case 'before': $label = $desc . ' ' . self::token; break;
+				case 'after': $label = self::token . ' ' . $desc;
+			}
+		} else {
+			$label = $desc;
+		}
+
+		$label = trim( str_replace( self::token, $input, $label ) );
+
+		if ( empty( $desc ) )
+			$output = $input . "\n";
+		else
+			$output = "<label>{$label}</label>\n";
+
+		return $output;
+	}
+
+
+// Utilities
+
 	/**
 	 * Traverses the formdata and retrieves the correct value.
 	 *
@@ -340,33 +367,6 @@ class scbForms {
 
 		return $name_str;
 	}
-
-	private static function add_label( $input, $desc, $desc_pos ) {
-		if ( empty( $desc_pos ) )
-			$desc_pos = 'after';
-
-		$label = '';
-		if ( false === strpos( $desc, self::token ) ) {
-			switch ( $desc_pos ) {
-				case 'before': $label = $desc . ' ' . self::token; break;
-				case 'after': $label = self::token . ' ' . $desc;
-			}
-		} else {
-			$label = $desc;
-		}
-
-		$label = trim( str_replace( self::token, $input, $label ) );
-
-		if ( empty( $desc ) )
-			$output = $input . "\n";
-		else
-			$output = "<label>{$label}</label>\n";
-
-		return $output;
-	}
-
-
-// Utilities
 
 
 	private static function attr_to_array( $html ) {
