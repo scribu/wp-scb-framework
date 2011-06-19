@@ -147,7 +147,7 @@ function html( $tag ) {
 			if ( true === $value )
 				$value = $key;
 
-			$tag .= ' ' . $key . '="' . htmlspecialchars( $value, ENT_QUOTES ) . '"';
+			$tag .= ' ' . $key . '="' . esc_attr( $value ) . '"';
 		}
 	} else {
 		list( $closing ) = explode( ' ', $tag, 2 );

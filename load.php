@@ -1,6 +1,6 @@
 <?php
 
-$GLOBALS['_scb_data'] = array( 35, __FILE__, array(
+$GLOBALS['_scb_data'] = array( 36, __FILE__, array(
 	'scbUtil', 'scbOptions', 'scbForms', 'scbTable',
 	'scbWidget', 'scbAdminPage', 'scbBoxesPage',
 	'scbQueryManipulation', 'scbCron',
@@ -57,7 +57,7 @@ class scbLoad4 {
 		foreach ( self::$classes[$file] as $class_name ) {
 			if ( class_exists( $class_name ) )
 				continue;
-			
+
 			$fpath = $path . substr( $class_name, 3 ) . '.php';
 			if ( file_exists( $fpath ) ) {
 				include $fpath;

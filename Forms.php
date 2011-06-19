@@ -292,7 +292,7 @@ class scbForms {
 		$extra['name'] = self::get_name( $name );
 
 		if ( 'textarea' == $type ) {
-			$input = html( 'textarea', $extra, esc_html( $value ) );
+			$input = html( 'textarea', $extra, esc_textarea( $value ) );
 		} else {
 			$extra['value'] = $value;
 			$extra['type'] = $type;
