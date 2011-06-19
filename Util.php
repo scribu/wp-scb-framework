@@ -65,13 +65,13 @@ class scbUtil {
 
 	// Extract certain $keys from $array
 	static function array_extract( $array, $keys ) {
-		_deprecated_function( 'scbUtil::array_extract', '3.1', 'wp_array_slice_assoc' );
+		_deprecated_function( 'scbUtil::array_extract', '3.1', 'wp_array_slice_assoc()' );
 		return wp_array_slice_assoc( $array, $keys );
 	}
 
 	// Extract a certain value from a list of arrays
 	static function array_pluck( $array, $key ) {
-		_deprecated_function( 'scbUtil::array_pluck', '3.1', 'wp_list_pluck' );
+		_deprecated_function( 'scbUtil::array_pluck', '3.1', 'wp_list_pluck()' );
 		return wp_list_pluck( $array, $key );
 	}
 
