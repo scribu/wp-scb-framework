@@ -76,16 +76,8 @@ class scbUtil {
 
 	// Extract a certain value from a list of arrays
 	static function array_pluck( $array, $key ) {
-		$r = array();
-
-		foreach ( $array as $value ) {
-			if ( is_object( $value ) )
-				$value = get_object_vars( $value );
-			if ( array_key_exists( $key, $value ) )
-				$r[] = $value[$key];
-		}
-
-		return $r;
+		_deprecated_function( 'scbUtil::array_pluck', '3.1', 'wp_list_pluck' );
+		return wp_list_pluck( $array, $key );
 	}
 
 	// Transform a list of objects into an associative array
