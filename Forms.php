@@ -229,6 +229,8 @@ class scbForms {
 
 		$extra = self::array_to_attr( $extra );
 
+		$name = self::get_name( $name );
+
 		$input =  "<select name='{$name}'$extra>\n{$opts}</select>";
 
 		return self::add_label( $input, $desc, $desc_pos );
@@ -274,7 +276,7 @@ class scbForms {
 		if ( is_null( $value ) )
 			$value = self::get_value( $name, '' );
 
-		if ( !isset( $extra['id'] ) && FALSE === strpos( $name, '[' ) )
+		if ( !isset( $extra['id'] ) && !is_array( $name ) && false === strpos( $name, '[' ) )
 			$extra['id'] = $name;
 
 		return self::_input_gen( $args );
@@ -290,12 +292,12 @@ class scbForms {
 		) ) );
 
 		$extra = self::array_to_attr( $extra );
+		$name = self::get_name( $name );
 
 		if ( 'textarea' == $type ) {
 			$value = esc_html( $value );
 			$input = "<textarea name='{$name}'{$extra}>{$value}</textarea>\n";
-		}
-		else {
+		} else {
 			$value = esc_attr( $value );
 			$input = "<input name='{$name}' value='{$value}' type='{$type}'{$extra} /> ";
 		}
@@ -360,6 +362,8 @@ class scbForms {
 	 * @return string
 	 */
 	private static function get_name( $name ) {
+		$name = (array) $name;
+
 		$name_str = array_shift( $name );
 
 		foreach ( $name as $key ) {
