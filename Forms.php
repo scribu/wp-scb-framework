@@ -30,7 +30,7 @@ class scbForms {
 		) );
 
 		if ( isset( $args['extra'] ) && !is_array( $args['extra'] ) )
-			$args['extra'] = self::attr_to_array( $args['extra'] );
+			$args['extra'] = shortcode_parse_atts( $args['extra'] );
 
 		switch ( $args['type'] ) {
 			case 'select':
@@ -224,14 +224,12 @@ class scbForms {
 		foreach ( $options as $option ) {
 			extract( $option );
 
-			$opts .= "\t<option value='" . esc_attr( $value ) . "'" . selected( $selected, true, false ) . '>' . $title . "</option>\n";
+			$opts .= html( 'option', compact( 'value', 'selected' ), $title );
 		}
 
-		$extra = self::array_to_attr( $extra );
+		$extra['name'] = self::get_name( $name );
 
-		$name = self::get_name( $name );
-
-		$input =  "<select name='{$name}'$extra>\n{$opts}</select>";
+		$input = html( 'select', $extra, $opts );
 
 		return self::add_label( $input, $desc, $desc_pos );
 	}
@@ -291,15 +289,14 @@ class scbForms {
 			'extra' => array()
 		) ) );
 
-		$extra = self::array_to_attr( $extra );
-		$name = self::get_name( $name );
+		$extra['name'] = self::get_name( $name );
 
 		if ( 'textarea' == $type ) {
-			$value = esc_html( $value );
-			$input = "<textarea name='{$name}'{$extra}>{$value}</textarea>\n";
+			$input = html( 'textarea', $extra, esc_html( $value ) );
 		} else {
-			$value = esc_attr( $value );
-			$input = "<input name='{$name}' value='{$value}' type='{$type}'{$extra} /> ";
+			$extra['value'] = $value;
+			$extra['type'] = $type;
+			$input = html( 'input', $extra );
 		}
 
 		return self::add_label( $input, $desc, $desc_pos );
@@ -322,11 +319,11 @@ class scbForms {
 		$label = trim( str_replace( self::token, $input, $label ) );
 
 		if ( empty( $desc ) )
-			$output = $input . "\n";
+			$output = $input;
 		else
-			$output = "<label>{$label}</label>\n";
+			$output = html( 'label', $label );
 
-		return $output;
+		return $output . "\n";
 	}
 
 
@@ -372,22 +369,6 @@ class scbForms {
 
 		return $name_str;
 	}
-
-
-	private static function attr_to_array( $html ) {
-		return shortcode_parse_atts( $html );
-	}
-
-	private static function array_to_attr( $attr ) {
-		$attr = array_filter( (array) $attr );
-
-		$out = '';
-		foreach ( $attr as $key => $value )
-			$out .= ' ' . $key . '=' . '"' . esc_attr( $value ) . '"';
-
-		return $out;
-	}
-
 
 	private static function is_associative( $array ) {
 		$keys = array_keys( $array );

@@ -141,6 +141,12 @@ function html( $tag ) {
 		$closing = $tag;
 		$attributes = array_shift( $args );
 		foreach ( $attributes as $key => $value ) {
+			if ( false === $value )
+				continue;
+
+			if ( true === $value )
+				$value = $key;
+
 			$tag .= ' ' . $key . '="' . htmlspecialchars( $value, ENT_QUOTES ) . '"';
 		}
 	} else {
