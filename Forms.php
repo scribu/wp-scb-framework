@@ -330,6 +330,7 @@ class scbForms {
 
 // Utilities
 
+
 	/**
 	 * Traverses the formdata and retrieves the correct value.
 	 *
@@ -383,19 +384,10 @@ class scbForms {
 		return $out;
 	}
 
+
 	private static function is_associative( $array ) {
 		$keys = array_keys( $array );
-
 		return array_keys( $keys ) !== $keys;
-	}
-
-	private static function array_extract( $array, $keys ) {
-		$r = array();
-		foreach ( $keys as $key )
-			if ( isset( $array[$key] ) )
-				$r[$key] = $array[$key];
-
-		return $r;
 	}
 }
 
