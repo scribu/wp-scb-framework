@@ -239,9 +239,8 @@ class scbForms {
 		$args = wp_parse_args( $args, array(
 			'name' => NULL,
 			'value' => true,
-			'desc_pos' => 'after',
 			'desc' => NULL,
-			'checked' => NULL,
+			'checked' => false,
 			'extra' => array(),
 		) );
 
@@ -249,7 +248,9 @@ class scbForms {
 			$$key = &$val;
 		unset( $val );
 
-		if ( $checked )
+		$cur_val = self::get_value( $name );
+
+		if ( $checked || $cur_val == $value )
 			$extra['checked'] = 'checked';
 
 		if ( is_null( $desc ) && !is_bool( $value ) )
@@ -261,7 +262,7 @@ class scbForms {
 	// Handle args for text inputs
 	private static function _input( $args ) {
 		$args = wp_parse_args( $args, array(
-			'value' => '',
+			'value' => NULL,
 			'desc_pos' => 'after',
 			'extra' => array( 'class' => 'regular-text' ),
 		) );
@@ -269,6 +270,9 @@ class scbForms {
 		foreach ( $args as $key => &$val )
 			$$key = &$val;
 		unset( $val );
+
+		if ( is_null( $value ) )
+			$value = self::get_value( $name, '' );
 
 		if ( !isset( $extra['id'] ) && FALSE === strpos( $name, '[' ) )
 			$extra['id'] = $name;
