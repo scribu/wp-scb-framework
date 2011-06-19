@@ -174,10 +174,12 @@ abstract class scbAdminPage {
 	// Generates a form submit button
 	function submit_button( $value = '', $action = 'action', $class = "button" ) {
 		if ( is_array( $value ) ) {
-			extract( wp_parse_args( $value, array( 'value' => __( 'Save Changes', $this->textdomain ),
+			extract( wp_parse_args( $value, array(
+				'value' => __( 'Save Changes', $this->textdomain ),
 				'action' => 'action',
 				'class' => 'button',
-				'ajax' => true ) ) );
+				'ajax' => true
+			) ) );
 
 			if ( ! $ajax )
 				$class .= ' no-ajax';
@@ -216,7 +218,7 @@ abstract class scbAdminPage {
 	*/
 	function form_wrap( $content, $submit_button = true ) {
 		if ( is_array( $submit_button ) ) {
-			$content .= call_user_func( array( $this, 'submit_button' ), $submit_button );
+			$content .= $this->submit_button( $submit_button );
 		} elseif ( true === $submit_button ) {
 			$content .= $this->submit_button();
 		} elseif ( false !== strpos( $submit_button, '<input' ) ) {
@@ -248,7 +250,7 @@ abstract class scbAdminPage {
 	// Wraps the given content in a <form><table>
 	function form_table_wrap( $content ) {
 		$output = $this->table_wrap( $content );
-		$output = $this->form_wrap( $output, $this->nonce );
+		$output = $this->form_wrap( $output );
 
 		return $output;
 	}
@@ -277,8 +279,8 @@ abstract class scbAdminPage {
 
 	// Wraps the given content in a <tr><td>
 	function row_wrap( $title, $content ) {
-		return 
-		html( 'tr', 
+		return
+		html( 'tr',
 			 html( 'th scope="row"', $title )
 			.html( 'td', $content ) );
 	}
@@ -358,7 +360,7 @@ abstract class scbAdminPage {
 		if ( empty( $this->args['page_title'] ) )
 			trigger_error( 'Page title cannot be empty', E_USER_WARNING );
 
-		$this->args = wp_parse_args( $this->args, array( 
+		$this->args = wp_parse_args( $this->args, array(
 			'toplevel' => '',
 			'icon' => '',
 			'parent' => 'options-general.php',
@@ -367,7 +369,7 @@ abstract class scbAdminPage {
 			'page_slug' => '',
 			'nonce' => '',
 			'action_link' => __( 'Settings', $this->textdomain ),
-			'ajax_submit' => false, 
+			'ajax_submit' => false,
 			'admin_action_priority' => 10,
 		) );
 
