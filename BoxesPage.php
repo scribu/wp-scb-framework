@@ -37,7 +37,8 @@ abstract class scbBoxesPage extends scbAdminPage {
 		parent::page_init();
 
 		add_action( 'load-' . $this->pagehook, array( $this, 'boxes_init' ) );
-		add_filter( 'screen_layout_columns', array( $this, 'columns' ) );
+
+		add_screen_option( 'layout_columns', array( 'max' => $this->args['columns'], 'default' => $this->args['columns'] ) );
 	}
 
 	function default_css() {
@@ -155,12 +156,6 @@ abstract class scbBoxesPage extends scbAdminPage {
 		}
 	}
 
-	function columns( $columns ) {
-		$columns[$this->pagehook] = $this->args['columns'];
-
-		return $columns;
-	}
-
 	function uninstall() {
 		global $wpdb;
 
@@ -247,5 +242,6 @@ EOT
 <?php
 	}
 }
+
 
 
