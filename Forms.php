@@ -11,8 +11,6 @@ class scbForms {
 	static function input( $args, $formdata = array() ) {
 		self::$formdata = self::validate_data( $formdata );
 
-		$args = self::validate_data( $args );
-
 		foreach ( array( 'name', 'value' ) as $key ) {
 			$old = $key . 's';
 
@@ -152,7 +150,7 @@ class scbForms {
 		if ( !is_array( $value ) )
 			return trigger_error( "'value' argument is expected to be an array", E_USER_WARNING );
 
-		if ( !self::is_associative( $value ) ) {
+		if ( !empty( $value ) && !self::is_associative( $value ) ) {
 			if ( is_array( $args['desc'] ) ) {
 				$value = array_combine( $value, $args['desc'] );	// back-compat
 			} elseif ( !$args['numeric'] ) {
@@ -382,9 +380,6 @@ class scbForms {
 	}
 
 	private static function is_associative( $array ) {
-		if ( !is_array( $array ) || empty( $array ) )
-			return false;
-
 		$keys = array_keys( $array );
 
 		return array_keys( $keys ) !== $keys;
