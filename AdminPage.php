@@ -148,7 +148,7 @@ abstract class scbAdminPage {
 			return false;
 		}
 
-		$new_data = scbUtil::array_extract( $_POST, array_keys( $this->options->get_defaults() ) );
+		$new_data = wp_array_slice_assoc( $_POST, array_keys( $this->options->get_defaults() ) );
 
 		$new_data = stripslashes_deep( $new_data );
 
