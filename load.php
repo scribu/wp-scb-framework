@@ -1,9 +1,9 @@
 <?php
 
-$GLOBALS['_scb_data'] = array( 36, __FILE__, array(
+$GLOBALS['_scb_data'] = array( 37, __FILE__, array(
 	'scbUtil', 'scbOptions', 'scbForms', 'scbTable',
 	'scbWidget', 'scbAdminPage', 'scbBoxesPage',
-	'scbQueryManipulation', 'scbCron',
+	'scbCron', 'scbHooks',
 ) );
 
 if ( !class_exists( 'scbLoad4' ) ) :
