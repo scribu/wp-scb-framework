@@ -260,7 +260,7 @@ class scbForms {
 		return self::add_label( $input, $desc, $desc_pos );
 	}
 
-	// Handle args for checkboxes and radio inputs
+	// Handle args for a single checkbox or radio input
 	private static function _checkbox( $args ) {
 		$args = wp_parse_args( $args, array(
 			'value' => true,
@@ -279,10 +279,6 @@ class scbForms {
 			$desc = str_replace( '[]', '', $value );
 
 		return self::_input_gen( $args );
-	}
-
-	private static function get_cur_val( $default = null ) {
-		return is_null( self::$cur_val ) ? $default : self::$cur_val;
 	}
 
 	// Handle args for text inputs
@@ -356,6 +352,25 @@ class scbForms {
 
 
 	/**
+	 * Generates the proper string for a name attribute.
+	 *
+	 * @param array|string $name The raw name
+	 *
+	 * @return string
+	 */
+	private static function get_name( $name ) {
+		$name = (array) $name;
+
+		$name_str = array_shift( $name );
+
+		foreach ( $name as $key ) {
+			$name_str .= '[' . esc_attr( $key ) . ']';
+		}
+
+		return $name_str;
+	}
+
+	/**
 	 * Traverses the formdata and retrieves the correct value.
 	 *
 	 * @param array|string $name The name of the value
@@ -374,23 +389,8 @@ class scbForms {
 		return $value;
 	}
 
-	/**
-	 * Generates the proper string for a name attribute.
-	 *
-	 * @param array|string $name The raw name
-	 *
-	 * @return string
-	 */
-	private static function get_name( $name ) {
-		$name = (array) $name;
-
-		$name_str = array_shift( $name );
-
-		foreach ( $name as $key ) {
-			$name_str .= '[' . esc_attr( $key ) . ']';
-		}
-
-		return $name_str;
+	private static function get_cur_val( $default = null ) {
+		return is_null( self::$cur_val ) ? $default : self::$cur_val;
 	}
 
 	private static function is_associative( $array ) {
