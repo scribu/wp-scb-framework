@@ -34,6 +34,10 @@ class scbHooks {
 			if ( $method->isPublic() && !$method->isConstructor() ) {
 				$comment = $method->getDocComment();
 
+				if ( preg_match( '/@nohook[ \t\*\n]+/', $comment ) ) {
+					continue;
+				}
+
 				$hook = preg_match( '/@hook:?\s+(.+)/', $comment, $matches ) ? $matches[1] : $method->name;
 				$priority = preg_match( '/@priority:?\s+([0-9]+)/', $comment, $matches ) ? $matches[1] : 10;
 
