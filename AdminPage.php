@@ -8,7 +8,7 @@ You must set $this->args and define the page_content() method
 
 abstract class scbAdminPage {
 	/** Page args
-	 * $toplevel string  If not empty, will create a new top level menu
+	 * $toplevel string  If not empty, will create a new top level menu (for expected values see http://codex.wordpress.org/Administration_Menus#Using_add_submenu_page)
 	 * $icon string  Path to an icon for the top level menu
 	 * $parent string  ( default: options-general.php )
 	 * $capability string  ( default: 'manage_options' )
