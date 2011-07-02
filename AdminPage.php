@@ -1,10 +1,6 @@
 <?php
 
-/*
-Creates an admin page
-
-You must set $this->args and define the page_content() method
-*/
+// Administration page base class
 
 abstract class scbAdminPage {
 	/** Page args

@@ -1,6 +1,7 @@
 <?php
 
 // Takes care of creating, updating and deleting database tables
+
 class scbTable {
 	protected $name;
 	protected $columns;
@@ -16,8 +17,10 @@ class scbTable {
 		$wpdb->tables[] = $name;
 		$wpdb->$name = $wpdb->prefix . $name;
 
-		scbUtil::add_activation_hook( $file, array( $this, 'install' ) );
-		scbUtil::add_uninstall_hook( $file, array( $this, 'uninstall' ) );
+		if ( $file ) {
+			scbUtil::add_activation_hook( $file, array( $this, 'install' ) );
+			scbUtil::add_uninstall_hook( $file, array( $this, 'uninstall' ) );
+		}
 	}
 
 	function install() {
@@ -35,7 +38,7 @@ class scbTable {
 
 		if ( 'dbDelta' == $this->upgrade_method ) {
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-			dbDelta( "CREATE TABLE $full_table_name ( $this->columns ) $charset_collate" );		
+			dbDelta( "CREATE TABLE $full_table_name ( $this->columns ) $charset_collate" );
 			return;
 		}
 

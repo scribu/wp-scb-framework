@@ -1,12 +1,12 @@
 <?php
 
-// Documentation: http://scribu.net/wordpress/scb-framework/scb-options.html
+// Container for an array of options
 
 class scbOptions {
 
-	protected $key;			// the option name
+	protected $key;		// the option name
 
-	protected $defaults;	// the default value( s )
+	protected $defaults;	// the default values
 
 	public $wp_filter_id;	// used by WP hooks
 
@@ -15,15 +15,16 @@ class scbOptions {
 	 *
 	 * @param string $key Option name
 	 * @param string $file Reference to main plugin file
-	 * @param array $defaults An associative array of default values ( optional )
+	 * @param array $defaults An associative array of default values (optional)
 	 */
-	public function __construct( $key, $file, $defaults = '' ) {
+	public function __construct( $key, $file, $defaults = array() ) {
 		$this->key = $key;
 		$this->defaults = $defaults;
 
-		scbUtil::add_activation_hook( $file, array( $this, '_activation' ) );
-
-		scbUtil::add_uninstall_hook( $file, array( $this, 'delete' ) );
+		if ( $file ) {
+			scbUtil::add_activation_hook( $file, array( $this, '_activation' ) );
+			scbUtil::add_uninstall_hook( $file, array( $this, 'delete' ) );
+		}
 	}
 
 	/**

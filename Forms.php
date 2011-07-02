@@ -1,6 +1,6 @@
 <?php
 
-// Documentation: http://scribu.net/wordpress/scb-framework/scb-forms.html
+// Data-aware form generator
 
 class scbForms {
 

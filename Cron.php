@@ -1,5 +1,7 @@
 <?php
 
+// wp-cron job container
+
 class scbCron {
 	protected $schedule;
 	protected $interval;
@@ -47,7 +49,7 @@ class scbCron {
 		if ( isset( $callback_args ) )
 			$this->callback_args = ( array ) $callback_args;
 
-		if ( $this->schedule ) {
+		if ( $file && $this->schedule ) {
 			scbUtil::add_activation_hook( $file, array( $this, 'reset' ) );
 			register_deactivation_hook( $file, array( $this, 'unschedule' ) );
 		}

@@ -1,5 +1,7 @@
 <?php
 
+// Various utilities
+
 class scbUtil {
 
 	// Force script enqueue

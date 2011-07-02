@@ -1,19 +1,7 @@
 <?php
 
-/*
-Creates an admin page with widgets, similar to the dashboard
+// Admin screen with metaboxes base class
 
-For example, if you defined the boxes like this:
-
-$this->boxes = array( array( 'settings', 'Settings box', 'normal' )
-	... );
-
-You must also define two methods in your class for each box:
-
-function settings_box() - this is where the box content is echoed
-function settings_handler() - this is where the box settings are saved
-...
-*/
 abstract class scbBoxesPage extends scbAdminPage {
 	/*
 		A box definition looks like this:
