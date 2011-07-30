@@ -31,7 +31,16 @@ class scbHooks {
 
 		$func = " array( $class, '$callback[1]' )";
 
-		echo "add_filter( '$tag', $func, $prio, $argc );\n";
+		echo "add_filter( '$tag', $func";
+
+		if ( $prio != 10 || $argc > 1 ) {
+			echo ", $prio";
+
+			if ( $argc > 1 )
+				echo ", $argc";
+		}
+
+		echo " );\n";
 	}
 
 	private static function _do( $action, $class ) {
