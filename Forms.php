@@ -23,10 +23,11 @@ class scbForms {
 			return trigger_error( 'Empty name', E_USER_WARNING );
 
 		$args = wp_parse_args( $args, array(
-			'value' => NULL,
 			'desc' => '',
 			'desc_pos' => '',
 		) );
+
+		$val_is_array = isset( $args['value'] ) && is_array( $args['value'] );
 
 		if ( isset( $args['extra'] ) && !is_array( $args['extra'] ) )
 			$args['extra'] = shortcode_parse_atts( $args['extra'] );
@@ -37,13 +38,13 @@ class scbForms {
 		switch ( $args['type'] ) {
 			case 'select':
 			case 'radio':
-				if ( ! is_array( $args['value'] ) )
+				if ( ! $val_is_array )
 					return trigger_error( "'value' argument is expected to be an array", E_USER_WARNING );
 
 				return self::_single_choice( $args );
 				break;
 			case 'checkbox':
-				if ( is_array( $args['value'] ) )
+				if ( $val_is_array )
 					return self::_multiple_choice( $args );
 				else
 					return self::_checkbox( $args );
@@ -273,7 +274,8 @@ class scbForms {
 			$$key = &$val;
 		unset( $val );
 
-		$extra['checked'] = ( $checked || self::get_cur_val() == $value );
+		$cur_val = self::get_cur_val();
+		$extra['checked'] = ( $checked || ( $value && $value == $cur_val ) );
 
 		if ( is_null( $desc ) && !is_bool( $value ) )
 			$desc = str_replace( '[]', '', $value );
