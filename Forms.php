@@ -360,7 +360,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	private static function get_name( $name ) {
+	static function get_name( $name ) {
 		$name = (array) $name;
 
 		$name_str = array_shift( $name );
@@ -380,7 +380,7 @@ class scbForms {
 	 *
 	 * @return mixed
 	 */
-	private static function get_value( $name, $value ) {
+	static function get_value( $name, $value ) {
 		foreach ( (array) $name as $key ) {
 			if ( !isset( $value[ $key ] ) )
 				return null;

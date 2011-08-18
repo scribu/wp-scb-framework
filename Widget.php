@@ -59,13 +59,11 @@ abstract class scbWidget extends WP_Widget {
 			$args['desc_pos'] = 'before';
 
 		// Then add prefix to names and formdata
-		// TODO: handle nested names as well
 		$old_name = $args['name'];
 		$new_name = $this->scb_get_field_name( $old_name );
 
 		$new_formdata = array();
-		if ( isset( $formdata[ $old_name ] ) )
-			$new_formdata[ $new_name ] = $formdata[ $old_name ];
+		$new_formdata[ $new_name ] = scbForms::get_value( $old_name, $formdata );
 
 		$args['name'] = $new_name;
 
@@ -77,12 +75,11 @@ abstract class scbWidget extends WP_Widget {
 
 
 	private function scb_get_field_name( $name ) {
-		if ( $split = scbUtil::split_at( '[', $name ) )
-			list( $basename, $extra ) = $split;
-		else
-			return $this->get_field_name( $name );
+		$name = (array) $name;
 
-		return str_replace( '[]', '', $this->get_field_name( $basename ) ) . $extra;
+		$name[0] = $this->get_field_name( $name[0] );
+
+		return scbForms::get_name( $name );
 	}
 }
 
