@@ -51,24 +51,23 @@ abstract class scbWidget extends WP_Widget {
 	// Allows extra parameter $args['title']
 	protected function input( $args, $formdata = array() ) {
 		// Add default class
-		if ( !isset( $args['extra'] ) )
-			$args['extra'] = 'class="regular-text"';
+		if ( !isset( $args['extra'] ) && 'text' == $args['type'] )
+			$args['extra'] = array( 'class' => 'widefat' );
 
 		// Add default label position
 		if ( !in_array( $args['type'], array( 'checkbox', 'radio' ) ) && empty( $args['desc_pos'] ) )
 			$args['desc_pos'] = 'before';
 
 		// Then add prefix to names and formdata
-		$new_formdata = array();
-		foreach ( ( array ) $args['name'] as $name )
-			$new_formdata[$this->scb_get_field_name( $name )] = @$formdata[$name];
-		$new_names = array_keys( $new_formdata );
+		// TODO: handle nested names as well
+		$old_name = $args['name'];
+		$new_name = $this->scb_get_field_name( $old_name );
 
-		// Finally, replace the old names
-		if ( 1 == count( $new_names ) )
-			$args['name'] = $new_names[0];
-		else
-			$args['name'] = $new_names;
+		$new_formdata = array();
+		if ( isset( $formdata[ $old_name ] ) )
+			$new_formdata[ $new_name ] = $formdata[ $old_name ];
+
+		$args['name'] = $new_name;
 
 		return scbForms::input( $args, $new_formdata );
 	}
