@@ -401,3 +401,65 @@ class scbForms {
 	}
 }
 
+/**
+ * A wrapper for scbForms, containing the formdata
+ */
+class scbForm {
+	protected $data = array();
+	protected $prefix = array();
+
+	function __construct( $data, $prefix = false ) {
+		if ( is_array( $data ) )
+			$this->data = $data;
+
+		if ( $prefix )
+			$this->prefix = (array) $prefix;
+	}
+
+	function traverse_to( $path ) {
+		$data = $this->get_value( $path );
+		$prefix = array_merge( $this->prefix, (array) $path );
+
+		return new scbForm( $data, $prefix );
+	}
+
+	function input( $args ) {
+		if ( !empty( $this->prefix ) ) {
+			$name = (array) $args['name'];
+
+			$value = $this->get_value( $name );
+
+			if ( !is_null( $value ) ) {
+				switch ( $args['type'] ) {
+					case 'select':
+					case 'radio':
+						$args['selected'] = $value;
+						break;
+					case 'checkbox':
+						$args['checked'] = $value == $args['value'];
+						break;
+					default:
+						$args['value'] = $value;
+				}
+			}
+
+			$args['name'] = array_merge( $this->prefix, $name );
+		}
+
+		return scbForms::input( $args );
+	}
+
+	protected function get_value( $name, $default = null ) {
+		$value = $this->data;
+
+		foreach ( (array) $name as $key ) {
+			if ( !isset( $value[ $key ] ) )
+				return $default;
+
+			$value = $value[$key];
+		}
+
+		return $value;
+	}
+}
+

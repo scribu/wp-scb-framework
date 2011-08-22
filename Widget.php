@@ -50,6 +50,10 @@ abstract class scbWidget extends WP_Widget {
 	// See scbForms::input()
 	// Allows extra parameter $args['title']
 	protected function input( $args, $formdata = array() ) {
+		$prefix = array( 'widget-' . $this->id_base, $this->number );
+
+		$form = new scbForm( $formdata, $prefix );
+
 		// Add default class
 		if ( !isset( $args['extra'] ) && 'text' == $args['type'] )
 			$args['extra'] = array( 'class' => 'widefat' );
@@ -58,28 +62,14 @@ abstract class scbWidget extends WP_Widget {
 		if ( !in_array( $args['type'], array( 'checkbox', 'radio' ) ) && empty( $args['desc_pos'] ) )
 			$args['desc_pos'] = 'before';
 
-		// Then add prefix to names and formdata
-		$old_name = $args['name'];
-		$new_name = $this->scb_get_field_name( $old_name );
+		$name = $args['name'];
 
-		$new_formdata = array();
-		$new_formdata[ $new_name ] = scbForms::get_value( $old_name, $formdata );
+		if ( !is_array( $name ) && '[]' == substr( $name, -2 ) )
+			$name = array( substr( $name, 0, -2 ), '' );
 
-		$args['name'] = $new_name;
+		$args['name'] = $name;
 
-		return scbForms::input( $args, $new_formdata );
-	}
-
-
-//_____INTERNAL METHODS_____
-
-
-	private function scb_get_field_name( $name ) {
-		$name = (array) $name;
-
-		$name[0] = $this->get_field_name( $name[0] );
-
-		return scbForms::get_name( $name );
+		return $form->input( $args );
 	}
 }
 
