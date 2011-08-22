@@ -417,7 +417,8 @@ class scbForm {
 	}
 
 	function traverse_to( $path ) {
-		$data = $this->get_value( $path );
+		$data = scbForms::get_value( $path, $this->data );
+
 		$prefix = array_merge( $this->prefix, (array) $path );
 
 		return new scbForm( $data, $prefix );
@@ -427,7 +428,7 @@ class scbForm {
 		if ( !empty( $this->prefix ) ) {
 			$name = (array) $args['name'];
 
-			$value = $this->get_value( $name );
+			$value = scbForms::get_value( $name, $this->data );
 
 			if ( !is_null( $value ) ) {
 				switch ( $args['type'] ) {
@@ -447,19 +448,6 @@ class scbForm {
 		}
 
 		return scbForms::input( $args );
-	}
-
-	protected function get_value( $name, $default = null ) {
-		$value = $this->data;
-
-		foreach ( (array) $name as $key ) {
-			if ( !isset( $value[ $key ] ) )
-				return $default;
-
-			$value = $value[$key];
-		}
-
-		return $value;
 	}
 }
 
