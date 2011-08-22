@@ -7,9 +7,13 @@ class scbForms {
 	const token = '%input%';
 
 	protected static $cur_name;
-	protected static $cur_val;
 
-	static function input( $args, $formdata = array() ) {
+	static function input( $args, $formdata = false ) {
+		if ( false !== $formdata ) {
+			$form = new scbForm( $formdata );
+			return $form->input( $args );
+		}
+
 		foreach ( array( 'name', 'value' ) as $key ) {
 			$old = $key . 's';
 
@@ -33,7 +37,6 @@ class scbForms {
 			$args['extra'] = shortcode_parse_atts( $args['extra'] );
 
 		self::$cur_name = self::get_name( $args['name'] );
-		self::$cur_val = self::get_value( $args['name'], $formdata );
 
 		switch ( $args['type'] ) {
 			case 'select':
@@ -161,7 +164,7 @@ class scbForms {
 		extract( $args );
 
 		if ( !is_array( $checked ) )
-			$checked = self::get_cur_val( array() );
+			$checked = array();
 
 		$opts = '';
 		foreach ( $value as $value => $title ) {
@@ -199,8 +202,6 @@ class scbForms {
 			$selected = key( $value );	// radio buttons should always have one option selected
 		}
 
-		$cur_val = self::get_cur_val( $selected );
-
 		$opts = '';
 		foreach ( $value as $value => $title ) {
 			if ( empty( $value ) || empty( $title ) )
@@ -209,7 +210,7 @@ class scbForms {
 			$opts .= self::_checkbox( array(
 				'type' => 'radio',
 				'value' => $value,
-				'checked' => ( (string) $value == (string) $cur_val ),
+				'checked' => ( (string) $value == (string) $selected ),
 				'desc' => $title,
 				'desc_pos' => $desc_pos
 			) );
@@ -224,14 +225,12 @@ class scbForms {
 			'extra' => array()
 		) ) );
 
-		$cur_val = self::get_cur_val( $selected );
-
 		$options = array();
 
 		if ( false !== $text ) {
 			$options[] = array(
 				'value' => '',
-				'selected' => ( $cur_val == array( 'foo' ) ),
+				'selected' => ( $selected == array( 'foo' ) ),
 				'title' => $text
 			);
 		}
@@ -242,7 +241,7 @@ class scbForms {
 
 			$options[] = array(
 				'value' => $value,
-				'selected' => ( (string) $value == (string) $cur_val ),
+				'selected' => ( (string) $value == (string) $selected ),
 				'title' => $title
 			);
 		}
@@ -274,8 +273,7 @@ class scbForms {
 			$$key = &$val;
 		unset( $val );
 
-		$cur_val = self::get_cur_val();
-		$extra['checked'] = ( $checked || ( $value && $value == $cur_val ) );
+		$extra['checked'] = $checked;
 
 		if ( is_null( $desc ) && !is_bool( $value ) )
 			$desc = str_replace( '[]', '', $value );
@@ -286,7 +284,7 @@ class scbForms {
 	// Handle args for text inputs
 	private static function _input( $args ) {
 		$args = wp_parse_args( $args, array(
-			'value' => NULL,
+			'value' => '',
 			'desc_pos' => 'after',
 			'extra' => array( 'class' => 'regular-text' ),
 		) );
@@ -294,9 +292,6 @@ class scbForms {
 		foreach ( $args as $key => &$val )
 			$$key = &$val;
 		unset( $val );
-
-		if ( is_null( $value ) )
-			$value = self::get_cur_val( '' );
 
 		if ( !isset( $extra['id'] ) && !is_array( $name ) && false === strpos( $name, '[' ) )
 			$extra['id'] = $name;
@@ -389,10 +384,6 @@ class scbForms {
 		}
 
 		return $value;
-	}
-
-	private static function get_cur_val( $default = null ) {
-		return is_null( self::$cur_val ) ? $default : self::$cur_val;
 	}
 
 	private static function is_associative( $array ) {
