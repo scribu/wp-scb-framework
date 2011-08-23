@@ -285,25 +285,6 @@ abstract class scbAdminPage {
 		if ( empty( $formdata ) && isset( $this->options ) )
 			$formdata = $this->options->get();
 
-		if ( isset( $args['name_tree'] ) ) {
-			$tree = ( array ) $args['name_tree'];
-			unset( $args['name_tree'] );
-
-			$value = $formdata;
-			$name = $this->option_name;
-			foreach ( $tree as $key ) {
-				$value = $value[$key];
-				$name .= '[' . $key . ']';
-			}
-
-			$args['name'] = $name;
-			unset( $args['names'] );
-
-			unset( $args['values'] );
-
-			$formdata = array( $name => $value );
-		}
-
 		return scbForms::input( $args, $formdata );
 	}
 
