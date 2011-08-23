@@ -228,12 +228,12 @@ abstract class scbAdminPage {
 	}
 
 	// See scbForms::form()
-	function form( $rows, $formdata = array() ) {
+	function form( $rows, $formdata = false ) {
 		return scbForms::form( $rows, $formdata, $this->nonce );
 	}
 
 	// Generates a table wrapped in a form
-	function form_table( $rows, $formdata = array() ) {
+	function form_table( $rows, $formdata = false ) {
 		$output = '';
 		foreach ( $rows as $row )
 			$output .= $this->table_row( $row, $formdata );
@@ -252,7 +252,7 @@ abstract class scbAdminPage {
 	}
 
 	// Generates a form table
-	function table( $rows, $formdata = array() ) {
+	function table( $rows, $formdata = false ) {
 		$output = '';
 		foreach ( $rows as $row )
 			$output .= $this->table_row( $row, $formdata );
@@ -263,7 +263,7 @@ abstract class scbAdminPage {
 	}
 
 	// Generates a table row
-	function table_row( $args, $formdata = array() ) {
+	function table_row( $args, $formdata = false ) {
 		return $this->row_wrap( $args['title'], $this->input( $args, $formdata ) );
 	}
 
@@ -281,7 +281,7 @@ abstract class scbAdminPage {
 			.html( 'td', $content ) );
 	}
 
-	function input( $args, $formdata = array() ) {
+	function input( $args, $formdata = false ) {
 		if ( empty( $formdata ) && isset( $this->options ) )
 			$formdata = $this->options->get();
 
