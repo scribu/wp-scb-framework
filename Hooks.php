@@ -54,7 +54,7 @@ class scbHooks {
 					continue;
 				}
 
-				preg_match_all( '/@hook:?\s+(.+?)[\s*]/', $comment, $matches ) ? $matches[1] : $method->name;
+				preg_match_all( '/@hook:?\s+([^\s]+)/', $comment, $matches ) ? $matches[1] : $method->name;
 				if ( empty( $matches[1] ) )
 					$hooks = array( $method->name );
 				else
