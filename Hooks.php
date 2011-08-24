@@ -54,10 +54,17 @@ class scbHooks {
 					continue;
 				}
 
-				$hook = preg_match( '/@hook:?\s+([^\s]+)/', $comment, $matches ) ? $matches[1] : $method->name;
+				preg_match_all( '/@hook:?\s+(.+?)[\s*]/', $comment, $matches ) ? $matches[1] : $method->name;
+				if ( empty( $matches[1] ) )
+					$hooks = array( $method->name );
+				else
+					$hooks = $matches[1];
+
 				$priority = preg_match( '/@priority:?\s+(\d+)/', $comment, $matches ) ? $matches[1] : 10;
 
-				call_user_func( $action, $hook, array( $class, $method->name ), $priority, $method->getNumberOfParameters() );
+				foreach ( $hooks as $hook ) {
+					call_user_func( $action, $hook, array( $class, $method->name ), $priority, $method->getNumberOfParameters() );
+				}
 			}
 		}
 	}
