@@ -9,7 +9,7 @@ class scbForms {
 	protected static $cur_name;
 
 	static function input( $args, $formdata = false ) {
-		if ( false !== $formdata ) {
+		if ( !empty( $formdata ) ) {
 			$form = new scbForm( $formdata );
 			return $form->input( $args );
 		}
@@ -416,26 +416,24 @@ class scbForm {
 	}
 
 	function input( $args ) {
-		if ( !empty( $this->prefix ) ) {
-			$name = (array) $args['name'];
+		$value = scbForms::get_value( $args['name'], $this->data );
 
-			$value = scbForms::get_value( $name, $this->data );
-
-			if ( !is_null( $value ) ) {
-				switch ( $args['type'] ) {
-					case 'select':
-					case 'radio':
-						$args['selected'] = $value;
-						break;
-					case 'checkbox':
-						$args['checked'] = $value == $args['value'];
-						break;
-					default:
-						$args['value'] = $value;
-				}
+		if ( !is_null( $value ) ) {
+			switch ( $args['type'] ) {
+			case 'select':
+			case 'radio':
+				$args['selected'] = $value;
+				break;
+			case 'checkbox':
+				$args['checked'] = ( $value || ( isset( $args['value'] ) && $value == $args['value'] ) );
+				break;
+			default:
+				$args['value'] = $value;
 			}
+		}
 
-			$args['name'] = array_merge( $this->prefix, $name );
+		if ( !empty( $this->prefix ) ) {
+			$args['name'] = array_merge( $this->prefix, (array) $args['name'] );
 		}
 
 		return scbForms::input( $args );
