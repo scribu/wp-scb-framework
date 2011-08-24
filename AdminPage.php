@@ -227,11 +227,6 @@ abstract class scbAdminPage {
 		return scbForms::form_wrap( $content, $this->nonce );
 	}
 
-	// See scbForms::form()
-	function form( $rows, $formdata = false ) {
-		return scbForms::form( $rows, $formdata, $this->nonce );
-	}
-
 	// Generates a table wrapped in a form
 	function form_table( $rows, $formdata = false ) {
 		$output = '';
@@ -281,15 +276,16 @@ abstract class scbAdminPage {
 			.html( 'td', $content ) );
 	}
 
-	function input( $args, $formdata = false ) {
-		if ( empty( $formdata ) && isset( $this->options ) )
-			$formdata = $this->options->get();
-
-		return scbForms::input( $args, $formdata );
-	}
-
 	// Mimic scbForms inheritance
 	function __call( $method, $args ) {
+		if ( in_array( $method, array( 'input', 'form' ) ) ) {
+			if ( empty( $args[1] ) && isset( $this->options ) )
+				$args[1] = $this->options->get();
+
+			if ( 'form' == $method )
+				$args[2] = $this->nonce;
+		}
+
 		return call_user_func_array( array( 'scbForms', $method ), $args );
 	}
 
