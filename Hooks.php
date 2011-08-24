@@ -29,7 +29,7 @@ class scbHooks {
 		else
 			$class = '$' . get_class( $callback[0] );
 
-		$func = " array( $class, '$callback[1]' )";
+		$func = "array( $class, '$callback[1]' )";
 
 		echo "add_filter( '$tag', $func";
 
