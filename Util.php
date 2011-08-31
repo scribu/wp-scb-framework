@@ -67,24 +67,20 @@ class scbUtil {
 
 	// Extract certain $keys from $array
 	static function array_extract( $array, $keys ) {
-		_deprecated_function( 'scbUtil::array_extract', '3.1', 'wp_array_slice_assoc()' );
+		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, 'WP 3.1', 'wp_array_slice_assoc()' );
 		return wp_array_slice_assoc( $array, $keys );
 	}
 
 	// Extract a certain value from a list of arrays
 	static function array_pluck( $array, $key ) {
-		_deprecated_function( 'scbUtil::array_pluck', '3.1', 'wp_list_pluck()' );
+		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, 'WP 3.1', 'wp_list_pluck()' );
 		return wp_list_pluck( $array, $key );
 	}
 
 	// Transform a list of objects into an associative array
 	static function objects_to_assoc( $objects, $key, $value ) {
-		$r = array();
-
-		foreach ( $objects as $obj )
-			$r[$obj->$key] = $obj->$value;
-
-		return $r;
+		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, 'r41', 'scb_list_fold()' );
+		return scb_list_fold( $objects, $key, $value );
 	}
 
 	// Prepare an array for an IN statement
@@ -107,6 +103,22 @@ class scbUtil {
 
 		return array( $start, $finish );
 	}
+}
+
+
+// Transform a list of objects into an associative array
+function scb_list_fold( $list, $key, $value ) {
+	$r = array();
+
+	if ( is_array( reset( $list ) ) ) {
+		foreach ( $list as $item )
+			$r[ $item[ $key ] ] = $item[ $value ];
+	} else {
+		foreach ( $list as $item )
+			$r[ $item->$key ] = $item->$value;
+	}
+
+	return $r;
 }
 
 
