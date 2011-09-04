@@ -9,11 +9,7 @@ class scbForms {
 	protected static $cur_name;
 
 	static function input( $args, $formdata = false ) {
-		if ( !empty( $formdata ) ) {
-			$form = new scbForm( $formdata );
-			return $form->input( $args );
-		}
-
+		// setle on singular keys
 		foreach ( array( 'name', 'value' ) as $key ) {
 			$old = $key . 's';
 
@@ -21,6 +17,11 @@ class scbForms {
 				$args[$key] = $args[$old];
 				unset( $args[$old] );
 			}
+		}
+
+		if ( !empty( $formdata ) ) {
+			$form = new scbForm( $formdata );
+			return $form->input( $args );
 		}
 
 		if ( empty( $args['name'] ) )
@@ -425,7 +426,10 @@ class scbForm {
 				$args['selected'] = $value;
 				break;
 			case 'checkbox':
-				$args['checked'] = ( $value || ( isset( $args['value'] ) && $value == $args['value'] ) );
+				if ( is_array( $value ) )
+					$args['checked'] = $value;
+				else
+					$args['checked'] = ( $value || ( isset( $args['value'] ) && $value == $args['value'] ) );
 				break;
 			default:
 				$args['value'] = $value;
