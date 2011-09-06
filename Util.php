@@ -25,12 +25,10 @@ class scbUtil {
 
 		ob_start();
 		$wp_styles->do_items( ( array ) $handles );
-		$content = str_replace( array( '"', "\n" ), array( "'", '' ), ob_get_clean() );
+		$content = str_replace( array( "'", "\n" ), array( '"', '' ), ob_get_clean() );
 
 		echo "<script type='text/javascript'>\n";
-		echo "jQuery( document ).ready( function( $ ) {\n";
-		echo "$( 'head' ).prepend( \"$content\" );\n";
-		echo "} );\n";
+		echo "jQuery(function ($) { $('head').prepend('$content'); });\n";
 		echo "</script>";
 	}
 
