@@ -122,13 +122,8 @@ function scb_list_fold( $list, $key, $value ) {
 
 //_____Minimalist HTML framework_____
 
-/*
- * Examples:
- *
- * html( 'p', 'Hello world!' );												<p>Hello world!</p>
- * html( 'a', array( 'href' => 'http://example.com' ), 'A link' );			<a href="http://example.com">A link</a>
- * html( 'img', array( 'src' => 'http://example.com/f.jpg' ) );				<img src="http://example.com/f.jpg" />
- * html( 'ul', html( 'li', 'a' ), html( 'li', 'b' ) );						<ul><li>a</li><li>b</li></ul>
+/**
+ * Generate an HTML tag. Atributes are escaped. Content is NOT escaped.
  */
 if ( ! function_exists( 'html' ) ):
 function html( $tag ) {
