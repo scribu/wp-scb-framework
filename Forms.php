@@ -373,13 +373,14 @@ class scbForms {
 	 *
 	 * @param array|string $name The name of the value
 	 * @param array $value The data that will be traversed
+	 * @param mixed $fallback The value returned when the key is not found
 	 *
 	 * @return mixed
 	 */
-	static function get_value( $name, $value ) {
+	static function get_value( $name, $value, $fallback = null ) {
 		foreach ( (array) $name as $key ) {
 			if ( !isset( $value[ $key ] ) )
-				return null;
+				return $fallback;
 
 			$value = $value[$key];
 		}
