@@ -80,12 +80,9 @@ abstract class scbAdminPage {
 
 
 	// Constructor
-	function __construct( $file, $options = NULL ) {
+	function __construct( $file = false, $options = null ) {
 		if ( is_a( $options, 'scbOptions' ) )
 			$this->options = $options;
-
-		$this->file = $file;
-		$this->plugin_url = plugin_dir_url( $file );
 
 		$this->setup();
 		$this->check_args();
@@ -99,8 +96,13 @@ abstract class scbAdminPage {
 		add_action( 'admin_menu', array( $this, 'page_init' ), $this->args['admin_action_priority'] );
 		add_filter( 'contextual_help', array( $this, '_contextual_help' ), 10, 2 );
 
-		if ( $this->args['action_link'] )
-			add_filter( 'plugin_action_links_' . plugin_basename( $file ), array( $this, '_action_link' ) );
+		if ( $file ) {
+			$this->file = $file;
+			$this->plugin_url = plugin_dir_url( $file );
+
+			if ( $this->args['action_link'] )
+				add_filter( 'plugin_action_links_' . plugin_basename( $file ), array( $this, '_action_link' ) );
+		}
 	}
 
 	// This is where all the page args can be set

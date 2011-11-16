@@ -19,7 +19,7 @@ class scbCron {
 			string $schedule OR number $interval
 			array $callback_args (optional)
 	 */
-	function __construct( $file, $args ) {
+	function __construct( $file = false, $args ) {
 		extract( $args, EXTR_SKIP );
 
 		// Set time & schedule

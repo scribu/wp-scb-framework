@@ -11,10 +11,9 @@ abstract class scbBoxesPage extends scbAdminPage {
 	*/
 	protected $boxes = array();
 
-	function __construct( $file, $options = null ) {
+	function __construct( $file = false, $options = null ) {
 		parent::__construct( $file, $options );
 
-		// too late
 		scbUtil::add_uninstall_hook( $this->file, array( $this, 'uninstall' ) );
 	}
 
