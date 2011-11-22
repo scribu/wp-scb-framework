@@ -164,7 +164,7 @@ abstract class scbAdminPage {
 		if ( empty( $msg ) )
 			$msg = __( 'Settings <strong>saved</strong>.', $this->textdomain );
 
-		echo "<div class='$class fade'><p>$msg</p></div>\n";
+		echo scb_admin_notice( $msg, $class );
 	}
 
 
