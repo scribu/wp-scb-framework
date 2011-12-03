@@ -65,6 +65,6 @@ function scb_install_table( $name, $columns, $upgrade_method = 'dbDelta' ) {
 function scb_uninstall_table( $name ) {
 	global $wpdb;
 
-	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->$name" );
+	$wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->$name );
 }
 
