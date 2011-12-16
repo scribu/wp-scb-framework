@@ -4,7 +4,7 @@
 
 class scbForms {
 
-	const token = '%input%';
+	const TOKEN = '%input%';
 
 	protected static $cur_name;
 
@@ -29,7 +29,8 @@ class scbForms {
 
 		$args = wp_parse_args( $args, array(
 			'desc' => '',
-			'desc_pos' => '',
+			'desc_pos' => 'after',
+			'wrap' => self::TOKEN,
 		) );
 
 		$val_is_array = isset( $args['value'] ) && is_array( $args['value'] );
@@ -45,17 +46,19 @@ class scbForms {
 				if ( ! $val_is_array )
 					return trigger_error( "'value' argument is expected to be an array", E_USER_WARNING );
 
-				return self::_single_choice( $args );
+				$input = self::_single_choice( $args );
 				break;
 			case 'checkbox':
 				if ( $val_is_array )
-					return self::_multiple_choice( $args );
+					$input = self::_multiple_choice( $args );
 				else
-					return self::_checkbox( $args );
+					$input = self::_checkbox( $args );
 				break;
 			default:
-				return self::_input( $args );
+				$input = self::_input( $args );
 		}
+
+		return str_replace( self::TOKEN, $input, $args['wrap'] );
 	}
 
 
@@ -322,27 +325,15 @@ class scbForms {
 	}
 
 	private static function add_label( $input, $desc, $desc_pos ) {
-		if ( empty( $desc_pos ) )
-			$desc_pos = 'after';
-
-		$label = '';
-		if ( false === strpos( $desc, self::token ) ) {
-			switch ( $desc_pos ) {
-				case 'before': $label = $desc . ' ' . self::token; break;
-				case 'after': $label = self::token . ' ' . $desc;
-			}
-		} else {
-			$label = $desc;
-		}
-
-		$label = trim( str_replace( self::token, $input, $label ) );
-
 		if ( empty( $desc ) )
-			$output = $input;
-		else
-			$output = html( 'label', $label );
+			return $input . "\n";
 
-		return $output . "\n";
+		if ( 'before' == $desc_pos )
+			$label = $desc . ' ' . $input;
+		else
+			$label = $input . ' ' . $desc;
+
+		return html( 'label', $label ) . "\n";
 	}
 
 
