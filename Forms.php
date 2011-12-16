@@ -180,11 +180,11 @@ class scbForms {
 				'value' => $value,
 				'checked' => in_array( $value, $checked ),
 				'desc' => $title,
-				'desc_pos' => $desc_pos
+				'desc_pos' => 'after'
 			) );
 		}
 
-		return $opts;
+		return self::add_desc( $opts, $desc, $desc_pos );
 	}
 
 	private static function _expand_values( &$args ) {
@@ -193,6 +193,7 @@ class scbForms {
 		if ( !empty( $value ) && !self::is_associative( $value ) ) {
 			if ( is_array( $args['desc'] ) ) {
 				$value = array_combine( $value, $args['desc'] );	// back-compat
+				$args['desc'] = false;
 			} elseif ( !$args['numeric'] ) {
 				$value = array_combine( $value, $value );
 			}
@@ -216,11 +217,11 @@ class scbForms {
 				'value' => $value,
 				'checked' => ( (string) $value == (string) $selected ),
 				'desc' => $title,
-				'desc_pos' => $desc_pos
+				'desc_pos' => 'after'
 			) );
 		}
 
-		return $opts;
+		return self::add_desc( $opts, $desc, $desc_pos );
 	}
 
 	private static function _select( $args ) {
@@ -325,15 +326,17 @@ class scbForms {
 	}
 
 	private static function add_label( $input, $desc, $desc_pos ) {
+		return html( 'label', self::add_desc( $input, $desc, $desc_pos ) ) . "\n";
+	}
+
+	private static function add_desc( $input, $desc, $desc_pos ) {
 		if ( empty( $desc ) )
-			return $input . "\n";
+			return $input;
 
 		if ( 'before' == $desc_pos )
-			$label = $desc . ' ' . $input;
+			return $desc . ' ' . $input;
 		else
-			$label = $input . ' ' . $desc;
-
-		return html( 'label', $label ) . "\n";
+			return $input . ' ' . $desc;
 	}
 
 
