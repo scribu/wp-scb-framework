@@ -390,7 +390,7 @@ class scbForms {
 			switch ( $field['type'] ) {
 			case 'checkbox':
 				if ( isset( $field['values'] ) && is_array( $field['values'] ) )
-					$value = array_intersect( $field['values'], $value );
+					$value = array_intersect( $field['values'], (array) $value );
 				else
 					$value = (bool) $value;
 
