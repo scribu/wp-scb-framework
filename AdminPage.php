@@ -194,15 +194,14 @@ abstract class scbAdminPage {
 			'name' => $action,
 			'value' => $value,
 			'extra' => '',
-			'desc' => false
+			'desc' => false,
+			'wrap' => html( 'p class="submit"', scbForms::TOKEN )
 		);
 
 		if ( ! empty( $class ) )
-			$input_args['extra'] = "class='{$class}'";
+			$input_args['extra'] = compact( 'class' );
 
-		$output = "<p class='submit'>\n" . scbForms::input( $input_args ) . "</p>\n";
-
-		return $output;
+		return scbForms::input( $input_args );
 	}
 
 	/*
