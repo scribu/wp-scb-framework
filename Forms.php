@@ -409,11 +409,23 @@ class scbForms {
 					continue 2;
 			}
 
-			// TODO: handle nested names (map to nested array)
-			$to_update[ $field['name'] ] = $value;
+			self::set_value( $to_update, $field['name'], $value );
 		}
 
 		return $to_update;
+	}
+
+	private static function set_value( &$arr, $name, $value ) {
+		$name = (array) $name;
+
+		while ( !empty( $name ) ) {
+			$key = array_shift( $name );
+
+			if ( !isset( $arr[ $key ] ) )
+				$arr[ $key ] = empty( $name ) ? $value : array();
+
+			$arr =& $arr[ $key ];
+		}
 	}
 
 	private static function is_associative( $array ) {
