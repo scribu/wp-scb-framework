@@ -382,6 +382,40 @@ class scbForms {
 		return $value;
 	}
 
+	/**
+	 * Given a list of fields, extract the appropriate POST data and return it.
+	 *
+	 * @param array $fields List of args that would be sent to scbForms::input()
+	 *
+	 * @return array
+	 */
+	static function validate_post_data( $fields ) {
+		foreach ( $fields as $field ) {
+			$value = scbForms::get_value( $field['name'], $_POST );
+
+			$value = stripslashes_deep( $value );
+
+			switch ( $field['type'] ) {
+			case 'checkbox':
+				if ( isset( $field['values'] ) && is_array( $field['values'] ) )
+					$value = array_intersect( $field['values'], $value );
+				else
+					$value = (bool) $value;
+
+				break;
+			case 'radio':
+			case 'select':
+				if ( !isset( $field['values'][ $value ] ) )
+					continue 2;
+			}
+
+			// TODO: handle nested names (map to nested array)
+			$to_update[ $field['name'] ] = $value;
+		}
+
+		return $to_update;
+	}
+
 	private static function is_associative( $array ) {
 		$keys = array_keys( $array );
 		return array_keys( $keys ) !== $keys;
