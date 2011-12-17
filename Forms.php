@@ -9,23 +9,15 @@ class scbForms {
 	protected static $cur_name;
 
 	static function input( $args, $formdata = false ) {
-		// setle on singular keys
-		foreach ( array( 'name', 'value' ) as $key ) {
-			$old = $key . 's';
-
-			if ( isset( $args[$old] ) ) {
-				$args[$key] = $args[$old];
-				unset( $args[$old] );
-			}
-		}
-
 		if ( !empty( $formdata ) ) {
 			$form = new scbForm( $formdata );
 			return $form->input( $args );
 		}
 
-		if ( empty( $args['name'] ) )
+		if ( empty( $args['name'] ) ) {
+			debug($args);
 			return trigger_error( 'Empty name', E_USER_WARNING );
+		}
 
 		$args = wp_parse_args( $args, array(
 			'desc' => '',
@@ -33,7 +25,10 @@ class scbForms {
 			'wrap' => self::TOKEN,
 		) );
 
-		$val_is_array = isset( $args['value'] ) && is_array( $args['value'] );
+		if ( isset( $args['value'] ) && is_array( $args['value'] ) ) {
+			$args['values'] = $args['value'];
+			unset( $args['value'] );
+		}
 
 		if ( isset( $args['extra'] ) && !is_array( $args['extra'] ) )
 			$args['extra'] = shortcode_parse_atts( $args['extra'] );
@@ -43,13 +38,10 @@ class scbForms {
 		switch ( $args['type'] ) {
 			case 'select':
 			case 'radio':
-				if ( ! $val_is_array )
-					return trigger_error( "'value' argument is expected to be an array", E_USER_WARNING );
-
 				$input = self::_single_choice( $args );
 				break;
 			case 'checkbox':
-				if ( $val_is_array )
+				if ( isset( $args['values'] ) )
 					$input = self::_multiple_choice( $args );
 				else
 					$input = self::_checkbox( $args );
@@ -188,14 +180,14 @@ class scbForms {
 	}
 
 	private static function _expand_values( &$args ) {
-		$value =& $args['value'];
+		$values =& $args['values'];
 
-		if ( !empty( $value ) && !self::is_associative( $value ) ) {
+		if ( !empty( $values ) && !self::is_associative( $values ) ) {
 			if ( is_array( $args['desc'] ) ) {
-				$value = array_combine( $value, $args['desc'] );	// back-compat
+				$values = array_combine( $values, $args['desc'] );	// back-compat
 				$args['desc'] = false;
 			} elseif ( !$args['numeric'] ) {
-				$value = array_combine( $value, $value );
+				$values = array_combine( $values, $values );
 			}
 		}
 	}
@@ -208,7 +200,7 @@ class scbForms {
 		}
 
 		$opts = '';
-		foreach ( $value as $value => $title ) {
+		foreach ( $values as $value => $title ) {
 			if ( empty( $value ) || empty( $title ) )
 				continue;
 
@@ -240,7 +232,7 @@ class scbForms {
 			);
 		}
 
-		foreach ( $value as $value => $title ) {
+		foreach ( $values as $value => $title ) {
 			if ( empty( $value ) || empty( $title ) )
 				continue;
 

@@ -189,11 +189,13 @@ abstract class scbAdminPage {
 				$value = __( 'Save Changes', $this->textdomain );
 		}
 
-		$input_args = array( 'type' => 'submit',
-			'names' => $action,
-			'values' => $value,
+		$input_args = array(
+			'type' => 'submit',
+			'name' => $action,
+			'value' => $value,
 			'extra' => '',
-			'desc' => false );
+			'desc' => false
+		);
 
 		if ( ! empty( $class ) )
 			$input_args['extra'] = "class='{$class}'";
