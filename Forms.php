@@ -163,7 +163,7 @@ class scbForms {
 			$checked = array();
 
 		$opts = '';
-		foreach ( $value as $value => $title ) {
+		foreach ( $values as $value => $title ) {
 			if ( empty( $value ) || empty( $title ) )
 				continue;
 
