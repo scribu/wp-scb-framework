@@ -418,14 +418,18 @@ class scbForms {
 	private static function set_value( &$arr, $name, $value ) {
 		$name = (array) $name;
 
+		$final_key = array_pop( $name );
+
 		while ( !empty( $name ) ) {
 			$key = array_shift( $name );
 
 			if ( !isset( $arr[ $key ] ) )
-				$arr[ $key ] = empty( $name ) ? $value : array();
+				$arr[ $key ] = array();
 
 			$arr =& $arr[ $key ];
 		}
+
+		$arr[ $final_key ] = $value;
 	}
 
 	private static function is_associative( $array ) {
