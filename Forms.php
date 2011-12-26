@@ -15,7 +15,6 @@ class scbForms {
 		}
 
 		if ( empty( $args['name'] ) ) {
-			debug($args);
 			return trigger_error( 'Empty name', E_USER_WARNING );
 		}
 
@@ -196,7 +195,8 @@ class scbForms {
 		extract( $args );
 
 		if ( array( 'foo' ) == $selected ) {
-			$selected = key( $value );	// radio buttons should always have one option selected
+			// radio buttons should always have one option selected
+			$selected = key( $values );
 		}
 
 		$opts = '';
