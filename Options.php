@@ -126,12 +126,7 @@ class scbOptions {
 
 	// Keep only the keys defined in $this->defaults
 	private function _clean( $data ) {
-		$r = array();
-		foreach ( array_keys( $this->defaults ) as $key )
-			if ( isset( $data[$key] ) )
-				$r[$key] = $data[$key];
-
-		return $r;
+		return wp_array_slice_assoc( $data, array_keys( $this->defaults ) );
 	}
 
 	// Get one, more or all fields from an array
