@@ -103,7 +103,7 @@ class scbOptions {
 		if ( $clean )
 			$newdata = $this->_clean( $newdata );
 
-		update_option( $this->key, $newdata );
+		update_option( $this->key, array_merge( $this->get(), $newdata ) );
 	}
 
 	/**
