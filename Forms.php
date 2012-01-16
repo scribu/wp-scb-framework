@@ -378,10 +378,11 @@ class scbForms {
 	 * Given a list of fields, extract the appropriate POST data and return it.
 	 *
 	 * @param array $fields List of args that would be sent to scbForms::input()
+	 * @param array $to_update Existing data to update
 	 *
 	 * @return array
 	 */
-	static function validate_post_data( $fields ) {
+	static function validate_post_data( $fields, $to_update = array() ) {
 		foreach ( $fields as $field ) {
 			$value = scbForms::get_value( $field['name'], $_POST );
 
