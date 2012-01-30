@@ -45,10 +45,10 @@ function scb_register_table( $key, $name = false ) {
 	$wpdb->$key = $wpdb->prefix . $name;
 }
 
-function scb_install_table( $name, $columns, $upgrade_method = 'dbDelta' ) {
+function scb_install_table( $key, $columns, $upgrade_method = 'dbDelta' ) {
 	global $wpdb;
 
-	$full_table_name = $wpdb->$name;
+	$full_table_name = $wpdb->$key;
 
 	$charset_collate = '';
 	if ( $wpdb->has_cap( 'collation' ) ) {
@@ -70,9 +70,9 @@ function scb_install_table( $name, $columns, $upgrade_method = 'dbDelta' ) {
 	$wpdb->query( "CREATE TABLE IF NOT EXISTS $full_table_name ( $columns ) $charset_collate;" );
 }
 
-function scb_uninstall_table( $name ) {
+function scb_uninstall_table( $key ) {
 	global $wpdb;
 
-	$wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->$name );
+	$wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->$key );
 }
 
