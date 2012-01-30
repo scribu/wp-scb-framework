@@ -29,12 +29,20 @@ class scbTable {
 	}
 }
 
-
-function scb_register_table( $name ) {
+/**
+ * Register a table with $wpdb
+ *
+ * @param string $key The key to be used on the $wpdb object
+ * @param string $name The actual name of the table, without $wpdb->prefix
+ */
+function scb_register_table( $key, $name = false ) {
 	global $wpdb;
 
+	if ( !$name )
+		$name = $key;
+
 	$wpdb->tables[] = $name;
-	$wpdb->$name = $wpdb->prefix . $name;
+	$wpdb->$key = $wpdb->prefix . $name;
 }
 
 function scb_install_table( $name, $columns, $upgrade_method = 'dbDelta' ) {
