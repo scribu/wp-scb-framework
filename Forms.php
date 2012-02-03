@@ -9,7 +9,7 @@ class scbForms {
 	protected static $cur_name;
 
 	static function input( $args, $formdata = false ) {
-		if ( !empty( $formdata ) ) {
+		if ( false !== $formdata ) {
 			$form = new scbForm( $formdata );
 			return $form->input( $args );
 		}
@@ -431,6 +431,7 @@ class scbForms {
 	}
 }
 
+
 /**
  * A wrapper for scbForms, containing the formdata
  */
@@ -455,7 +456,9 @@ class scbForm {
 	}
 
 	function input( $args ) {
-		$value = scbForms::get_value( $args['name'], $this->data );
+		$default = isset( $args['default'] ) ? $args['default'] : null;
+
+		$value = scbForms::get_value( $args['name'], $this->data, $default );
 
 		if ( !is_null( $value ) ) {
 			switch ( $args['type'] ) {
