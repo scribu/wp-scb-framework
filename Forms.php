@@ -8,6 +8,27 @@ class scbForms {
 
 	protected static $cur_name;
 
+	function input_with_value( $args, $value ) {
+		if ( !is_null( $value ) ) {
+			switch ( $args['type'] ) {
+			case 'select':
+			case 'radio':
+				$args['selected'] = $value;
+				break;
+			case 'checkbox':
+				if ( is_array( $value ) )
+					$args['checked'] = $value;
+				else
+					$args['checked'] = ( $value || ( isset( $args['value'] ) && $value == $args['value'] ) );
+				break;
+			default:
+				$args['value'] = $value;
+			}
+		}
+
+		return self::input( $args );
+	}
+
 	static function input( $args, $formdata = false ) {
 		if ( false !== $formdata ) {
 			$form = new scbForm( $formdata );
@@ -411,11 +432,12 @@ class scbForms {
 	static function input_from_meta( $args, $object_id, $meta_type = 'post' ) {
 		$single = ( 'checkbox' != $args['type'] );
 
-		$value = get_metadata( $meta_type, $object_id, $args['name'], $single );
+		$key = (array) $args['name'];
+		$key = end( $key );
 
-		$data = array( $args['name'] => $value );
+		$value = get_metadata( $meta_type, $object_id, $key, $single );
 
-		return self::input( $args, $data );
+		return self::input_with_value( $args, $value );
 	}
 
 	static function update_meta( $fields, $data, $object_id, $meta_type = 'post' ) {
@@ -490,28 +512,11 @@ class scbForm {
 
 		$value = scbForms::get_value( $args['name'], $this->data, $default );
 
-		if ( !is_null( $value ) ) {
-			switch ( $args['type'] ) {
-			case 'select':
-			case 'radio':
-				$args['selected'] = $value;
-				break;
-			case 'checkbox':
-				if ( is_array( $value ) )
-					$args['checked'] = $value;
-				else
-					$args['checked'] = ( $value || ( isset( $args['value'] ) && $value == $args['value'] ) );
-				break;
-			default:
-				$args['value'] = $value;
-			}
-		}
-
 		if ( !empty( $this->prefix ) ) {
 			$args['name'] = array_merge( $this->prefix, (array) $args['name'] );
 		}
 
-		return scbForms::input( $args );
+		return scbForms::input_with_value( $args, $value );
 	}
 }
 
