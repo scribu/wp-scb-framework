@@ -408,6 +408,16 @@ class scbForms {
 		return $to_update;
 	}
 
+	static function input_from_meta( $args, $object_id, $meta_type = 'post' ) {
+		$single = ( 'checkbox' != $args['type'] );
+
+		$value = get_metadata( $meta_type, $object_id, $args['name'], $single );
+
+		$data = array( $args['name'] => $value );
+
+		return self::input( $args, $data );
+	}
+
 	static function update_meta( $fields, $data, $object_id, $meta_type = 'post' ) {
 		foreach ( $fields as $field_args ) {
 			$key = $field_args['name'];
