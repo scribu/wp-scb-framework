@@ -408,6 +408,26 @@ class scbForms {
 		return $to_update;
 	}
 
+	static function update_meta( $fields, $data, $object_id, $meta_type = 'post' ) {
+		foreach ( $fields as $field_args ) {
+			$key = $field_args['name'];
+
+			if ( 'checkbox' == $field_args['type'] ) {
+				$new_values = isset( $data[$key] ) ? $data[$key] : array();
+
+				$old_values = get_metadata( $meta_type, $object_id, $key );
+
+				foreach ( array_diff( $new_values, $old_values ) as $value )
+					add_metadata( $meta_type, $object_id, $key, $value );
+
+				foreach ( array_diff( $old_values, $new_values ) as $value )
+					delete_metadata( $meta_type, $object_id, $key, $value );
+			} else {
+				update_metadata( $meta_type, $object_id, $key, $data[$key] );
+			}
+		}
+	}
+
 	private static function set_value( &$arr, $name, $value ) {
 		$name = (array) $name;
 
