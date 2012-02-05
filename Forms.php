@@ -39,20 +39,6 @@ class scbForms {
 			return trigger_error( 'Empty name', E_USER_WARNING );
 		}
 
-		$args = wp_parse_args( $args, array(
-			'desc' => '',
-			'desc_pos' => 'after',
-			'wrap' => self::TOKEN,
-		) );
-
-		if ( isset( $args['value'] ) && is_array( $args['value'] ) ) {
-			$args['values'] = $args['value'];
-			unset( $args['value'] );
-		}
-
-		if ( isset( $args['extra'] ) && !is_array( $args['extra'] ) )
-			$args['extra'] = shortcode_parse_atts( $args['extra'] );
-
 		self::$cur_name = self::get_name( $args['name'] );
 
 		switch ( $args['type'] ) {
@@ -197,19 +183,6 @@ class scbForms {
 		}
 
 		return self::add_desc( $opts, $desc, $desc_pos );
-	}
-
-	private static function _expand_values( &$args ) {
-		$values =& $args['values'];
-
-		if ( !empty( $values ) && !self::is_associative( $values ) ) {
-			if ( is_array( $args['desc'] ) ) {
-				$values = array_combine( $values, $args['desc'] );	// back-compat
-				$args['desc'] = false;
-			} elseif ( !$args['numeric'] ) {
-				$values = array_combine( $values, $values );
-			}
-		}
 	}
 
 	private static function _radio( $args ) {
@@ -419,6 +392,8 @@ class scbForms {
 				break;
 			case 'radio':
 			case 'select':
+				self::_expand_values( $field );
+
 				if ( !isset( $field['values'][ $value ] ) )
 					continue 2;
 			}
@@ -476,11 +451,6 @@ class scbForms {
 
 		$arr[ $final_key ] = $value;
 	}
-
-	private static function is_associative( $array ) {
-		$keys = array_keys( $array );
-		return array_keys( $keys ) !== $keys;
-	}
 }
 
 
@@ -517,6 +487,55 @@ class scbForm {
 		}
 
 		return scbForms::input_with_value( $args, $value );
+	}
+}
+
+
+class scbFormField {
+
+	public static get_instance( $args ) {
+		if ( $args instanceof __CLASS__ )
+			return $args;
+
+		return new __CLASS__( $args );
+	}
+
+	protected function __construct( $args ) {
+		$args = wp_parse_args( $args, array(
+			'numeric' => false,
+			'desc' => '',
+			'desc_pos' => 'after',
+			'wrap' => self::TOKEN,
+			'extra' => array(),
+		) );
+
+		if ( isset( $args['value'] ) && is_array( $args['value'] ) ) {
+			$args['values'] = $args['value'];
+			unset( $args['value'] );
+		}
+
+		if ( !is_array( $args['extra'] ) )
+			$args['extra'] = shortcode_parse_atts( $args['extra'] );
+
+		$this->args = $args;
+	}
+
+	private static function _expand_values( &$args ) {
+		$values =& $args['values'];
+
+		if ( !empty( $values ) && !self::is_associative( $values ) ) {
+			if ( is_array( $args['desc'] ) ) {
+				$values = array_combine( $values, $args['desc'] );	// back-compat
+				$args['desc'] = false;
+			} elseif ( !$args['numeric'] ) {
+				$values = array_combine( $values, $values );
+			}
+		}
+	}
+
+	private static function is_associative( $array ) {
+		$keys = array_keys( $array );
+		return array_keys( $keys ) !== $keys;
 	}
 }
 
