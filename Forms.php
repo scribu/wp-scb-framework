@@ -206,7 +206,7 @@ class scbForms {
 			if ( is_array( $args['desc'] ) ) {
 				$values = array_combine( $values, $args['desc'] );	// back-compat
 				$args['desc'] = false;
-			} elseif ( !$args['numeric'] ) {
+			} elseif ( !isset( $args['numeric'] ) || !$args['numeric'] ) {
 				$values = array_combine( $values, $values );
 			}
 		}
@@ -419,6 +419,8 @@ class scbForms {
 				break;
 			case 'radio':
 			case 'select':
+				self::_expand_values( $field );
+
 				if ( !isset( $field['values'][ $value ] ) )
 					continue 2;
 			}
