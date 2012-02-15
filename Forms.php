@@ -457,7 +457,12 @@ class scbForms {
 				foreach ( array_diff( $old_values, $new_values ) as $value )
 					delete_metadata( $meta_type, $object_id, $key, $value );
 			} else {
-				update_metadata( $meta_type, $object_id, $key, $data[$key] );
+				$value = $data[$key];
+
+				if ( '' === $value )
+					delete_metadata( $meta_type, $object_id, $key );
+				else
+					update_metadata( $meta_type, $object_id, $key, $value );
 			}
 		}
 	}
