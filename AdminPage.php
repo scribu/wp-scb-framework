@@ -108,6 +108,13 @@ abstract class scbAdminPage {
 	// This is where all the page args can be set
 	function setup(){}
 
+	/**
+	 * Called when the page is loaded, but before any rendering.
+	 *
+	 * Useful for calling $screen->add_help_tab() etc.
+	 */
+	function page_loaded() {}
+
 	// This is where the css and js go
 	// Both wp_enqueue_*() and inline code can be added
 	function page_head(){}
@@ -321,6 +328,8 @@ abstract class scbAdminPage {
 
 		if ( ! $this->pagehook )
 			return;
+
+		add_action( 'load-' . $this->pagehook, array( $this, 'page_loaded' ) );
 
 		if ( $ajax_submit ) {
 			$this->ajax_response();
