@@ -48,6 +48,9 @@ class scbUtil {
 	// Allows more than one uninstall hooks.
 	// Also prevents an UPDATE query on each page load.
 	static function add_uninstall_hook( $plugin, $callback ) {
+		if ( !is_admin() )
+			return;
+
 		register_uninstall_hook( $plugin, '__return_false' );	// dummy
 
 		add_action( 'uninstall_' . plugin_basename( $plugin ), $callback );
