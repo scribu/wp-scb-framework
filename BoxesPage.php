@@ -166,8 +166,11 @@ abstract class scbBoxesPage extends scbAdminPage {
 		) );
 
 		$registered = array();
-		foreach( $this->boxes as $box_args ) {
-			@list( $name, $title, $context, $priority, $args ) = $box_args;
+		foreach ( $this->boxes as $box_args ) {
+			foreach ( array( 'name', 'title', 'context', 'priority', 'args' ) as $i => $arg ) {
+				if ( isset( $box_args[$i] ) )
+					$$arg = $box_args[$i];
+			}
 
 			if ( empty( $title ) )
 				$title = ucfirst( $name );
