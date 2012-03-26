@@ -254,9 +254,6 @@ class scbForms {
 		}
 
 		foreach ( $values as $value => $title ) {
-			if ( empty( $value ) || empty( $title ) )
-				continue;
-
 			$options[] = array(
 				'value' => $value,
 				'selected' => ( (string) $value == (string) $selected ),
