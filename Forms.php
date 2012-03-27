@@ -239,7 +239,7 @@ class scbForms {
 
 	private static function _select( $args ) {
 		extract( wp_parse_args( $args, array(
-			'text' => '',
+			'text' => false,
 			'extra' => array()
 		) ) );
 
