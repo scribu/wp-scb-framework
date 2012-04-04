@@ -184,9 +184,6 @@ class scbForms {
 
 		$opts = '';
 		foreach ( $values as $value => $title ) {
-			if ( empty( $value ) || empty( $title ) )
-				continue;
-
 			$single_input = self::_checkbox( array(
 				'type' => 'checkbox',
 				'value' => $value,
@@ -224,9 +221,6 @@ class scbForms {
 
 		$opts = '';
 		foreach ( $values as $value => $title ) {
-			if ( empty( $value ) || empty( $title ) )
-				continue;
-
 			$single_input = self::_checkbox( array(
 				'type' => 'radio',
 				'value' => $value,
