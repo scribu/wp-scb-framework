@@ -43,6 +43,7 @@ class scbForms {
 			'desc' => '',
 			'desc_pos' => 'after',
 			'wrap' => self::TOKEN,
+			'wrap_each' => self::TOKEN,
 		) );
 
 		if ( isset( $args['value'] ) && is_array( $args['value'] ) ) {
