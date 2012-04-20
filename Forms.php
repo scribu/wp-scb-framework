@@ -9,6 +9,9 @@ class scbForms {
 	protected static $cur_name;
 
 	function input_with_value( $args, $value ) {
+		if ( is_null( $value ) && isset( $args['default'] ) )
+			$value = $args['default'];
+
 		if ( !is_null( $value ) ) {
 			switch ( $args['type'] ) {
 			case 'select':
@@ -433,7 +436,12 @@ class scbForms {
 		$key = (array) $args['name'];
 		$key = end( $key );
 
-		$value = get_metadata( $meta_type, $object_id, $key, $single );
+		$value = get_metadata( $meta_type, $object_id, $key );
+
+		if ( empty( $value ) )
+			$value = null;
+		elseif( $single )
+			$value = reset( $value );
 
 		return self::input_with_value( $args, $value );
 	}
@@ -511,9 +519,7 @@ class scbForm {
 	}
 
 	function input( $args ) {
-		$default = isset( $args['default'] ) ? $args['default'] : null;
-
-		$value = scbForms::get_value( $args['name'], $this->data, $default );
+		$value = scbForms::get_value( $args['name'], $this->data );
 
 		if ( !empty( $this->prefix ) ) {
 			$args['name'] = array_merge( $this->prefix, (array) $args['name'] );
