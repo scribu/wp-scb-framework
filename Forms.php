@@ -447,10 +447,7 @@ class scbForms {
 	}
 
 	static function update_meta( $fields, $data, $object_id, $meta_type = 'post' ) {
-
-		$curried = function( $fn, $key, $value = null ) use ( $meta_type, $object_id ) {
-			return $fn( $meta_type, $object_id, $key, $value );
-		};
+		$curried = new _scbCurried( $meta_type, $object_id );
 
 		foreach ( $fields as $field_args ) {
 			$key = $field_args['name'];
@@ -458,15 +455,15 @@ class scbForms {
 			if ( 'checkbox' == $field_args['type'] ) {
 				$new_values = isset( $data[$key] ) ? $data[$key] : array();
 
-				$old_values = $curried( 'get_metadata', $key );
+				$old_values = $curried->get_metadata( $key );
 
 				foreach ( array_diff( $new_values, $old_values ) as $value )
-					$curried( 'add_metadata', $key, $value );
+					$curried->add_metadata( $key, $value );
 
 				foreach ( array_diff( $old_values, $new_values ) as $value )
-					$curried( 'delete_metadata', $key, $value );
+					$curried->delete_metadata( $key, $value );
 			} else {
-				$curried( 'update_metadata', $key, $data[$key] );
+				$curried->update_metadata( $key, $data[$key] );
 			}
 		}
 	}
@@ -526,6 +523,20 @@ class scbForm {
 		}
 
 		return scbForms::input_with_value( $args, $value );
+	}
+}
+
+
+class _scbCurried {
+
+	private $args;
+
+	function __construct() {
+		$this->args = func_get_args();
+	}
+
+	function __call( $key, $args ) {
+		return call_user_func_array( $key, array_merge( $this->args, $args ) );
 	}
 }
 
