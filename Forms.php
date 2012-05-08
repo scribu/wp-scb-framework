@@ -447,23 +447,21 @@ class scbForms {
 	}
 
 	static function update_meta( $fields, $data, $object_id, $meta_type = 'post' ) {
-		$curried = new _scbCurried( $meta_type, $object_id );
-
 		foreach ( $fields as $field_args ) {
 			$key = $field_args['name'];
+
+			$curried = new _scbCurried( $meta_type, $object_id, $key );
 
 			if ( 'checkbox' == $field_args['type'] ) {
 				$new_values = isset( $data[$key] ) ? $data[$key] : array();
 
-				$old_values = $curried->get_metadata( $key );
+				$old_values = $curried->get_metadata();
 
-				foreach ( array_diff( $new_values, $old_values ) as $value )
-					$curried->add_metadata( $key, $value );
+				array_walk( array_diff( $new_values, $old_values ), array( $curried, 'add_metadata' ) );
 
-				foreach ( array_diff( $old_values, $new_values ) as $value )
-					$curried->delete_metadata( $key, $value );
+				array_walk( array_diff( $old_values, $new_values ), array( $curried, 'delete_metadata' ) );
 			} else {
-				$curried->update_metadata( $key, $data[$key] );
+				$curried->update_metadata( $data[$key] );
 			}
 		}
 	}
