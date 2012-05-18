@@ -292,6 +292,9 @@ abstract class scbFormField {
 			'wrap_each' => scbForms::TOKEN,
 		) );
 
+		if ( isset( $args['values'] ) )
+			self::_expand_values( $args );
+
 		switch ( $args['type'] ) {
 		case 'radio':
 			return new scbRadiosField( $args );
@@ -327,7 +330,7 @@ abstract class scbFormField {
 	 * @return string
 	 */
 	public function render( $value = null ) {
-		if ( is_null( $value ) && isset( $this->default ) )
+		if ( null === $value && isset( $this->default ) )
 			$value = $this->default;
 
 		$args = $this->args;
@@ -411,7 +414,7 @@ abstract class scbFormField {
 			return $input . ' ' . $desc;
 	}
 
-	protected static function _expand_values( &$args ) {
+	private static function _expand_values( &$args ) {
 		$values =& $args['values'];
 
 		if ( !empty( $values ) && !self::is_associative( $values ) ) {
@@ -465,8 +468,6 @@ class scbTextField extends scbFormField {
 abstract class scbSingleChoiceField extends scbFormField {
 
 	public function validate( $value ) {
-		scbFormField::_expand_values( $this->args );
-
 		if ( isset( $this->values[ $value ] ) )
 			return $value;
 
@@ -478,8 +479,6 @@ abstract class scbSingleChoiceField extends scbFormField {
 			'numeric' => false,		// use numeric array instead of associative
 			'selected' => array( 'foo' ),	// hack to make default blank
 		) );
-
-		scbFormField::_expand_values( $args );
 
 		return $this->_render_specific( $args );
 	}
@@ -566,7 +565,7 @@ class scbRadiosField extends scbSelectField {
 class scbCheckboxesField extends scbFormField {
 
 	public function validate( $value ) {
-		return array_intersect( $this->values, (array) $value );
+		return array_intersect( array_keys( $this->values ), (array) $value );
 	}
 
 	protected function _render( $args ) {
@@ -574,8 +573,6 @@ class scbCheckboxesField extends scbFormField {
 			'numeric' => false,		// use numeric array instead of associative
 			'checked' => null,
 		) );
-
-		scbFormField::_expand_values( $args );
 
 		extract( $args );
 
