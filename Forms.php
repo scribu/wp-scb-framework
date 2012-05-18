@@ -403,7 +403,7 @@ class scbForms {
 	 *
 	 * @return array
 	 */
-	static function validate_post_data( $fields, $to_update = array(), $validator = null ) {
+	static function validate_post_data( $fields, $to_update = array(), $validator = 'wp_filter_kses' ) {
 		foreach ( $fields as $field ) {
 			$value = scbForms::get_value( $field['name'], $_POST );
 
@@ -429,8 +429,7 @@ class scbForms {
 				break;
 
 			default:
-				if ( $validator )
-					$value = call_user_func( $validator, $value, $field );
+				$value = call_user_func( $validator, $value, $field );
 			}
 
 			self::set_value( $to_update, $field['name'], $value );
