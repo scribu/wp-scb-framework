@@ -399,16 +399,18 @@ class scbForms {
 	 *
 	 * @param array $fields List of args that would be sent to scbForms::input()
 	 * @param array $to_update Existing data to update
+	 * @param callback $validator Code to call for free-form inputs
 	 *
 	 * @return array
 	 */
-	static function validate_post_data( $fields, $to_update = array() ) {
+	static function validate_post_data( $fields, $to_update = array(), $validator = null ) {
 		foreach ( $fields as $field ) {
 			$value = scbForms::get_value( $field['name'], $_POST );
 
 			$value = stripslashes_deep( $value );
 
 			switch ( $field['type'] ) {
+
 			case 'checkbox':
 				if ( isset( $field['values'] ) && is_array( $field['values'] ) )
 					$value = array_intersect( $field['values'], (array) $value );
@@ -416,12 +418,19 @@ class scbForms {
 					$value = (bool) $value;
 
 				break;
+
 			case 'radio':
 			case 'select':
 				self::_expand_values( $field );
 
 				if ( !isset( $field['values'][ $value ] ) )
 					continue 2;
+
+				break;
+
+			default:
+				if ( $validator )
+					$value = call_user_func( $validator, $value, $field );
 			}
 
 			self::set_value( $to_update, $field['name'], $value );
