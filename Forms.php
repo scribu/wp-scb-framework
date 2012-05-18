@@ -395,47 +395,70 @@ class scbForms {
 	}
 
 	/**
-	 * Given a list of fields, extract the appropriate POST data and return it.
+	 * Given a list of fields, validate some data.
 	 *
 	 * @param array $fields List of args that would be sent to scbForms::input()
-	 * @param array $to_update Existing data to update
-	 * @param callback $validator Code to call for free-form inputs
+	 * @param array $data The data to validate. Defaults to $_POST
 	 *
 	 * @return array
 	 */
-	static function validate_post_data( $fields, $to_update = array(), $validator = 'wp_filter_kses' ) {
+	static function validate_post_data( $fields, $data = null ) {
+		if ( null === $data ) {
+			$data = stripslashes_deep( $_POST );
+		}
+
+		$to_update = array();
+
 		foreach ( $fields as $field ) {
-			$value = scbForms::get_value( $field['name'], $_POST );
+			$value = scbForms::get_value( $field['name'], $data );
 
-			$value = stripslashes_deep( $value );
+			if ( !isset( $field['sanitize'] ) )
+				$field['sanitize'] = 'wp_filter_kses';
 
-			switch ( $field['type'] ) {
+			$value = self::validate( $value, $field );
 
-			case 'checkbox':
-				if ( isset( $field['values'] ) && is_array( $field['values'] ) )
-					$value = array_intersect( $field['values'], (array) $value );
-				else
-					$value = (bool) $value;
-
-				break;
-
-			case 'radio':
-			case 'select':
-				self::_expand_values( $field );
-
-				if ( !isset( $field['values'][ $value ] ) )
-					continue 2;
-
-				break;
-
-			default:
-				$value = call_user_func( $validator, $value, $field );
-			}
-
-			self::set_value( $to_update, $field['name'], $value );
+			if ( null !== $value )
+				self::set_value( $to_update, $field['name'], $value );
 		}
 
 		return $to_update;
+	}
+
+	/**
+	 * Validates a value against a field.
+	 *
+	 * @param mixed $new_value The value to check
+	 * @param array $field A field definition
+	 *
+	 * @return mixed null if the validation failed, sanitized value otherwise.
+	 */
+	private static function validate( $new_value, $field ) {
+		$value = null;
+
+		switch ( $field['type'] ) {
+
+		case 'checkbox':
+			if ( isset( $field['values'] ) && is_array( $field['values'] ) )
+				$value = array_intersect( $field['values'], (array) $new_value );
+			else
+				$value = (bool) $new_value;
+
+			break;
+
+		case 'radio':
+		case 'select':
+			self::_expand_values( $field );
+
+			if ( isset( $field['values'][ $new_value ] ) )
+				$value = $new_value;
+
+			break;
+
+		default:
+			$value = call_user_func( $field['sanitize'], $new_value, $field );
+		}
+
+		return $value;
 	}
 
 	static function input_from_meta( $args, $object_id, $meta_type = 'post' ) {
