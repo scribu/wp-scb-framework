@@ -202,7 +202,7 @@ class scbForms {
 		return self::add_desc( $opts, $desc, $desc_pos );
 	}
 
-	private static function _expand_values( &$args ) {
+	static function _expand_values( &$args ) {
 		$values =& $args['values'];
 
 		if ( !empty( $values ) && !self::is_associative( $values ) ) {
@@ -412,53 +412,15 @@ class scbForms {
 		foreach ( $fields as $field ) {
 			$value = scbForms::get_value( $field['name'], $data );
 
-			if ( !isset( $field['sanitize'] ) )
-				$field['sanitize'] = 'wp_filter_kses';
+			$fieldObj = scbFormField::create( $field );
 
-			$value = self::validate( $value, $field );
+			$value = $fieldObj->validate( $value );
 
 			if ( null !== $value )
 				self::set_value( $to_update, $field['name'], $value );
 		}
 
 		return $to_update;
-	}
-
-	/**
-	 * Validates a value against a field.
-	 *
-	 * @param mixed $new_value The value to check
-	 * @param array $field A field definition
-	 *
-	 * @return mixed null if the validation failed, sanitized value otherwise.
-	 */
-	private static function validate( $new_value, $field ) {
-		$value = null;
-
-		switch ( $field['type'] ) {
-
-		case 'checkbox':
-			if ( isset( $field['values'] ) && is_array( $field['values'] ) )
-				$value = array_intersect( $field['values'], (array) $new_value );
-			else
-				$value = (bool) $new_value;
-
-			break;
-
-		case 'radio':
-		case 'select':
-			self::_expand_values( $field );
-
-			if ( isset( $field['values'][ $new_value ] ) )
-				$value = $new_value;
-
-			break;
-
-		default:
-			$value = call_user_func( $field['sanitize'], $new_value, $field );
-		}
-
-		return $value;
 	}
 
 	static function input_from_meta( $args, $object_id, $meta_type = 'post' ) {
@@ -557,6 +519,113 @@ class scbForm {
 		}
 
 		return scbForms::input_with_value( $args, $value );
+	}
+}
+
+
+abstract class scbFormField {
+
+	protected $args;
+
+	public static function create( $args ) {
+		if ( is_a( $args, __CLASS__ ) )
+			return $args;
+
+		if ( isset( $args['value'] ) && is_array( $args['value'] ) ) {
+			$args['values'] = $args['value'];
+			unset( $args['value'] );
+		}
+
+		switch ( $args['type'] ) {
+		case 'radio':
+			return new scbRadiosField( $args );
+		case 'select':
+			return new scbSelectField( $args );
+		case 'checkbox':
+			if ( isset( $args['values'] ) )
+				return new scbCheckboxesField( $args );
+			else
+				return new scbSingleCheckboxField( $args );
+		default:
+			return new scbTextField( $args );
+		}
+	}
+
+	protected function __construct( $args ) {
+		$this->args = $args;
+	}
+
+	public function __get( $key ) {
+		return $this->args[ $key ];
+	}
+
+	abstract public function render( $value );
+
+	/**
+	 * Validates a value against a field.
+	 *
+	 * @param mixed $value The value to check
+	 *
+	 * @return mixed null if the validation failed, sanitized value otherwise.
+	 */
+	abstract public function validate( $value );
+}
+
+
+class scbTextField extends scbFormField {
+
+	public function render( $value ) {
+		// TODO
+	}
+
+	public function validate( $value ) {
+		$sanitize = isset( $this->args['sanitize'] ) ? $this->args['sanitize'] : 'wp_filter_kses';
+
+		return call_user_func( $sanitize, $value, $this );
+	}
+}
+
+
+class scbSelectField extends scbFormField {
+
+	public function render( $value ) {
+		// TODO
+	}
+
+	public function validate( $value ) {
+		scbForms::_expand_values( $this->args );
+
+		if ( isset( $this->values[ $value ] ) )
+			return $value;
+
+		return null;
+	}
+}
+
+
+class scbRadiosField extends scbSelectField {}
+
+
+class scbSingleCheckboxField extends scbFormField {
+
+	public function render( $value ) {
+		// TODO
+	}
+
+	public function validate( $value ) {
+		return (bool) $value;
+	}
+}
+
+
+class scbCheckboxesField extends scbFormField {
+
+	public function render( $value ) {
+		// TODO
+	}
+
+	public function validate( $value ) {
+		return array_intersect( $this->values, (array) $value );
 	}
 }
 
