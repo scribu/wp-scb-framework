@@ -170,18 +170,24 @@ class scbForms {
 		return $to_update;
 	}
 
+	/**
+	 * For multiple-choice fields, we can never distinguish between "never been set" and "set to none".
+	 * For single-choice fields, we can't distinguish either, because of how self::update_meta() works.
+	 * Therefore, the 'default' parameter is always ignored.
+	 *
+	 * @param array $args Field arguments.
+	 * @param int $object_id The object ID the metadata is attached to
+	 * @param string $meta_type
+	 *
+	 * @return string
+	 */
 	static function input_from_meta( $args, $object_id, $meta_type = 'post' ) {
 		$single = ( 'checkbox' != $args['type'] );
 
 		$key = (array) $args['name'];
 		$key = end( $key );
 
-		$value = get_metadata( $meta_type, $object_id, $key );
-
-		if ( empty( $value ) )
-			$value = null;
-		elseif( $single )
-			$value = reset( $value );
+		$value = get_metadata( $meta_type, $object_id, $key, $single );
 
 		return self::input_with_value( $args, $value );
 	}
