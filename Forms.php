@@ -6,30 +6,10 @@ class scbForms {
 
 	const TOKEN = '%input%';
 
-	protected static $cur_name;
+	static function input_with_value( $args, $value ) {
+		$field = scbFormField::create( $args );
 
-	function input_with_value( $args, $value ) {
-		if ( is_null( $value ) && isset( $args['default'] ) )
-			$value = $args['default'];
-
-		if ( !is_null( $value ) ) {
-			switch ( $args['type'] ) {
-			case 'select':
-			case 'radio':
-				$args['selected'] = $value;
-				break;
-			case 'checkbox':
-				if ( is_array( $value ) )
-					$args['checked'] = $value;
-				else
-					$args['checked'] = ( $value || ( isset( $args['value'] ) && $value == $args['value'] ) );
-				break;
-			default:
-				$args['value'] = $value;
-			}
-		}
-
-		return self::input( $args );
+		return $field->render( $value );
 	}
 
 	static function input( $args, $formdata = false ) {
@@ -38,48 +18,10 @@ class scbForms {
 			return $form->input( $args );
 		}
 
-		if ( empty( $args['name'] ) ) {
-			return trigger_error( 'Empty name', E_USER_WARNING );
-		}
+		$field = scbFormField::create( $args );
 
-		$args = wp_parse_args( $args, array(
-			'desc' => '',
-			'desc_pos' => 'after',
-			'wrap' => self::TOKEN,
-			'wrap_each' => self::TOKEN,
-		) );
-
-		if ( isset( $args['value'] ) && is_array( $args['value'] ) ) {
-			$args['values'] = $args['value'];
-			unset( $args['value'] );
-		}
-
-		if ( isset( $args['extra'] ) && !is_array( $args['extra'] ) )
-			$args['extra'] = shortcode_parse_atts( $args['extra'] );
-
-		self::$cur_name = self::get_name( $args['name'] );
-
-		switch ( $args['type'] ) {
-			case 'select':
-			case 'radio':
-				$input = self::_single_choice( $args );
-				break;
-			case 'checkbox':
-				if ( isset( $args['values'] ) )
-					$input = self::_multiple_choice( $args );
-				else
-					$input = self::_checkbox( $args );
-				break;
-			default:
-				$input = self::_input( $args );
-		}
-
-		return str_replace( self::TOKEN, $input, $args['wrap'] );
+		return $field->render();
 	}
-
-
-// ____________UTILITIES____________
-
 
 	// Generates a table wrapped in a form
 	static function form_table( $rows, $formdata = NULL ) {
@@ -157,201 +99,6 @@ class scbForms {
 // ____________PRIVATE METHODS____________
 
 
-	private static function _single_choice( $args ) {
-		$args = wp_parse_args( $args, array(
-			'numeric' => false,		// use numeric array instead of associative
-			'selected' => array( 'foo' ),	// hack to make default blank
-		) );
-
-		self::_expand_values( $args );
-
-		if ( 'select' == $args['type'] )
-			return self::_select( $args );
-		else
-			return self::_radio( $args );
-	}
-
-	private static function _multiple_choice( $args ) {
-		$args = wp_parse_args( $args, array(
-			'numeric' => false,		// use numeric array instead of associative
-			'checked' => null,
-		) );
-
-		self::$cur_name .= '[]';
-
-		self::_expand_values( $args );
-
-		extract( $args );
-
-		if ( !is_array( $checked ) )
-			$checked = array();
-
-		$opts = '';
-		foreach ( $values as $value => $title ) {
-			$single_input = self::_checkbox( array(
-				'type' => 'checkbox',
-				'value' => $value,
-				'checked' => in_array( $value, $checked ),
-				'desc' => $title,
-				'desc_pos' => 'after'
-			) );
-
-			$opts .= str_replace( self::TOKEN, $single_input, $args['wrap_each'] );
-		}
-
-		return self::add_desc( $opts, $desc, $desc_pos );
-	}
-
-	private static function _expand_values( &$args ) {
-		$values =& $args['values'];
-
-		if ( !empty( $values ) && !self::is_associative( $values ) ) {
-			if ( is_array( $args['desc'] ) ) {
-				$values = array_combine( $values, $args['desc'] );	// back-compat
-				$args['desc'] = false;
-			} elseif ( !isset( $args['numeric'] ) || !$args['numeric'] ) {
-				$values = array_combine( $values, $values );
-			}
-		}
-	}
-
-	private static function _radio( $args ) {
-		extract( $args );
-
-		if ( array( 'foo' ) == $selected ) {
-			// radio buttons should always have one option selected
-			$selected = key( $values );
-		}
-
-		$opts = '';
-		foreach ( $values as $value => $title ) {
-			$single_input = self::_checkbox( array(
-				'type' => 'radio',
-				'value' => $value,
-				'checked' => ( (string) $value == (string) $selected ),
-				'desc' => $title,
-				'desc_pos' => 'after'
-			) );
-
-			$opts .= str_replace( self::TOKEN, $single_input, $args['wrap_each'] );
-		}
-
-		return self::add_desc( $opts, $desc, $desc_pos );
-	}
-
-	private static function _select( $args ) {
-		extract( wp_parse_args( $args, array(
-			'text' => false,
-			'extra' => array()
-		) ) );
-
-		$options = array();
-
-		if ( false !== $text ) {
-			$options[] = array(
-				'value' => '',
-				'selected' => ( $selected == array( 'foo' ) ),
-				'title' => $text
-			);
-		}
-
-		foreach ( $values as $value => $title ) {
-			$options[] = array(
-				'value' => $value,
-				'selected' => ( (string) $value == (string) $selected ),
-				'title' => $title
-			);
-		}
-
-		$opts = '';
-		foreach ( $options as $option ) {
-			extract( $option );
-
-			$opts .= html( 'option', compact( 'value', 'selected' ), $title );
-		}
-
-		$extra['name'] = self::$cur_name;
-
-		$input = html( 'select', $extra, $opts );
-
-		return self::add_label( $input, $desc, $desc_pos );
-	}
-
-	// Handle args for a single checkbox or radio input
-	private static function _checkbox( $args ) {
-		$args = wp_parse_args( $args, array(
-			'value' => true,
-			'desc' => NULL,
-			'checked' => false,
-			'extra' => array(),
-		) );
-
-		foreach ( $args as $key => &$val )
-			$$key = &$val;
-		unset( $val );
-
-		$extra['checked'] = $checked;
-
-		if ( is_null( $desc ) && !is_bool( $value ) )
-			$desc = str_replace( '[]', '', $value );
-
-		return self::_input_gen( $args );
-	}
-
-	// Handle args for text inputs
-	private static function _input( $args ) {
-		$args = wp_parse_args( $args, array(
-			'value' => '',
-			'desc_pos' => 'after',
-			'extra' => array( 'class' => 'regular-text' ),
-		) );
-
-		foreach ( $args as $key => &$val )
-			$$key = &$val;
-		unset( $val );
-
-		if ( !isset( $extra['id'] ) && !is_array( $name ) && false === strpos( $name, '[' ) )
-			$extra['id'] = $name;
-
-		return self::_input_gen( $args );
-	}
-
-	// Generate html with the final args
-	private static function _input_gen( $args ) {
-		extract( wp_parse_args( $args, array(
-			'value' => NULL,
-			'desc' => NULL,
-			'extra' => array()
-		) ) );
-
-		$extra['name'] = self::$cur_name;
-
-		if ( 'textarea' == $type ) {
-			$input = html( 'textarea', $extra, esc_textarea( $value ) );
-		} else {
-			$extra['value'] = $value;
-			$extra['type'] = $type;
-			$input = html( 'input', $extra );
-		}
-
-		return self::add_label( $input, $desc, $desc_pos );
-	}
-
-	private static function add_label( $input, $desc, $desc_pos ) {
-		return html( 'label', self::add_desc( $input, $desc, $desc_pos ) ) . "\n";
-	}
-
-	private static function add_desc( $input, $desc, $desc_pos ) {
-		if ( empty( $desc ) )
-			return $input;
-
-		if ( 'before' == $desc_pos )
-			return $desc . ' ' . $input;
-		else
-			return $input . ' ' . $desc;
-	}
-
-
 // Utilities
 
 
@@ -412,53 +159,15 @@ class scbForms {
 		foreach ( $fields as $field ) {
 			$value = scbForms::get_value( $field['name'], $data );
 
-			if ( !isset( $field['sanitize'] ) )
-				$field['sanitize'] = 'wp_filter_kses';
+			$fieldObj = scbFormField::create( $field );
 
-			$value = self::validate( $value, $field );
+			$value = $fieldObj->validate( $value );
 
 			if ( null !== $value )
 				self::set_value( $to_update, $field['name'], $value );
 		}
 
 		return $to_update;
-	}
-
-	/**
-	 * Validates a value against a field.
-	 *
-	 * @param mixed $new_value The value to check
-	 * @param array $field A field definition
-	 *
-	 * @return mixed null if the validation failed, sanitized value otherwise.
-	 */
-	private static function validate( $new_value, $field ) {
-		$value = null;
-
-		switch ( $field['type'] ) {
-
-		case 'checkbox':
-			if ( isset( $field['values'] ) && is_array( $field['values'] ) )
-				$value = array_intersect( $field['values'], (array) $new_value );
-			else
-				$value = (bool) $new_value;
-
-			break;
-
-		case 'radio':
-		case 'select':
-			self::_expand_values( $field );
-
-			if ( isset( $field['values'][ $new_value ] ) )
-				$value = $new_value;
-
-			break;
-
-		default:
-			$value = call_user_func( $field['sanitize'], $new_value, $field );
-		}
-
-		return $value;
 	}
 
 	static function input_from_meta( $args, $object_id, $meta_type = 'post' ) {
@@ -518,11 +227,6 @@ class scbForms {
 
 		$arr[ $final_key ] = $value;
 	}
-
-	private static function is_associative( $array ) {
-		$keys = array_keys( $array );
-		return array_keys( $keys ) !== $keys;
-	}
 }
 
 
@@ -557,6 +261,375 @@ class scbForm {
 		}
 
 		return scbForms::input_with_value( $args, $value );
+	}
+}
+
+
+abstract class scbFormField {
+
+	protected $args;
+
+	public static function create( $args ) {
+		if ( is_a( $args, __CLASS__ ) )
+			return $args;
+
+		if ( empty( $args['name'] ) ) {
+			return trigger_error( 'Empty name', E_USER_WARNING );
+		}
+
+		if ( isset( $args['value'] ) && is_array( $args['value'] ) ) {
+			$args['values'] = $args['value'];
+			unset( $args['value'] );
+		}
+
+		if ( isset( $args['extra'] ) && !is_array( $args['extra'] ) )
+			$args['extra'] = shortcode_parse_atts( $args['extra'] );
+
+		$args = wp_parse_args( $args, array(
+			'desc' => '',
+			'desc_pos' => 'after',
+			'wrap' => scbForms::TOKEN,
+			'wrap_each' => scbForms::TOKEN,
+		) );
+
+		if ( isset( $args['values'] ) )
+			self::_expand_values( $args );
+
+		switch ( $args['type'] ) {
+		case 'radio':
+			return new scbRadiosField( $args );
+		case 'select':
+			return new scbSelectField( $args );
+		case 'checkbox':
+			if ( isset( $args['values'] ) )
+				return new scbMultipleChoiceField( $args );
+			else
+				return new scbSingleCheckboxField( $args );
+		default:
+			return new scbTextField( $args );
+		}
+	}
+
+	protected function __construct( $args ) {
+		$this->args = $args;
+	}
+
+	public function __get( $key ) {
+		return $this->args[ $key ];
+	}
+
+	public function __isset( $key ) {
+		return isset( $this->args[ $key ] );
+	}
+
+	/**
+	 * Generate the corresponding HTML for a field
+	 *
+	 * @param mixed $value The value to use
+	 *
+	 * @return string
+	 */
+	public function render( $value = null ) {
+		if ( null === $value && isset( $this->default ) )
+			$value = $this->default;
+
+		$args = $this->args;
+
+		if ( null !== $value )
+			$this->_set_value( $args, $value );
+
+		$args['name'] = scbForms::get_name( $args['name'] );
+
+		return str_replace( scbForms::TOKEN, $this->_render( $args ), $this->wrap );
+	}
+
+	// Mutate the field arguments so that the value passed is rendered.
+	abstract protected function _set_value( &$args, $value );
+
+	// The actual rendering
+	abstract protected function _render( $args );
+
+	/**
+	 * Validates a value against a field.
+	 *
+	 * @param mixed $value The value to check
+	 *
+	 * @return mixed null if the validation failed, sanitized value otherwise.
+	 */
+	abstract public function validate( $value );
+
+	// Handle args for a single checkbox or radio input
+	protected static function _checkbox( $args ) {
+		$args = wp_parse_args( $args, array(
+			'value' => true,
+			'desc' => NULL,
+			'checked' => false,
+			'extra' => array(),
+		) );
+
+		foreach ( $args as $key => &$val )
+			$$key = &$val;
+		unset( $val );
+
+		$extra['checked'] = $checked;
+
+		if ( is_null( $desc ) && !is_bool( $value ) )
+			$desc = str_replace( '[]', '', $value );
+
+		return self::_input_gen( $args );
+	}
+
+	// Generate html with the final args
+	protected static function _input_gen( $args ) {
+		extract( wp_parse_args( $args, array(
+			'value' => NULL,
+			'desc' => NULL,
+			'extra' => array()
+		) ) );
+
+		$extra['name'] = $name;
+
+		if ( 'textarea' == $type ) {
+			$input = html( 'textarea', $extra, esc_textarea( $value ) );
+		} else {
+			$extra['value'] = $value;
+			$extra['type'] = $type;
+			$input = html( 'input', $extra );
+		}
+
+		return self::add_label( $input, $desc, $desc_pos );
+	}
+
+	protected static function add_label( $input, $desc, $desc_pos ) {
+		return html( 'label', self::add_desc( $input, $desc, $desc_pos ) ) . "\n";
+	}
+
+	protected static function add_desc( $input, $desc, $desc_pos ) {
+		if ( empty( $desc ) )
+			return $input;
+
+		if ( 'before' == $desc_pos )
+			return $desc . ' ' . $input;
+		else
+			return $input . ' ' . $desc;
+	}
+
+	private static function _expand_values( &$args ) {
+		$values =& $args['values'];
+
+		if ( !empty( $values ) && !self::is_associative( $values ) ) {
+			if ( is_array( $args['desc'] ) ) {
+				$values = array_combine( $values, $args['desc'] );	// back-compat
+				$args['desc'] = false;
+			} elseif ( !isset( $args['numeric'] ) || !$args['numeric'] ) {
+				$values = array_combine( $values, $values );
+			}
+		}
+	}
+
+	private static function is_associative( $array ) {
+		$keys = array_keys( $array );
+		return array_keys( $keys ) !== $keys;
+	}
+}
+
+
+class scbTextField extends scbFormField {
+
+	public function validate( $value ) {
+		$sanitize = isset( $this->sanitize ) ? $this->sanitize : 'wp_filter_kses';
+
+		return call_user_func( $sanitize, $value, $this );
+	}
+
+	protected function _render( $args ) {
+		$args = wp_parse_args( $args, array(
+			'value' => '',
+			'desc_pos' => 'after',
+			'extra' => array( 'class' => 'regular-text' ),
+		) );
+
+		foreach ( $args as $key => &$val )
+			$$key = &$val;
+		unset( $val );
+
+		if ( !isset( $extra['id'] ) && !is_array( $name ) && false === strpos( $name, '[' ) )
+			$extra['id'] = $name;
+
+		return scbFormField::_input_gen( $args );
+	}
+
+	protected function _set_value( &$args, $value ) {
+		$args['value'] = $value;
+	}
+}
+
+
+abstract class scbSingleChoiceField extends scbFormField {
+
+	public function validate( $value ) {
+		if ( isset( $this->values[ $value ] ) )
+			return $value;
+
+		return null;
+	}
+
+	protected function _render( $args ) {
+		$args = wp_parse_args( $args, array(
+			'numeric' => false,		// use numeric array instead of associative
+			'selected' => array( 'foo' ),	// hack to make default blank
+		) );
+
+		return $this->_render_specific( $args );
+	}
+
+	protected function _set_value( &$args, $value ) {
+		$args['selected'] = $value;
+	}
+
+	abstract protected function _render_specific( $args );
+}
+
+
+class scbSelectField extends scbSingleChoiceField {
+
+	protected function _render_specific( $args ) {
+		extract( wp_parse_args( $args, array(
+			'text' => false,
+			'extra' => array()
+		) ) );
+
+		$options = array();
+
+		if ( false !== $text ) {
+			$options[] = array(
+				'value' => '',
+				'selected' => ( $selected == array( 'foo' ) ),
+				'title' => $text
+			);
+		}
+
+		foreach ( $values as $value => $title ) {
+			$options[] = array(
+				'value' => $value,
+				'selected' => ( (string) $value == (string) $selected ),
+				'title' => $title
+			);
+		}
+
+		$opts = '';
+		foreach ( $options as $option ) {
+			extract( $option );
+
+			$opts .= html( 'option', compact( 'value', 'selected' ), $title );
+		}
+
+		$extra['name'] = $name;
+
+		$input = html( 'select', $extra, $opts );
+
+		return scbFormField::add_label( $input, $desc, $desc_pos );
+	}
+}
+
+
+class scbRadiosField extends scbSelectField {
+
+	protected function _render_specific( $args ) {
+		extract( $args );
+
+		if ( array( 'foo' ) == $selected ) {
+			// radio buttons should always have one option selected
+			$selected = key( $values );
+		}
+
+		$opts = '';
+		foreach ( $values as $value => $title ) {
+			$single_input = scbFormField::_checkbox( array(
+				'name' => $name,
+				'type' => 'radio',
+				'value' => $value,
+				'checked' => ( (string) $value == (string) $selected ),
+				'desc' => $title,
+				'desc_pos' => 'after'
+			) );
+
+			$opts .= str_replace( scbForms::TOKEN, $single_input, $wrap_each );
+		}
+
+		return scbFormField::add_desc( $opts, $desc, $desc_pos );
+	}
+}
+
+
+class scbMultipleChoiceField extends scbFormField {
+
+	public function validate( $value ) {
+		return array_intersect( array_keys( $this->values ), (array) $value );
+	}
+
+	protected function _render( $args ) {
+		$args = wp_parse_args( $args, array(
+			'numeric' => false,		// use numeric array instead of associative
+			'checked' => null,
+		) );
+
+		extract( $args );
+
+		if ( !is_array( $checked ) )
+			$checked = array();
+
+		$opts = '';
+		foreach ( $values as $value => $title ) {
+			$single_input = scbFormField::_checkbox( array(
+				'name' => $name . '[]',
+				'type' => 'checkbox',
+				'value' => $value,
+				'checked' => in_array( $value, $checked ),
+				'desc' => $title,
+				'desc_pos' => 'after'
+			) );
+
+			$opts .= str_replace( scbForms::TOKEN, $single_input, $wrap_each );
+		}
+
+		return scbFormField::add_desc( $opts, $desc, $desc_pos );
+	}
+
+	protected function _set_value( &$args, $value ) {
+		$args['checked'] = (array) $value;
+	}
+}
+
+
+class scbSingleCheckboxField extends scbFormField {
+
+	public function validate( $value ) {
+		return (bool) $value;
+	}
+
+	protected function _render( $args ) {
+		$args = wp_parse_args( $args, array(
+			'value' => true,
+			'desc' => NULL,
+			'checked' => false,
+			'extra' => array(),
+		) );
+
+		foreach ( $args as $key => &$val )
+			$$key = &$val;
+		unset( $val );
+
+		$extra['checked'] = $checked;
+
+		if ( is_null( $desc ) && !is_bool( $value ) )
+			$desc = str_replace( '[]', '', $value );
+
+		return scbFormField::_input_gen( $args );
+	}
+
+	protected function _set_value( &$args, $value ) {
+		$args['checked'] = ( $value || ( isset( $args['value'] ) && $value == $args['value'] ) );
 	}
 }
 
