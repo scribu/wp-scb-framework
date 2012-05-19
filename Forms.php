@@ -302,7 +302,7 @@ abstract class scbFormField {
 			return new scbSelectField( $args );
 		case 'checkbox':
 			if ( isset( $args['values'] ) )
-				return new scbCheckboxesField( $args );
+				return new scbMultipleChoiceField( $args );
 			else
 				return new scbSingleCheckboxField( $args );
 		default:
@@ -562,7 +562,7 @@ class scbRadiosField extends scbSelectField {
 }
 
 
-class scbCheckboxesField extends scbFormField {
+class scbMultipleChoiceField extends scbFormField {
 
 	public function validate( $value ) {
 		return array_intersect( array_keys( $this->values ), (array) $value );
