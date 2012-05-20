@@ -12,14 +12,14 @@ class scbForms {
 		return $field->render( $value );
 	}
 
-	static function input( $args, $formdata = NULL ) {
+	static function input( $args, $formdata = null ) {
 		$field = scbFormField::create( $args );
 
 		return $field->render( scbForms::get_value( $args['name'], $formdata ) );
 	}
 
 	// Generates a table wrapped in a form
-	static function form_table( $rows, $formdata = NULL ) {
+	static function form_table( $rows, $formdata = null ) {
 		$output = '';
 		foreach ( $rows as $row )
 			$output .= self::table_row( $row, $formdata );
@@ -30,7 +30,7 @@ class scbForms {
 	}
 
 	// Generates a form
-	static function form( $inputs, $formdata = NULL, $nonce ) {
+	static function form( $inputs, $formdata = null, $nonce ) {
 		$output = '';
 		foreach ( $inputs as $input )
 			$output .= self::input( $input, $formdata );
@@ -41,7 +41,7 @@ class scbForms {
 	}
 
 	// Generates a table
-	static function table( $rows, $formdata = NULL ) {
+	static function table( $rows, $formdata = null ) {
 		$output = '';
 		foreach ( $rows as $row )
 			$output .= self::table_row( $row, $formdata );
@@ -52,7 +52,7 @@ class scbForms {
 	}
 
 	// Generates a table row
-	static function table_row( $args, $formdata = NULL ) {
+	static function table_row( $args, $formdata = null ) {
 		return self::row_wrap( $args['title'], self::input( $args, $formdata ) );
 	}
 
@@ -363,7 +363,7 @@ abstract class scbFormField {
 	protected static function _checkbox( $args ) {
 		$args = wp_parse_args( $args, array(
 			'value' => true,
-			'desc' => NULL,
+			'desc' => null,
 			'checked' => false,
 			'extra' => array(),
 		) );
@@ -383,8 +383,8 @@ abstract class scbFormField {
 	// Generate html with the final args
 	protected static function _input_gen( $args ) {
 		extract( wp_parse_args( $args, array(
-			'value' => NULL,
-			'desc' => NULL,
+			'value' => null,
+			'desc' => null,
 			'extra' => array()
 		) ) );
 
@@ -612,7 +612,7 @@ class scbSingleCheckboxField extends scbFormField {
 	protected function _render( $args ) {
 		$args = wp_parse_args( $args, array(
 			'value' => true,
-			'desc' => NULL,
+			'desc' => null,
 			'checked' => false,
 			'extra' => array(),
 		) );
