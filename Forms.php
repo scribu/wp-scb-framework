@@ -12,15 +12,10 @@ class scbForms {
 		return $field->render( $value );
 	}
 
-	static function input( $args, $formdata = false ) {
-		if ( false !== $formdata ) {
-			$form = new scbForm( $formdata );
-			return $form->input( $args );
-		}
-
+	static function input( $args, $formdata = NULL ) {
 		$field = scbFormField::create( $args );
 
-		return $field->render();
+		return $field->render( scbForms::get_value( $args['name'], $formdata ) );
 	}
 
 	// Generates a table wrapped in a form
