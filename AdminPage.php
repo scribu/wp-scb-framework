@@ -127,7 +127,7 @@ abstract class scbAdminPage {
 	function page_header() {
 		echo "<div class='wrap'>\n";
 		screen_icon( $this->args['screen_icon'] );
-		echo "<h2>" . $this->args['page_title'] . "</h2>\n";
+		echo html( "h2", $this->args['page_title'] );
 	}
 
 	// This is where the page content goes
@@ -274,20 +274,6 @@ abstract class scbAdminPage {
 		return $this->row_wrap( $args['title'], $this->input( $args, $formdata ) );
 	}
 
-	// Wraps the given content in a <table>
-	function table_wrap( $content ) {
-		return
-		html( 'table class="form-table"', $content );
-	}
-
-	// Wraps the given content in a <tr><td>
-	function row_wrap( $title, $content ) {
-		return
-		html( 'tr',
-			 html( 'th scope="row"', $title )
-			.html( 'td', $content ) );
-	}
-
 	// Mimic scbForms inheritance
 	function __call( $method, $args ) {
 		if ( in_array( $method, array( 'input', 'form' ) ) ) {
@@ -303,12 +289,12 @@ abstract class scbAdminPage {
 
 	// Wraps a string in a <script> tag
 	function js_wrap( $string ) {
-		return "\n<script type='text/javascript'>\n" . $string . "\n</script>\n";
+		return html( "script type='text/javascript'", $string );
 	}
 
 	// Wraps a string in a <style> tag
 	function css_wrap( $string ) {
-		return "\n<style type='text/css'>\n" . $string . "\n</style>\n";
+		return html( "style type='text/css'", $string );
 	}
 
 

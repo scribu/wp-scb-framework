@@ -60,34 +60,26 @@ class scbForms {
 // ____________WRAPPERS____________
 
 
-	// Wraps the given content in a <form><table>
 	static function form_table_wrap( $content, $nonce = 'update_options' ) {
-		$output = self::table_wrap( $content );
-		$output = self::form_wrap( $output, $nonce );
-
-		return $output;
+		return self::form_wrap( self::table_wrap( $content ), $nonce );
 	}
 
-	// Wraps the given content in a <form> tag
 	static function form_wrap( $content, $nonce = 'update_options' ) {
-		$output = "\n<form method='post' action=''>\n";
-		$output .= $content;
-		$output .= wp_nonce_field( $action = $nonce, $name = "_wpnonce", $referer = true , $echo = false );
-		$output .= "\n</form>\n";
-
-		return $output;
+		return html( "form method='post' action=''",
+			$content,
+			wp_nonce_field( $nonce, '_wpnonce', $referer = true, $echo = false )
+		);
 	}
 
-	// Wraps the given content in a <table>
 	static function table_wrap( $content ) {
-		$output = "\n<table class='form-table'>\n" . $content . "\n</table>\n";
-
-		return $output;
+		return html( "table class='form-table'", $content );
 	}
 
-	// Wraps the given content in a <tr><td>
 	static function row_wrap( $title, $content ) {
-		return "\n<tr>\n\t<th scope='row'>" . $title . "</th>\n\t<td>\n\t\t" . $content . "\t</td>\n\n</tr>";
+		return html( "tr",
+			html( "th scope='row'", $title ),
+			html( "td", $content )
+		);
 	}
 
 

@@ -119,7 +119,7 @@ class scbUtil {
 
 // Return a standard admin notice
 function scb_admin_notice( $msg, $class = 'updated' ) {
-	return "<div class='$class fade'><p>$msg</p></div>\n";
+	return html( "div class='$class fade'", html( "p", $msg ) );
 }
 
 // Transform a list of objects into an associative array
