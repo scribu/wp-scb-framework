@@ -505,7 +505,7 @@ class scbSelectField extends scbSingleChoiceField {
 		foreach ( $values as $value => $title ) {
 			$options[] = array(
 				'value' => $value,
-				'selected' => ( (string) $value == (string) $selected ),
+				'selected' => ( $value == $selected ),
 				'title' => $title
 			);
 		}
@@ -542,7 +542,7 @@ class scbRadiosField extends scbSelectField {
 				'name' => $name,
 				'type' => 'radio',
 				'value' => $value,
-				'checked' => ( (string) $value == (string) $selected ),
+				'checked' => ( $value == $selected ),
 				'desc' => $title,
 				'desc_pos' => 'after'
 			) );
