@@ -271,8 +271,13 @@ abstract class scbFormField {
 		}
 
 		if ( isset( $args['value'] ) && is_array( $args['value'] ) ) {
-			$args['values'] = $args['value'];
+			$args['choices'] = $args['value'];
 			unset( $args['value'] );
+		}
+
+		if ( isset( $args['values'] ) ) {
+			$args['choices'] = $args['values'];
+			unset( $args['values'] );
 		}
 
 		if ( isset( $args['extra'] ) && !is_array( $args['extra'] ) )
@@ -285,8 +290,9 @@ abstract class scbFormField {
 			'wrap_each' => scbForms::TOKEN,
 		) );
 
-		if ( isset( $args['values'] ) )
-			self::_expand_values( $args );
+		// depends on $args['desc']
+		if ( isset( $args['choices'] ) )
+			self::_expand_choices( $args );
 
 		switch ( $args['type'] ) {
 		case 'radio':
@@ -294,7 +300,7 @@ abstract class scbFormField {
 		case 'select':
 			return new scbSelectField( $args );
 		case 'checkbox':
-			if ( isset( $args['values'] ) )
+			if ( isset( $args['choices'] ) )
 				return new scbMultipleChoiceField( $args );
 			else
 				return new scbSingleCheckboxField( $args );
@@ -407,15 +413,15 @@ abstract class scbFormField {
 			return $input . ' ' . $desc;
 	}
 
-	private static function _expand_values( &$args ) {
-		$values =& $args['values'];
+	private static function _expand_choices( &$args ) {
+		$choices =& $args['choices'];
 
-		if ( !empty( $values ) && !self::is_associative( $values ) ) {
+		if ( !empty( $choices ) && !self::is_associative( $choices ) ) {
 			if ( is_array( $args['desc'] ) ) {
-				$values = array_combine( $values, $args['desc'] );	// back-compat
+				$choices = array_combine( $choices, $args['desc'] );	// back-compat
 				$args['desc'] = false;
 			} elseif ( !isset( $args['numeric'] ) || !$args['numeric'] ) {
-				$values = array_combine( $values, $values );
+				$choices = array_combine( $choices, $choices );
 			}
 		}
 	}
@@ -461,7 +467,7 @@ class scbTextField extends scbFormField {
 abstract class scbSingleChoiceField extends scbFormField {
 
 	public function validate( $value ) {
-		if ( isset( $this->values[ $value ] ) )
+		if ( isset( $this->choices[ $value ] ) )
 			return $value;
 
 		return null;
@@ -502,7 +508,7 @@ class scbSelectField extends scbSingleChoiceField {
 			);
 		}
 
-		foreach ( $values as $value => $title ) {
+		foreach ( $choices as $value => $title ) {
 			$options[] = array(
 				'value' => $value,
 				'selected' => ( $value == $selected ),
@@ -533,11 +539,11 @@ class scbRadiosField extends scbSelectField {
 
 		if ( array( 'foo' ) == $selected ) {
 			// radio buttons should always have one option selected
-			$selected = key( $values );
+			$selected = key( $choices );
 		}
 
 		$opts = '';
-		foreach ( $values as $value => $title ) {
+		foreach ( $choices as $value => $title ) {
 			$single_input = scbFormField::_checkbox( array(
 				'name' => $name,
 				'type' => 'radio',
@@ -558,7 +564,7 @@ class scbRadiosField extends scbSelectField {
 class scbMultipleChoiceField extends scbFormField {
 
 	public function validate( $value ) {
-		return array_intersect( array_keys( $this->values ), (array) $value );
+		return array_intersect( array_keys( $this->choices ), (array) $value );
 	}
 
 	protected function _render( $args ) {
@@ -573,7 +579,7 @@ class scbMultipleChoiceField extends scbFormField {
 			$checked = array();
 
 		$opts = '';
-		foreach ( $values as $value => $title ) {
+		foreach ( $choices as $value => $title ) {
 			$single_input = scbFormField::_checkbox( array(
 				'name' => $name . '[]',
 				'type' => 'checkbox',
