@@ -258,12 +258,17 @@ class scbForm {
 }
 
 
-abstract class scbFormField {
+interface scbFormField_I {
+	function render( $value );
+	function validate( $value );
+}
+
+abstract class scbFormField implements scbFormField_I {
 
 	protected $args;
 
 	public static function create( $args ) {
-		if ( is_a( $args, __CLASS__ ) )
+		if ( is_a( $args, 'scbFormField_I' ) )
 			return $args;
 
 		if ( empty( $args['name'] ) ) {
@@ -304,6 +309,8 @@ abstract class scbFormField {
 				return new scbMultipleChoiceField( $args );
 			else
 				return new scbSingleCheckboxField( $args );
+		case 'custom':
+			return new scbCustomField( $args );
 		default:
 			return new scbTextField( $args );
 		}
@@ -629,6 +636,35 @@ class scbSingleCheckboxField extends scbFormField {
 
 	protected function _set_value( &$args, $value ) {
 		$args['checked'] = ( $value || ( isset( $args['value'] ) && $value == $args['value'] ) );
+	}
+}
+
+
+class scbCustomField implements scbFormField_I {
+
+	protected $args;
+
+	function __construct( $args ) {
+		$this->args = wp_parse_args( $args, array(
+			'render' => 'print_r',
+			'sanitize' => 'wp_filter_kses',
+		) );
+	}
+
+	public function __get( $key ) {
+		return $this->args[ $key ];
+	}
+
+	public function __isset( $key ) {
+		return isset( $this->args[ $key ] );
+	}
+
+	public function render( $value ) {
+		return call_user_func( $this->render, $value, $this );
+	}
+
+	public function validate( $value ) {
+		return call_user_func( $this->sanitize, $value, $this );
 	}
 }
 
