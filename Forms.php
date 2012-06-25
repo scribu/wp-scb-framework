@@ -646,7 +646,7 @@ class scbCustomField implements scbFormField_I {
 
 	function __construct( $args ) {
 		$this->args = wp_parse_args( $args, array(
-			'render' => 'print_r',
+			'render' => 'var_dump',
 			'sanitize' => 'wp_filter_kses',
 		) );
 	}
