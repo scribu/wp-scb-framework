@@ -259,7 +259,7 @@ class scbForm {
 
 
 interface scbFormField_I {
-	function render( $value );
+	function render( $value = null );
 	function validate( $value );
 }
 
@@ -659,7 +659,7 @@ class scbCustomField implements scbFormField_I {
 		return isset( $this->args[ $key ] );
 	}
 
-	public function render( $value ) {
+	public function render( $value = null ) {
 		return call_user_func( $this->render, $value, $this );
 	}
 
