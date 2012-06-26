@@ -259,9 +259,26 @@ class scbForm {
 
 
 interface scbFormField_I {
+
+	/**
+	 * Generate the corresponding HTML for a field
+	 *
+	 * @param mixed $value The value to use
+	 *
+	 * @return string
+	 */
 	function render( $value = null );
+
+	/**
+	 * Validates a value against a field.
+	 *
+	 * @param mixed $value The value to check
+	 *
+	 * @return mixed null if the validation failed, sanitized value otherwise.
+	 */
 	function validate( $value );
 }
+
 
 abstract class scbFormField implements scbFormField_I {
 
@@ -328,13 +345,6 @@ abstract class scbFormField implements scbFormField_I {
 		return isset( $this->args[ $key ] );
 	}
 
-	/**
-	 * Generate the corresponding HTML for a field
-	 *
-	 * @param mixed $value The value to use
-	 *
-	 * @return string
-	 */
 	public function render( $value = null ) {
 		if ( null === $value && isset( $this->default ) )
 			$value = $this->default;
@@ -354,15 +364,6 @@ abstract class scbFormField implements scbFormField_I {
 
 	// The actual rendering
 	abstract protected function _render( $args );
-
-	/**
-	 * Validates a value against a field.
-	 *
-	 * @param mixed $value The value to check
-	 *
-	 * @return mixed null if the validation failed, sanitized value otherwise.
-	 */
-	abstract public function validate( $value );
 
 	// Handle args for a single checkbox or radio input
 	protected static function _checkbox( $args ) {
