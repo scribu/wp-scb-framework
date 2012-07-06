@@ -35,27 +35,25 @@ class scbOptions {
 	}
 
 	/**
-	 * Get option values for one, many or all fields
+	 * Get option values for one or all fields
 	 *
-	 * @param string|array $field The field(s) to get
+	 * @param string|array $field The field to get
 	 * @return mixed Whatever is in those fields
 	 */
-	public function get( $field = '' ) {
-		$data = get_option( $this->key, array() );
+	public function get( $field = null, $default = null ) {
+		$data = array_merge( $this->defaults, get_option( $this->key, array() ) );
 
-		$data = array_merge( $this->defaults, $data );
-
-		return $this->_get( $field, $data );
+		return scbForms::get_value( $field, $data, $default );
 	}
 
 	/**
-	 * Get default values for one, many or all fields
+	 * Get default values for one or all fields
 	 *
-	 * @param string|array $field The field( s ) to get
+	 * @param string|array $field The field to get
 	 * @return mixed Whatever is in those fields
 	 */
-	public function get_defaults( $field = '' ) {
-		return $this->_get( $field, $this->defaults );
+	public function get_defaults( $field = null ) {
+		return scbForms::get_value( $field, $this->defaults );
 	}
 
 	/**
@@ -129,19 +127,7 @@ class scbOptions {
 		return wp_array_slice_assoc( $data, array_keys( $this->defaults ) );
 	}
 
-	// Get one, more or all fields from an array
 	private function &_get( $field, $data ) {
-		if ( empty( $field ) )
-			return $data;
-
-		if ( is_string( $field ) )
-			return $data[$field];
-
-		foreach ( $field as $key )
-			if ( isset( $data[$key] ) )
-				$result[] = $data[$key];
-
-		return $result;
 	}
 
 	// Magic method: $options->field
