@@ -133,15 +133,14 @@ class scbForms {
 	 *
 	 * @param array $fields List of args that would be sent to scbForms::input()
 	 * @param array $data The data to validate. Defaults to $_POST
+	 * @param array $to_update Existing data to populate. Necessary for nested values
 	 *
 	 * @return array
 	 */
-	static function validate_post_data( $fields, $data = null ) {
+	static function validate_post_data( $fields, $data = null, $to_update = array() ) {
 		if ( null === $data ) {
 			$data = stripslashes_deep( $_POST );
 		}
-
-		$to_update = array();
 
 		foreach ( $fields as $field ) {
 			$value = scbForms::get_value( $field['name'], $data );
