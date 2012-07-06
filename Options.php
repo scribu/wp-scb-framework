@@ -89,7 +89,7 @@ class scbOptions {
 	 * @return bool
 	 */
 	public function cleanup() {
-		$this->update( $this->_clean( $this->get() ) );
+		$this->update( $this->get(), true );
 	}
 
 	/**
