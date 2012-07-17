@@ -3,7 +3,7 @@ namespace P2P;
 
 // Adds compatibility methods between WP_Widget and scbForms
 
-abstract class scbWidget extends WP_Widget {
+abstract class scbWidget extends \WP_Widget {
 	protected $defaults = array();
 
 	private static $scb_widgets = array();
