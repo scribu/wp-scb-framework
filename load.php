@@ -1,4 +1,5 @@
 <?php
+namespace P2P;
 
 $GLOBALS['_scb_data'] = array( 56, __FILE__, array(
 	'scbUtil', 'scbOptions', 'scbForms', 'scbTable',

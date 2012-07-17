@@ -1,4 +1,5 @@
 <?php
+namespace P2P;
 
 // Adds compatibility methods between WP_Widget and scbForms
 

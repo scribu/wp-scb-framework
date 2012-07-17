@@ -1,4 +1,5 @@
 <?php
+namespace P2P;
 
 // Container for an array of options
 

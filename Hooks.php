@@ -1,4 +1,5 @@
 <?php
+namespace P2P;
 
 class scbHooks {
 	private static $mangle_name;

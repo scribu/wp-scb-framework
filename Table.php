@@ -1,4 +1,5 @@
 <?php
+namespace P2P;
 
 // Takes care of creating, updating and deleting database tables
 

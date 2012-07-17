@@ -1,4 +1,5 @@
 <?php
+namespace P2P;
 
 // Admin screen with metaboxes base class
 

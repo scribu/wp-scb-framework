@@ -1,4 +1,5 @@
 <?php
+namespace P2P;
 
 // Data-aware form generator
 
