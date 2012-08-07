@@ -145,6 +145,8 @@ function scb_list_fold( $list, $key, $value ) {
  */
 if ( ! function_exists( 'html' ) ):
 function html( $tag ) {
+	static $SELF_CLOSING_TAGS = array( 'area', 'base', 'basefont', 'br', 'hr', 'input', 'img', 'link', 'meta' );
+
 	$args = func_get_args();
 
 	$tag = array_shift( $args );
@@ -165,11 +167,6 @@ function html( $tag ) {
 		list( $closing ) = explode( ' ', $tag, 2 );
 	}
 
-	static $SELF_CLOSING_TAGS = null;
-	if($SELF_CLOSING_TAGS === null) {
-		$SELF_CLOSING_TAGS = array( 'area', 'base', 'basefont', 'br', 'hr', 'input', 'img', 'link', 'meta' );
-	}
-	
 	if ( in_array( $closing, $SELF_CLOSING_TAGS ) ) {
 		return "<{$tag} />";
 	}
