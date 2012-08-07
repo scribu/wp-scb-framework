@@ -165,7 +165,12 @@ function html( $tag ) {
 		list( $closing ) = explode( ' ', $tag, 2 );
 	}
 
-	if ( in_array( $closing, array( 'area', 'base', 'basefont', 'br', 'hr', 'input', 'img', 'link', 'meta' ) ) ) {
+	static $SELF_CLOSING_TAGS = null;
+	if($SELF_CLOSING_TAGS === null) {
+		$SELF_CLOSING_TAGS = array( 'area', 'base', 'basefont', 'br', 'hr', 'input', 'img', 'link', 'meta' );
+	}
+	
+	if ( in_array( $closing, $SELF_CLOSING_TAGS ) ) {
 		return "<{$tag} />";
 	}
 
