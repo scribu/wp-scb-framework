@@ -193,7 +193,7 @@ class scbForms {
 				foreach ( array_diff( $old_values, $new_values ) as $value )
 					delete_metadata( $meta_type, $object_id, $key, $value );
 			} else {
-				$value = $data[$key];
+				$value = isset( $data[$key] ) ? $data[$key] : '';
 
 				if ( '' === $value )
 					delete_metadata( $meta_type, $object_id, $key );
