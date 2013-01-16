@@ -25,7 +25,7 @@ class scbMetabox {
 		add_action( 'load-post-new.php', array( $this, 'pre_register' ) );
 	}
 
-	public function pre_register() {
+	final public function pre_register() {
 		if ( ! in_array( get_current_screen()->post_type, $this->post_types ) )
 			return;
 
@@ -49,7 +49,7 @@ class scbMetabox {
 		return true;
 	}
 
-	public function register() {
+	final public function register() {
 		if ( $this->context === 'standalone' ) {
 			add_action( 'edit_form_advanced', array( $this, 'standalone' ) );
 		} else {
@@ -116,7 +116,6 @@ class scbMetabox {
 			html( "th $style scope='row'", $row['title'] ),
 			html( "td $style", $input )
 		);
-
 	}
 
 	public function before_form( $post ) { }
@@ -126,7 +125,7 @@ class scbMetabox {
 	public function after_form( $post ) { }
 
 	// Makes sure that the saving occurs only for the post being edited
-	public function _save_post( $post_id, $post ) {
+	final public function _save_post( $post_id, $post ) {
 		if ( ! isset( $_POST['action'] ) || $_POST['action'] != 'editpost' )
 			return;
 
