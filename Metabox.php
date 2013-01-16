@@ -59,9 +59,7 @@ class scbMetabox {
 		if ( $this->context === 'standalone' ) {
 			add_action( 'edit_form_advanced', array( $this, 'standalone' ) );
 		} else {
-			foreach ( $this->post_types as $post_type ) {
-				add_meta_box( $this->id, $this->title, array( $this, 'display' ), $post_type, $this->context, $this->priority );
-			}
+			add_meta_box( $this->id, $this->title, array( $this, 'display' ), null, $this->context, $this->priority );
 		}
 	}
 
