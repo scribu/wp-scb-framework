@@ -51,7 +51,7 @@ class scbMetabox {
 
 	public function register() {
 		if ( $this->context === 'standalone' ) {
-			add_action( 'edit_form_advanced', array( $this, 'edit_form_advanced' ) );
+			add_action( 'edit_form_advanced', array( $this, 'standalone' ) );
 		} else {
 			foreach ( $this->post_types as $post_type ) {
 				add_meta_box( $this->identifier, $this->display_name, array( $this, 'display' ), $post_type, $this->context, $this->priority );
@@ -59,7 +59,7 @@ class scbMetabox {
 		}
 	}
 
-	public function edit_form_advanced() {
+	final public function standalone() {
 		global $post_ID;
 
 		$this->display( get_post( $post_ID ) );
