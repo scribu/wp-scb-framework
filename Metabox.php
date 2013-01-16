@@ -70,7 +70,7 @@ class scbMetabox {
 	}
 
 	public function display( $post ) {
-		$form_fields = $this->form();
+		$form_fields = $this->form_fields();
 		if ( ! $form_fields )
 			return;
 
@@ -118,10 +118,15 @@ class scbMetabox {
 		);
 	}
 
+	// Display some extra HTML before the form
 	public function before_form( $post ) { }
 
-	public function form() { return array(); }
+	// Return the list of form fields
+	public function form_fields() {
+		return array();
+	}
 
+	// Display some extra HTML after the form
 	public function after_form( $post ) { }
 
 	// Makes sure that the saving occurs only for the post being edited
@@ -139,7 +144,7 @@ class scbMetabox {
 	}
 
 	protected function save( $post_id ) {
-		$form_fields = $this->form();
+		$form_fields = $this->form_fields();
 
 		$to_update = scbForms::validate_post_data( $form_fields );
 
