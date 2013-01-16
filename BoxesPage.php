@@ -194,7 +194,8 @@ abstract class scbBoxesPage extends scbAdminPage {
 		}
 	}
 
-	// Make it so that $args is actually what's passed to the callback
+	// Since we don't pass an object to do_meta_boxes(),
+	// pass $box['args'] directly to each method.
 	function _intermediate_callback( $_, $box ) {
 		list( $name ) = explode( '-', $box['id'] );
 
