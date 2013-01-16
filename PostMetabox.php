@@ -1,6 +1,6 @@
 <?php
 
-class scbMetabox {
+class scbPostMetabox {
 
 	private $id, $title;
 
