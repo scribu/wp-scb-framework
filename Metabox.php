@@ -2,24 +2,30 @@
 
 class scbMetabox {
 
-	private $identifier, $display_name;
+	private $id, $title;
 
-	private $post_types = array();
+	private $post_types;
 
 	private $post_data = array();
 
 	protected $actions = array( 'admin_enqueue_scripts', 'post_updated_messages' );
 
-	public function __construct( $identifier, $display_name, $post_types = 'post', $context = 'advanced', $priority = 'default' ) {
-		$this->identifier = $identifier;
-		$this->display_name = $display_name;
-		$this->context = $context;
-		$this->priority = $priority;
+	public function __construct( $id, $title, $args = array() ) {
+		$this->id = $id;
+		$this->title = $title;
 
-		if ( is_string( $post_types ) )
-			$post_types = array( $post_types );
+		$args = wp_parse_args( $args, array(
+			'post_type' => 'post',
+			'context' => 'advanced',
+			'priority' => 'default'
+		) );
 
-		$this->post_types = $post_types;
+		if ( is_string( $args['post_type'] ) )
+			$args['post_type'] = array( $args['post_type'] );
+		$this->post_types = $args['post_type'];
+
+		$this->context = $args['context'];
+		$this->priority = $args['priority'];
 
 		add_action( 'load-post.php', array( $this, 'pre_register' ) );
 		add_action( 'load-post-new.php', array( $this, 'pre_register' ) );
@@ -54,7 +60,7 @@ class scbMetabox {
 			add_action( 'edit_form_advanced', array( $this, 'standalone' ) );
 		} else {
 			foreach ( $this->post_types as $post_type ) {
-				add_meta_box( $this->identifier, $this->display_name, array( $this, 'display' ), $post_type, $this->context, $this->priority );
+				add_meta_box( $this->id, $this->title, array( $this, 'display' ), $post_type, $this->context, $this->priority );
 			}
 		}
 	}
@@ -77,8 +83,8 @@ class scbMetabox {
 		$form_data = $this->post_data;
 		$error_fields = array();
 
-		if ( isset( $form_data['_error_data_' . $this->identifier ] ) ) {
-			$data = unserialize( $form_data['_error_data_' . $this->identifier ] );
+		if ( isset( $form_data['_error_data_' . $this->id ] ) ) {
+			$data = unserialize( $form_data['_error_data_' . $this->id ] );
 
 			$error_fields = $data['fields'];
 			$form_data = $data['data'];
@@ -92,7 +98,7 @@ class scbMetabox {
 		echo $form;
 		$this->after_form( $post );
 
-		delete_post_meta( $post->ID, '_error_data_' . $this->identifier  );
+		delete_post_meta( $post->ID, '_error_data_' . $this->id );
 	}
 
 	public function table( $rows, $formdata, $errors = array() ) {
@@ -159,7 +165,7 @@ class scbMetabox {
 				'fields' => $is_valid->get_error_codes(),
 				'data' => $to_update
 			);
-			update_post_meta( $post_id, '_error_data_' . $this->identifier, $error_data );
+			update_post_meta( $post_id, '_error_data_' . $this->id, $error_data );
 
 			$location = add_query_arg( 'message', 1, get_edit_post_link( $post_id, 'url' ) );
 			wp_redirect( apply_filters( 'redirect_post_location', $location, $post_id ) );
