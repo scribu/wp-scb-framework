@@ -56,17 +56,7 @@ class scbPostMetabox {
 	}
 
 	final public function register() {
-		if ( $this->context === 'standalone' ) {
-			add_action( 'edit_form_advanced', array( $this, 'standalone' ) );
-		} else {
-			add_meta_box( $this->id, $this->title, array( $this, 'display' ), null, $this->context, $this->priority );
-		}
-	}
-
-	final public function standalone() {
-		global $post_ID;
-
-		$this->display( get_post( $post_ID ) );
+		add_meta_box( $this->id, $this->title, array( $this, 'display' ), null, $this->context, $this->priority );
 	}
 
 	public function before_display( $form_data, $post ) {
