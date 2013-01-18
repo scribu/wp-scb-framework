@@ -21,34 +21,33 @@ class scbCron {
 	 *                          array $callback_args (optional)
 	 */
 	function __construct( $file = false, $args ) {
-		extract( $args, EXTR_SKIP );
 
 		// Set time & schedule
-		if ( isset( $time ) )
-			$this->time = $time;
+		if ( isset( $args['time'] ) )
+			$this->time = $args['time'];
 
-		if ( isset( $interval ) ) {
-			$this->schedule = $interval . 'secs';
-			$this->interval = $interval;
-		} elseif ( isset( $schedule ) ) {
-			$this->schedule = $schedule;
+		if ( isset( $args['interval'] ) ) {
+			$this->schedule = $args['interval'] . 'secs';
+			$this->interval = $args['interval'];
+		} elseif ( isset( $args['schedule'] ) ) {
+			$this->schedule = $args['schedule'];
 		}
 
 		// Set hook
-		if ( isset( $action ) ) {
-			$this->hook = $action;
-		} elseif ( isset( $callback ) ) {
-			$this->hook = self::_callback_to_string( $callback );
-			add_action( $this->hook, $callback );
+		if ( isset( $args['action'] ) ) {
+			$this->hook = $args['action'];
+		} elseif ( isset( $args['callback'] ) ) {
+			$this->hook = self::_callback_to_string( $args['callback'] );
+			add_action( $this->hook, $args['callback'] );
 		} elseif ( method_exists( $this, 'callback' ) ) {
 			$this->hook = self::_callback_to_string( array( $this, 'callback' ) );
-			add_action( $this->hook, $callback );
+			add_action( $this->hook, $args['callback'] );
 		} else {
 			trigger_error( '$action OR $callback not set', E_USER_WARNING );
 		}
 
-		if ( isset( $callback_args ) )
-			$this->callback_args = (array) $callback_args;
+		if ( isset( $this['callback_args'] ) )
+			$this->callback_args = (array) $this['callback_args'];
 
 		if ( $file && $this->schedule ) {
 			scbUtil::add_activation_hook( $file, array( $this, 'reset' ) );
@@ -66,16 +65,15 @@ class scbCron {
 	 *                    timestamp $time ( optional )
 	 */
 	function reschedule( $args ) {
-		extract( $args );
 
-		if ( $schedule && $this->schedule != $schedule ) {
-			$this->schedule = $schedule;
-		} elseif ( $interval && $this->interval != $interval ) {
-			$this->schedule = $interval . 'secs';
-			$this->interval = $interval;
+		if ( $args['schedule'] && $this->schedule != $args['schedule'] ) {
+			$this->schedule = $args['schedule'];
+		} elseif ( $args['interval'] && $this->interval != $args['interval'] ) {
+			$this->schedule = $args['interval'] . 'secs';
+			$this->interval = $args['interval'];
 		}
 
-		$this->time = $time;
+		$this->time = $args['time'];
 
 		$this->reset();
 	}
