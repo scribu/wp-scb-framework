@@ -1,7 +1,8 @@
 <?php
 
-// wp-cron job container
-
+/**
+ * wp-cron job container
+ */
 class scbCron {
 	protected $schedule;
 	protected $interval;
@@ -13,11 +14,11 @@ class scbCron {
 	/**
 	 * Create a new cron job
 	 *
-	 * @param string Reference to main plugin file
-	 * @param array List of args:
-	 		string $action OR callback $callback
-			string $schedule OR number $interval
-			array $callback_args (optional)
+	 * @param string|bool $file Reference to main plugin file
+	 * @param array       $args List of args:
+	 *                          string $action OR callback $callback
+	 *                          string $schedule OR number $interval
+	 *                          array $callback_args (optional)
 	 */
 	function __construct( $file = false, $args ) {
 		extract( $args, EXTR_SKIP );
@@ -57,11 +58,12 @@ class scbCron {
 		add_filter( 'cron_schedules', array( $this, '_add_timing' ) );
 	}
 
-	/* Change the interval of the cron job
+	/**
+	 * Change the interval of the cron job
 	 *
-	 * @param array List of args:
-			string $schedule OR number $interval
-	 		timestamp $time ( optional )
+	 * @param array $args List of args:
+	 *                    string $schedule OR number $interval
+	 *                    timestamp $time ( optional )
 	 */
 	function reschedule( $args ) {
 		extract( $args );
@@ -107,8 +109,8 @@ class scbCron {
 
 	/**
 	 * Execute the job with a given delay
-	 * @param int $delay in seconds
-	 * @param array $args List of arguments to pass to the callback
+	 * @param int   $delay in seconds
+	 * @param array $args  List of arguments to pass to the callback
 	 */
 	function do_once( $delay = 0, $args = null ) {
 		if ( is_null( $args ) )
@@ -121,13 +123,19 @@ class scbCron {
 
 //_____INTERNAL METHODS_____
 
-
+	/**
+	 * @param array $schedules
+	 *
+	 * @return array
+	 */
 	function _add_timing( $schedules ) {
 		if ( isset( $schedules[$this->schedule] ) )
 			return $schedules;
 
-		$schedules[$this->schedule] = array( 'interval' => $this->interval,
-			'display' => $this->interval . ' seconds' );
+		$schedules[$this->schedule] = array(
+			'interval' => $this->interval,
+			'display'  => $this->interval . ' seconds',
+		);
 
 		return $schedules;
 	}
@@ -139,6 +147,9 @@ class scbCron {
 		wp_schedule_event( $this->time, $this->schedule, $this->hook, $this->callback_args );
 	}
 
+	/**
+	 * @param string $name
+	 */
 	protected static function really_clear_scheduled_hook( $name ) {
 		$crons = _get_cron_array();
 
@@ -154,6 +165,11 @@ class scbCron {
 		_set_cron_array( $crons );
 	}
 
+	/**
+	 * @param callback $callback
+	 *
+	 * @return string
+	 */
 	protected static function _callback_to_string( $callback ) {
 		if ( ! is_array( $callback ) )
 			$str = $callback;
