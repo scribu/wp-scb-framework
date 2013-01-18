@@ -156,7 +156,7 @@ class scbCron {
 				if ( $hook == $name )
 					unset( $crons[$timestamp][$hook] );
 
-			if ( empty( $hooks ) )
+			if ( empty( $crons[$timestamp] ) )
 				unset( $crons[$timestamp] );
 		}
 
