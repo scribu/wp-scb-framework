@@ -46,8 +46,8 @@ class scbCron {
 			trigger_error( '$action OR $callback not set', E_USER_WARNING );
 		}
 
-		if ( isset( $this['callback_args'] ) )
-			$this->callback_args = (array) $this['callback_args'];
+		if ( isset( $args['callback_args'] ) )
+			$this->callback_args = (array) $args['callback_args'];
 
 		if ( $file && $this->schedule ) {
 			scbUtil::add_activation_hook( $file, array( $this, 'reset' ) );
