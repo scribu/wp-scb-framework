@@ -243,14 +243,17 @@ abstract class scbAdminPage {
 	 */
 	function submit_button( $value = '', $action = 'action', $class = 'button' ) {
 		if ( is_array( $value ) ) {
-			extract( wp_parse_args( $value, array(
+			$value = wp_parse_args( $value, array(
 				'value'  => __( 'Save Changes', $this->textdomain ),
 				'action' => 'action',
 				'class'  => 'button',
 				'ajax'   => true,
-			) ) );
+			) );
 
-			if ( ! $ajax )
+			$action = $value['action'];
+			$class  = $value['class'];
+
+			if ( ! $value['ajax'] )
 				$class .= ' no-ajax';
 		}
 		else {
@@ -422,13 +425,27 @@ abstract class scbAdminPage {
 	 * Registers a page
 	 */
 	function page_init() {
-		extract( $this->args );
 
-		if ( ! $toplevel ) {
-			$this->pagehook = add_submenu_page( $parent, $page_title, $menu_title, $capability, $page_slug, array( $this, '_page_content_hook' ) );
+		if ( ! $this->args['toplevel'] ) {
+			$this->pagehook = add_submenu_page(
+				$this->args['parent'],
+				$this->args['page_title'],
+				$this->args['menu_title'],
+				$this->args['capability'],
+				$this->args['page_slug'],
+				array( $this, '_page_content_hook' )
+			);
 		} else {
-			$func = 'add_' . $toplevel . '_page';
-			$this->pagehook = $func( $page_title, $menu_title, $capability, $page_slug, array( $this, '_page_content_hook' ), $icon_url, $position );
+			$func = 'add_' . $this->args['toplevel'] . '_page';
+			$this->pagehook = $func(
+				$this->args['page_title'],
+				$this->args['menu_title'],
+				$this->args['capability'],
+				$this->args['page_slug'],
+				array( $this, '_page_content_hook' ),
+				$this->args['icon_url'],
+				$this->args['position']
+			);
 		}
 
 		if ( ! $this->pagehook )
@@ -436,7 +453,7 @@ abstract class scbAdminPage {
 
 		add_action( 'load-' . $this->pagehook, array( $this, 'page_loaded' ) );
 
-		if ( $ajax_submit ) {
+		if ( $this->args['ajax_submit'] ) {
 			$this->ajax_response();
 			add_action( 'admin_footer', array( $this, 'ajax_submit' ), 20 );
 		}
