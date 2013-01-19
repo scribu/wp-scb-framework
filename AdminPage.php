@@ -284,9 +284,10 @@ abstract class scbAdminPage {
 	 * $this->form_wrap( $content, false ); // generates a form with no submit button
 	 *
 	 *  // the second argument is sent to submit_button()
-	 *  $this->form_wrap( $content, array( 'text' => 'Save changes',
-	 *    'name' => 'action',
-	 *    'ajax' => true,
+	 *  $this->form_wrap( $content, array(
+	 *      'text' => 'Save changes',
+	 *      'name' => 'action',
+	 *      'ajax' => true,
 	 *  ) );
 	 *
 	 * @see scbForms::form_wrap()
