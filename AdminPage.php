@@ -235,9 +235,9 @@ abstract class scbAdminPage {
 	/**
 	 * Generates a form submit button
 	 *
-	 * @param string $value
-	 * @param string $action
-	 * @param string $class
+	 * @param array|string $value
+	 * @param string       $action
+	 * @param string       $class
 	 *
 	 * @return string
 	 */
