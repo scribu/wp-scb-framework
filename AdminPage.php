@@ -235,45 +235,26 @@ abstract class scbAdminPage {
 	/**
 	 * Generates a form submit button
 	 *
-	 * @param array|string $value
+	 * @param string|array $value  button text or array of arguments
 	 * @param string       $action
 	 * @param string       $class
 	 *
 	 * @return string
 	 */
 	function submit_button( $value = '', $action = 'action', $class = 'button' ) {
-		if ( is_array( $value ) ) {
-			$value = wp_parse_args( $value, array(
-				'value'  => __( 'Save Changes', $this->textdomain ),
-				'action' => 'action',
-				'class'  => 'button',
-				'ajax'   => true,
-			) );
 
-			$action = $value['action'];
-			$class  = $value['class'];
+		$args = is_array( $value ) ? $value : func_get_args();
+		$args = wp_parse_args( $args, array(
+			'value'  => null,
+			'action' => $action,
+			'class'  => $class,
+			'ajax'   => true,
+		) );
 
-			if ( ! $value['ajax'] )
-				$class .= ' no-ajax';
-		}
-		else {
-			if ( empty( $value ) )
-				$value = __( 'Save Changes', $this->textdomain );
-		}
+		if ( ! $args['ajax'] )
+			$args['class'] .= ' no-ajax';
 
-		$input_args = array(
-			'type'  => 'submit',
-			'name'  => $action,
-			'value' => $value,
-			'extra' => '',
-			'desc'  => false,
-			'wrap'  => html( 'p class="submit"', scbForms::TOKEN ),
-		);
-
-		if ( ! empty( $class ) )
-			$input_args['extra'] = compact( 'class' );
-
-		return scbForms::input( $input_args );
+		return get_submit_button( $args['value'], $args['class'], $args['action'] );
 	}
 
 	/**
