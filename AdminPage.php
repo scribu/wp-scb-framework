@@ -273,8 +273,8 @@ abstract class scbAdminPage {
 	 *
 	 * @see scbForms::form_wrap()
 	 *
-	 * @param string        $content
-	 * @param boolean|array $submit_button
+	 * @param string               $content
+	 * @param boolean|string|array $submit_button
 	 *
 	 * @return string
 	 */
@@ -284,6 +284,8 @@ abstract class scbAdminPage {
 		} elseif ( true === $submit_button ) {
 			$content .= $this->submit_button();
 		} elseif ( false !== strpos( $submit_button, '<input' ) ) {
+			$content .= $submit_button;
+		} elseif ( false !== strpos( $submit_button, '<button' ) ) {
 			$content .= $submit_button;
 		} elseif ( false !== $submit_button ) {
 			$button_args = array_slice( func_get_args(), 1 );
