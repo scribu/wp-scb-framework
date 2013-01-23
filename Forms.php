@@ -504,14 +504,10 @@ abstract class scbFormField implements scbFormField_I {
 			'extra'   => array(),
 		) );
 
-		foreach ( $args as $key => &$val )
-			$$key = &$val;
-		unset( $val );
+		$args['extra']['checked'] = $args['checked'];
 
-		$extra['checked'] = $checked;
-
-		if ( is_null( $desc ) && !is_bool( $value ) )
-			$desc = str_replace( '[]', '', $value );
+		if ( is_null( $args['desc'] ) && ! is_bool( $args['value'] ) )
+			$args['desc'] = str_replace( '[]', '', $args['value'] );
 
 		return self::_input_gen( $args );
 	}
@@ -626,12 +622,8 @@ class scbTextField extends scbFormField {
 			'extra'    => array( 'class' => 'regular-text' ),
 		) );
 
-		foreach ( $args as $key => &$val )
-			$$key = &$val;
-		unset( $val );
-
-		if ( !isset( $extra['id'] ) && !is_array( $name ) && false === strpos( $name, '[' ) )
-			$extra['id'] = $name;
+		if ( ! isset( $args['extra']['id'] ) && ! is_array( $args['name'] ) && false === strpos( $args['name'], '[' ) )
+			$args['extra']['id'] = $args['name'];
 
 		return scbFormField::_input_gen( $args );
 	}
@@ -855,14 +847,10 @@ class scbSingleCheckboxField extends scbFormField {
 			'extra'   => array(),
 		) );
 
-		foreach ( $args as $key => &$val )
-			$$key = &$val;
-		unset( $val );
+		$args['extra']['checked'] = $args['checked'];
 
-		$extra['checked'] = $checked;
-
-		if ( is_null( $desc ) && !is_bool( $value ) )
-			$desc = str_replace( '[]', '', $value );
+		if ( is_null( $args['desc'] ) && ! is_bool( $args['value'] ) )
+			$args['desc'] = str_replace( '[]', '', $args['value'] );
 
 		return scbFormField::_input_gen( $args );
 	}
