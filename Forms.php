@@ -520,23 +520,23 @@ abstract class scbFormField implements scbFormField_I {
 	 * @return string
 	 */
 	protected static function _input_gen( $args ) {
-		extract( wp_parse_args( $args, array(
+		$args = wp_parse_args( $args, array(
 			'value' => null,
 			'desc'  => null,
 			'extra' => array(),
-		) ) );
+		) );
 
-		$extra['name'] = $name;
+		$args['extra']['name'] = $args['name'];
 
-		if ( 'textarea' == $type ) {
-			$input = html( 'textarea', $extra, esc_textarea( $value ) );
+		if ( 'textarea' == $args['type'] ) {
+			$input = html( 'textarea', $args['extra'], esc_textarea( $args['value'] ) );
 		} else {
-			$extra['value'] = $value;
-			$extra['type']  = $type;
-			$input = html( 'input', $extra );
+			$args['extra']['value'] = $args['value'];
+			$args['extra']['type']  = $args['type'];
+			$input = html( 'input', $args['extra'] );
 		}
 
-		return self::add_label( $input, $desc, $desc_pos );
+		return self::add_label( $input, $args['desc'], $args['desc_pos'] );
 	}
 
 	/**
@@ -689,42 +689,45 @@ abstract class scbSingleChoiceField extends scbFormField {
  */
 class scbSelectField extends scbSingleChoiceField {
 
+	/**
+	 * @param array $args
+	 *
+	 * @return string
+	 */
 	protected function _render_specific( $args ) {
-		extract( wp_parse_args( $args, array(
+		$args = wp_parse_args( $args, array(
 			'text'  => false,
 			'extra' => array(),
-		) ) );
+		) );
 
 		$options = array();
 
-		if ( false !== $text ) {
+		if ( false !== $args['text'] ) {
 			$options[] = array(
 				'value'    => '',
-				'selected' => ( $selected == array( 'foo' ) ),
-				'title'    => $text,
+				'selected' => ( $args['selected'] == array( 'foo' ) ),
+				'title'    => $args['text'],
 			);
 		}
 
-		foreach ( $choices as $value => $title ) {
+		foreach ( $args['choices'] as $value => $title ) {
 			$options[] = array(
 				'value'    => $value,
-				'selected' => ( $value == $selected ),
+				'selected' => ( $value == $args['selected'] ),
 				'title'    => $title,
 			);
 		}
 
 		$opts = '';
 		foreach ( $options as $option ) {
-			extract( $option );
-
-			$opts .= html( 'option', compact( 'value', 'selected' ), $title );
+			$opts .= html( 'option', array( 'value' => $option['value'], 'selected' => $option['selected'] ), $option['title'] );
 		}
 
-		$extra['name'] = $name;
+		$args['extra']['name'] = $args['name'];
 
-		$input = html( 'select', $extra, $opts );
+		$input = html( 'select', $args['extra'], $opts );
 
-		return scbFormField::add_label( $input, $desc, $desc_pos );
+		return scbFormField::add_label( $input, $args['desc'], $args['desc_pos'] );
 	}
 }
 
@@ -739,28 +742,27 @@ class scbRadiosField extends scbSelectField {
 	 * @return string
 	 */
 	protected function _render_specific( $args ) {
-		extract( $args );
 
-		if ( array( 'foo' ) == $selected ) {
+		if ( array( 'foo' ) == $args['selected'] ) {
 			// radio buttons should always have one option selected
-			$selected = key( $choices );
+			$args['selected'] = key( $args['choices'] );
 		}
 
 		$opts = '';
-		foreach ( $choices as $value => $title ) {
+		foreach ( $args['choices'] as $value => $title ) {
 			$single_input = scbFormField::_checkbox( array(
-				'name'     => $name,
+				'name'     => $args['name'],
 				'type'     => 'radio',
 				'value'    => $value,
-				'checked'  => ( $value == $selected ),
+				'checked'  => ( $value == $args['selected'] ),
 				'desc'     => $title,
 				'desc_pos' => 'after',
 			) );
 
-			$opts .= str_replace( scbForms::TOKEN, $single_input, $wrap_each );
+			$opts .= str_replace( scbForms::TOKEN, $single_input, $args['wrap_each'] );
 		}
 
-		return scbFormField::add_desc( $opts, $desc, $desc_pos );
+		return scbFormField::add_desc( $opts, $args['desc'], $args['desc_pos'] );
 	}
 }
 
@@ -789,26 +791,24 @@ class scbMultipleChoiceField extends scbFormField {
 			'checked' => null,
 		) );
 
-		extract( $args );
-
-		if ( !is_array( $checked ) )
-			$checked = array();
+		if ( ! is_array( $args['checked'] ) )
+			$args['checked'] = array();
 
 		$opts = '';
-		foreach ( $choices as $value => $title ) {
+		foreach ( $args['choices'] as $value => $title ) {
 			$single_input = scbFormField::_checkbox( array(
-				'name'     => $name . '[]',
+				'name'     => $args['name'] . '[]',
 				'type'     => 'checkbox',
 				'value'    => $value,
-				'checked'  => in_array( $value, $checked ),
+				'checked'  => in_array( $value, $args['checked'] ),
 				'desc'     => $title,
 				'desc_pos' => 'after',
 			) );
 
-			$opts .= str_replace( scbForms::TOKEN, $single_input, $wrap_each );
+			$opts .= str_replace( scbForms::TOKEN, $single_input, $args['wrap_each'] );
 		}
 
-		return scbFormField::add_desc( $opts, $desc, $desc_pos );
+		return scbFormField::add_desc( $opts, $args['desc'], $args['desc_pos'] );
 	}
 
 	/**
