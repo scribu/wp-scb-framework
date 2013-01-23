@@ -192,7 +192,7 @@ abstract class scbAdminPage {
 	 * @return bool
 	 */
 	function form_handler() {
-		if ( empty( $_POST['action'] ) )
+		if ( empty( $_POST['submit'] ) && empty( $_POST['action'] ) )
 			return false;
 
 		check_admin_referer( $this->nonce );
@@ -241,9 +241,9 @@ abstract class scbAdminPage {
 	 *
 	 * @return string
 	 */
-	function submit_button( $value = '', $action = 'action', $class = 'button' ) {
+	function submit_button( $value = '', $action = 'submit', $class = 'button' ) {
 
-		$args = is_array( $value ) ? $value : compact( 'value', 'action', 'button' );
+		$args = is_array( $value ) ? $value : compact( 'value', 'action', 'class' );
 		$args = wp_parse_args( $args, array(
 			'value'  => null,
 			'action' => $action,
