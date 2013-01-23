@@ -1,24 +1,44 @@
 <?php
 
-// Data-aware form generator
-
+/**
+ * Data-aware form generator
+ */
 class scbForms {
 
 	const TOKEN = '%input%';
 
+	/**
+	 * @param array|scbFormField_I $args
+	 * @param mixed                $value
+	 *
+	 * @return string
+	 */
 	static function input_with_value( $args, $value ) {
 		$field = scbFormField::create( $args );
 
 		return $field->render( $value );
 	}
 
+	/**
+	 * @param array|scbFormField_I $args
+	 * @param array                $formdata
+	 *
+	 * @return string
+	 */
 	static function input( $args, $formdata = null ) {
 		$field = scbFormField::create( $args );
 
 		return $field->render( scbForms::get_value( $args['name'], $formdata ) );
 	}
 
-	// Generates a table wrapped in a form
+	/**
+	 * Generates a table wrapped in a form
+	 *
+	 * @param array $rows
+	 * @param array $formdata
+	 *
+	 * @return string
+	 */
 	static function form_table( $rows, $formdata = null ) {
 		$output = '';
 		foreach ( $rows as $row )
@@ -29,7 +49,15 @@ class scbForms {
 		return $output;
 	}
 
-	// Generates a form
+	/**
+	 * Generates a form
+	 *
+	 * @param array  $inputs
+	 * @param array  $formdata
+	 * @param string $nonce
+	 *
+	 * @return string
+	 */
 	static function form( $inputs, $formdata = null, $nonce ) {
 		$output = '';
 		foreach ( $inputs as $input )
@@ -40,7 +68,14 @@ class scbForms {
 		return $output;
 	}
 
-	// Generates a table
+	/**
+	 * Generates a table
+	 *
+	 * @param array $rows
+	 * @param array $formdata
+	 *
+	 * @return string
+	 */
 	static function table( $rows, $formdata = null ) {
 		$output = '';
 		foreach ( $rows as $row )
@@ -51,7 +86,14 @@ class scbForms {
 		return $output;
 	}
 
-	// Generates a table row
+	/**
+	 * Generates a table row
+	 *
+	 * @param array $args
+	 * @param array $formdata
+	 *
+	 * @return string
+	 */
 	static function table_row( $args, $formdata = null ) {
 		return self::row_wrap( $args['title'], self::input( $args, $formdata ) );
 	}
@@ -59,11 +101,22 @@ class scbForms {
 
 // ____________WRAPPERS____________
 
-
+	/**
+	 * @param string $content
+	 * @param string $nonce
+	 *
+	 * @return string
+	 */
 	static function form_table_wrap( $content, $nonce = 'update_options' ) {
 		return self::form_wrap( self::table_wrap( $content ), $nonce );
 	}
 
+	/**
+	 * @param string $content
+	 * @param string $nonce
+	 *
+	 * @return string
+	 */
 	static function form_wrap( $content, $nonce = 'update_options' ) {
 		return html( "form method='post' action=''",
 			$content,
@@ -71,14 +124,25 @@ class scbForms {
 		);
 	}
 
+	/**
+	 * @param string $content
+	 *
+	 * @return string
+	 */
 	static function table_wrap( $content ) {
 		return html( "table class='form-table'", $content );
 	}
 
+	/**
+	 * @param string $title
+	 * @param string $content
+	 *
+	 * @return string
+	 */
 	static function row_wrap( $title, $content ) {
-		return html( "tr",
+		return html( 'tr',
 			html( "th scope='row'", $title ),
-			html( "td", $content )
+			html( 'td', $content )
 		);
 	}
 
@@ -111,9 +175,9 @@ class scbForms {
 	/**
 	 * Traverses the formdata and retrieves the correct value.
 	 *
-	 * @param array|string $name The name of the value
-	 * @param array $value The data that will be traversed
-	 * @param mixed $fallback The value returned when the key is not found
+	 * @param string $name     The name of the value
+	 * @param array  $value    The data that will be traversed
+	 * @param mixed  $fallback The value returned when the key is not found
 	 *
 	 * @return mixed
 	 */
@@ -131,8 +195,8 @@ class scbForms {
 	/**
 	 * Given a list of fields, validate some data.
 	 *
-	 * @param array $fields List of args that would be sent to scbForms::input()
-	 * @param array $data The data to validate. Defaults to $_POST
+	 * @param array $fields    List of args that would be sent to scbForms::input()
+	 * @param array $data      The data to validate. Defaults to $_POST
 	 * @param array $to_update Existing data to populate. Necessary for nested values
 	 *
 	 * @return array
@@ -161,8 +225,8 @@ class scbForms {
 	 * For single-choice fields, we can't distinguish either, because of how self::update_meta() works.
 	 * Therefore, the 'default' parameter is always ignored.
 	 *
-	 * @param array $args Field arguments.
-	 * @param int $object_id The object ID the metadata is attached to
+	 * @param array  $args      Field arguments.
+	 * @param int    $object_id The object ID the metadata is attached to
 	 * @param string $meta_type
 	 *
 	 * @return string
@@ -178,6 +242,12 @@ class scbForms {
 		return self::input_with_value( $args, $value );
 	}
 
+	/**
+	 * @param array  $fields
+	 * @param array  $data
+	 * @param int    $object_id
+	 * @param string $meta_type
+	 */
 	static function update_meta( $fields, $data, $object_id, $meta_type = 'post' ) {
 		foreach ( $fields as $field_args ) {
 			$key = $field_args['name'];
@@ -203,6 +273,11 @@ class scbForms {
 		}
 	}
 
+	/**
+	 * @param array  $arr
+	 * @param string $name
+	 * @param mixed  $value
+	 */
 	private static function set_value( &$arr, $name, $value ) {
 		$name = (array) $name;
 
@@ -226,9 +301,13 @@ class scbForms {
  * A wrapper for scbForms, containing the formdata
  */
 class scbForm {
-	protected $data = array();
+	protected $data   = array();
 	protected $prefix = array();
 
+	/**
+	 * @param array          $data
+	 * @param string|boolean $prefix
+	 */
 	function __construct( $data, $prefix = false ) {
 		if ( is_array( $data ) )
 			$this->data = $data;
@@ -237,6 +316,11 @@ class scbForm {
 			$this->prefix = (array) $prefix;
 	}
 
+	/**
+	 * @param string $path
+	 *
+	 * @return scbForm
+	 */
 	function traverse_to( $path ) {
 		$data = scbForms::get_value( $path, $this->data );
 
@@ -245,6 +329,11 @@ class scbForm {
 		return new scbForm( $data, $prefix );
 	}
 
+	/**
+	 * @param array $args
+	 *
+	 * @return string
+	 */
 	function input( $args ) {
 		$value = scbForms::get_value( $args['name'], $this->data );
 
@@ -256,7 +345,9 @@ class scbForm {
 	}
 }
 
-
+/**
+ * Interface for form fields.
+ */
 interface scbFormField_I {
 
 	/**
@@ -278,11 +369,18 @@ interface scbFormField_I {
 	function validate( $value );
 }
 
-
+/**
+ * Base class for form fields implementations.
+ */
 abstract class scbFormField implements scbFormField_I {
 
 	protected $args;
 
+	/**
+	 * @param array|scbFormField_I $args
+	 *
+	 * @return mixed false on failure or instance of form class
+	 */
 	public static function create( $args ) {
 		if ( is_a( $args, 'scbFormField_I' ) )
 			return $args;
@@ -305,9 +403,9 @@ abstract class scbFormField implements scbFormField_I {
 			$args['extra'] = shortcode_parse_atts( $args['extra'] );
 
 		$args = wp_parse_args( $args, array(
-			'desc' => '',
-			'desc_pos' => 'after',
-			'wrap' => scbForms::TOKEN,
+			'desc'      => '',
+			'desc_pos'  => 'after',
+			'wrap'      => scbForms::TOKEN,
 			'wrap_each' => scbForms::TOKEN,
 		) );
 
@@ -332,18 +430,36 @@ abstract class scbFormField implements scbFormField_I {
 		}
 	}
 
+	/**
+	 * @param array $args
+	 */
 	protected function __construct( $args ) {
 		$this->args = $args;
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return mixed
+	 */
 	public function __get( $key ) {
 		return $this->args[ $key ];
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return bool
+	 */
 	public function __isset( $key ) {
 		return isset( $this->args[ $key ] );
 	}
 
+	/**
+	 * @param mixed $value
+	 *
+	 * @return string
+	 */
 	public function render( $value = null ) {
 		if ( null === $value && isset( $this->default ) )
 			$value = $this->default;
@@ -358,19 +474,34 @@ abstract class scbFormField implements scbFormField_I {
 		return str_replace( scbForms::TOKEN, $this->_render( $args ), $this->wrap );
 	}
 
-	// Mutate the field arguments so that the value passed is rendered.
+	/**
+	 * Mutate the field arguments so that the value passed is rendered.
+	 *
+	 * @param array  $args
+	 * @param mixed  $value
+	 */
 	abstract protected function _set_value( &$args, $value );
 
-	// The actual rendering
+	/**
+	 * The actual rendering
+	 *
+	 * @param array $args
+	 */
 	abstract protected function _render( $args );
 
-	// Handle args for a single checkbox or radio input
+	/**
+	 * Handle args for a single checkbox or radio input
+	 *
+	 * @param array $args
+	 *
+	 * @return string
+	 */
 	protected static function _checkbox( $args ) {
 		$args = wp_parse_args( $args, array(
-			'value' => true,
-			'desc' => null,
+			'value'   => true,
+			'desc'    => null,
 			'checked' => false,
-			'extra' => array(),
+			'extra'   => array(),
 		) );
 
 		foreach ( $args as $key => &$val )
@@ -385,12 +516,18 @@ abstract class scbFormField implements scbFormField_I {
 		return self::_input_gen( $args );
 	}
 
-	// Generate html with the final args
+	/**
+	 * Generate html with the final args
+	 *
+	 * @param array $args
+	 *
+	 * @return string
+	 */
 	protected static function _input_gen( $args ) {
 		extract( wp_parse_args( $args, array(
 			'value' => null,
-			'desc' => null,
-			'extra' => array()
+			'desc'  => null,
+			'extra' => array(),
 		) ) );
 
 		$extra['name'] = $name;
@@ -399,17 +536,31 @@ abstract class scbFormField implements scbFormField_I {
 			$input = html( 'textarea', $extra, esc_textarea( $value ) );
 		} else {
 			$extra['value'] = $value;
-			$extra['type'] = $type;
+			$extra['type']  = $type;
 			$input = html( 'input', $extra );
 		}
 
 		return self::add_label( $input, $desc, $desc_pos );
 	}
 
+	/**
+	 * @param string $input
+	 * @param string $desc
+	 * @param string $desc_pos
+	 *
+	 * @return string
+	 */
 	protected static function add_label( $input, $desc, $desc_pos ) {
 		return html( 'label', self::add_desc( $input, $desc, $desc_pos ) ) . "\n";
 	}
 
+	/**
+	 * @param string $input
+	 * @param string $desc
+	 * @param string $desc_pos
+	 *
+	 * @return string
+	 */
 	protected static function add_desc( $input, $desc, $desc_pos ) {
 		if ( empty( $desc ) )
 			return $input;
@@ -420,6 +571,9 @@ abstract class scbFormField implements scbFormField_I {
 			return $input . ' ' . $desc;
 	}
 
+	/**
+	 * @param array $args
+	 */
 	private static function _expand_choices( &$args ) {
 		$choices =& $args['choices'];
 
@@ -433,26 +587,43 @@ abstract class scbFormField implements scbFormField_I {
 		}
 	}
 
+	/**
+	 * @param array $array
+	 *
+	 * @return bool
+	 */
 	private static function is_associative( $array ) {
 		$keys = array_keys( $array );
 		return array_keys( $keys ) !== $keys;
 	}
 }
 
-
+/**
+ * Text form field.
+ */
 class scbTextField extends scbFormField {
 
+	/**
+	 * @param string $value
+	 *
+	 * @return string
+	 */
 	public function validate( $value ) {
 		$sanitize = isset( $this->sanitize ) ? $this->sanitize : 'wp_filter_kses';
 
 		return call_user_func( $sanitize, $value, $this );
 	}
 
+	/**
+	 * @param array $args
+	 *
+	 * @return string
+	 */
 	protected function _render( $args ) {
 		$args = wp_parse_args( $args, array(
-			'value' => '',
+			'value'    => '',
 			'desc_pos' => 'after',
-			'extra' => array( 'class' => 'regular-text' ),
+			'extra'    => array( 'class' => 'regular-text' ),
 		) );
 
 		foreach ( $args as $key => &$val )
@@ -465,14 +636,25 @@ class scbTextField extends scbFormField {
 		return scbFormField::_input_gen( $args );
 	}
 
+	/**
+	 * @param array  $args
+	 * @param string $value
+	 */
 	protected function _set_value( &$args, $value ) {
 		$args['value'] = $value;
 	}
 }
 
-
+/**
+ * Base class for form fields with single choice.
+ */
 abstract class scbSingleChoiceField extends scbFormField {
 
+	/**
+	 * @param mixed $value
+	 *
+	 * @return mixed|null
+	 */
 	public function validate( $value ) {
 		if ( isset( $this->choices[ $value ] ) )
 			return $value;
@@ -480,46 +662,62 @@ abstract class scbSingleChoiceField extends scbFormField {
 		return null;
 	}
 
+	/**
+	 * @param array $args
+	 *
+	 * @return string
+	 */
 	protected function _render( $args ) {
 		$args = wp_parse_args( $args, array(
-			'numeric' => false,		// use numeric array instead of associative
-			'selected' => array( 'foo' ),	// hack to make default blank
+			'numeric'  => false, // use numeric array instead of associative
+			'selected' => array( 'foo' ), // hack to make default blank
 		) );
 
 		return $this->_render_specific( $args );
 	}
 
+	/**
+	 * @param array $args
+	 * @param mixed $value
+	 */
 	protected function _set_value( &$args, $value ) {
 		$args['selected'] = $value;
 	}
 
+	/**
+	 * @param array $args
+	 *
+	 * @return string
+	 */
 	abstract protected function _render_specific( $args );
 }
 
-
+/**
+ * Dropdown field.
+ */
 class scbSelectField extends scbSingleChoiceField {
 
 	protected function _render_specific( $args ) {
 		extract( wp_parse_args( $args, array(
-			'text' => false,
-			'extra' => array()
+			'text'  => false,
+			'extra' => array(),
 		) ) );
 
 		$options = array();
 
 		if ( false !== $text ) {
 			$options[] = array(
-				'value' => '',
+				'value'    => '',
 				'selected' => ( $selected == array( 'foo' ) ),
-				'title' => $text
+				'title'    => $text,
 			);
 		}
 
 		foreach ( $choices as $value => $title ) {
 			$options[] = array(
-				'value' => $value,
+				'value'    => $value,
 				'selected' => ( $value == $selected ),
-				'title' => $title
+				'title'    => $title,
 			);
 		}
 
@@ -538,9 +736,16 @@ class scbSelectField extends scbSingleChoiceField {
 	}
 }
 
-
+/**
+ * Radio field.
+ */
 class scbRadiosField extends scbSelectField {
 
+	/**
+	 * @param array $args
+	 *
+	 * @return string
+	 */
 	protected function _render_specific( $args ) {
 		extract( $args );
 
@@ -552,12 +757,12 @@ class scbRadiosField extends scbSelectField {
 		$opts = '';
 		foreach ( $choices as $value => $title ) {
 			$single_input = scbFormField::_checkbox( array(
-				'name' => $name,
-				'type' => 'radio',
-				'value' => $value,
-				'checked' => ( $value == $selected ),
-				'desc' => $title,
-				'desc_pos' => 'after'
+				'name'     => $name,
+				'type'     => 'radio',
+				'value'    => $value,
+				'checked'  => ( $value == $selected ),
+				'desc'     => $title,
+				'desc_pos' => 'after',
 			) );
 
 			$opts .= str_replace( scbForms::TOKEN, $single_input, $wrap_each );
@@ -567,16 +772,28 @@ class scbRadiosField extends scbSelectField {
 	}
 }
 
-
+/**
+ * Checkbox field with multiple choices.
+ */
 class scbMultipleChoiceField extends scbFormField {
 
+	/**
+	 * @param mixed $value
+	 *
+	 * @return array
+	 */
 	public function validate( $value ) {
 		return array_intersect( array_keys( $this->choices ), (array) $value );
 	}
 
+	/**
+	 * @param array $args
+	 *
+	 * @return string
+	 */
 	protected function _render( $args ) {
 		$args = wp_parse_args( $args, array(
-			'numeric' => false,		// use numeric array instead of associative
+			'numeric' => false, // use numeric array instead of associative
 			'checked' => null,
 		) );
 
@@ -588,12 +805,12 @@ class scbMultipleChoiceField extends scbFormField {
 		$opts = '';
 		foreach ( $choices as $value => $title ) {
 			$single_input = scbFormField::_checkbox( array(
-				'name' => $name . '[]',
-				'type' => 'checkbox',
-				'value' => $value,
-				'checked' => in_array( $value, $checked ),
-				'desc' => $title,
-				'desc_pos' => 'after'
+				'name'     => $name . '[]',
+				'type'     => 'checkbox',
+				'value'    => $value,
+				'checked'  => in_array( $value, $checked ),
+				'desc'     => $title,
+				'desc_pos' => 'after',
 			) );
 
 			$opts .= str_replace( scbForms::TOKEN, $single_input, $wrap_each );
@@ -602,24 +819,40 @@ class scbMultipleChoiceField extends scbFormField {
 		return scbFormField::add_desc( $opts, $desc, $desc_pos );
 	}
 
+	/**
+	 * @param array $args
+	 * @param mixed $value
+	 */
 	protected function _set_value( &$args, $value ) {
 		$args['checked'] = (array) $value;
 	}
 }
 
-
+/**
+ * Checkbox field.
+ */
 class scbSingleCheckboxField extends scbFormField {
 
+	/**
+	 * @param mixed $value
+	 *
+	 * @return boolean
+	 */
 	public function validate( $value ) {
 		return (bool) $value;
 	}
 
+	/**
+	 * @param array $args
+	 *
+	 * @return string
+	 */
 	protected function _render( $args ) {
 		$args = wp_parse_args( $args, array(
-			'value' => true,
-			'desc' => null,
+			'value'   => true,
+			'desc'    => null,
 			'checked' => false,
-			'extra' => array(),
+			'extra'   => array(),
 		) );
 
 		foreach ( $args as $key => &$val )
@@ -634,35 +867,64 @@ class scbSingleCheckboxField extends scbFormField {
 		return scbFormField::_input_gen( $args );
 	}
 
+	/**
+	 * @param array $args
+	 * @param mixed $value
+	 */
 	protected function _set_value( &$args, $value ) {
 		$args['checked'] = ( $value || ( isset( $args['value'] ) && $value == $args['value'] ) );
 	}
 }
 
-
+/**
+ * Wrapper field for custom callbacks.
+ */
 class scbCustomField implements scbFormField_I {
 
 	protected $args;
 
+	/**
+	 * @param array $args
+	 */
 	function __construct( $args ) {
 		$this->args = wp_parse_args( $args, array(
-			'render' => 'var_dump',
+			'render'   => 'var_dump',
 			'sanitize' => 'wp_filter_kses',
 		) );
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return mixed
+	 */
 	public function __get( $key ) {
 		return $this->args[ $key ];
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return boolean
+	 */
 	public function __isset( $key ) {
 		return isset( $this->args[ $key ] );
 	}
 
+	/**
+	 * @param mixed $value
+	 *
+	 * @return string
+	 */
 	public function render( $value = null ) {
 		return call_user_func( $this->render, $value, $this );
 	}
 
+	/**
+	 * @param mixed $value
+	 *
+	 * @return mixed
+	 */
 	public function validate( $value ) {
 		return call_user_func( $this->sanitize, $value, $this );
 	}
