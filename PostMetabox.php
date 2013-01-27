@@ -80,10 +80,8 @@ class scbPostMetabox {
 
 		$form_data = $this->before_display( $form_data, $post );
 
-		$form = $this->table( $form_fields, $form_data, $error_fields );
-
 		$this->before_form( $post );
-		echo $form;
+		echo $this->table( $form_fields, $form_data, $error_fields );
 		$this->after_form( $post );
 
 		delete_post_meta( $post->ID, '_error_data_' . $this->id );
