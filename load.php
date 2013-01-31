@@ -1,8 +1,8 @@
 <?php
 
-$GLOBALS['_scb_data'] = array( 57, __FILE__, array(
+$GLOBALS['_scb_data'] = array( 58, __FILE__, array(
 	'scbUtil', 'scbOptions', 'scbForms', 'scbTable',
-	'scbWidget', 'scbAdminPage', 'scbBoxesPage',
+	'scbWidget', 'scbAdminPage', 'scbBoxesPage', 'scbPostMetabox',
 	'scbCron', 'scbHooks',
 ) );
 
