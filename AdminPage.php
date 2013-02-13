@@ -248,11 +248,7 @@ abstract class scbAdminPage {
 			'value'  => null,
 			'action' => $action,
 			'class'  => $class,
-			'ajax'   => true,
 		) );
-
-		if ( ! $args['ajax'] )
-			$args['class'] .= ' no-ajax';
 
 		return get_submit_button( $args['value'], $args['class'], $args['action'] );
 	}
@@ -268,7 +264,6 @@ abstract class scbAdminPage {
 	 *  $this->form_wrap( $content, array(
 	 *      'text' => 'Save changes',
 	 *      'name' => 'action',
-	 *      'ajax' => true,
 	 *  ) );
 	 *
 	 * @see scbForms::form_wrap()
@@ -437,11 +432,6 @@ abstract class scbAdminPage {
 
 		add_action( 'load-' . $this->pagehook, array( $this, 'page_loaded' ) );
 
-		if ( $this->args['ajax_submit'] ) {
-			$this->ajax_response();
-			add_action( 'admin_footer', array( $this, 'ajax_submit' ), 20 );
-		}
-
 		add_action( 'admin_print_styles-' . $this->pagehook, array( $this, 'page_head' ) );
 	}
 
@@ -464,7 +454,6 @@ abstract class scbAdminPage {
 			'page_slug'             => '',
 			'nonce'                 => '',
 			'action_link'           => __( 'Settings', $this->textdomain ),
-			'ajax_submit'           => false,
 			'admin_action_priority' => 10,
 		) );
 
@@ -491,59 +480,6 @@ abstract class scbAdminPage {
 			return $actual_help;
 
 		return $help;
-	}
-
-	function ajax_response() {
-		if ( ! isset( $_POST['_ajax_submit'] ) || $_POST['_ajax_submit'] != $this->pagehook )
-			return;
-
-		$this->form_handler();
-		die;
-	}
-
-	function ajax_submit() {
-		global $page_hook;
-
-		if ( $page_hook != $this->pagehook )
-			return;
-?>
-<script type="text/javascript">
-jQuery( document ).ready( function( $ ){
-	var $spinner = $( new Image() ).attr( 'src', '<?php echo admin_url( 'images/wpspin_light.gif' ); ?>' );
-
-	$( ':submit' ).click( function( ev ){
-		var $submit = $( this );
-		var $form = $submit.parents( 'form' );
-
-		if ( $submit.hasClass( 'no-ajax' ) || $form.attr( 'method' ).toLowerCase() != 'post' )
-			return true;
-
-		var $this_spinner = $spinner.clone();
-
-		$submit.before( $this_spinner ).hide();
-
-		var data = $form.serializeArray();
-		data.push( {name: $submit.attr( 'name' ), value: $submit.val()} );
-		data.push( {name: '_ajax_submit', value: '<?php echo $this->pagehook; ?>'} );
-
-		$.post( location.href, data, function( response ){
-			var $prev = $( '.wrap > .updated, .wrap > .error' );
-			var $msg = $( response ).hide().insertAfter( $( '.wrap h2' ) );
-			if ( $prev.length > 0 )
-				$prev.fadeOut( 'slow', function(){ $msg.fadeIn( 'slow' ); } );
-			else
-				$msg.fadeIn( 'slow' );
-
-			$this_spinner.hide();
-			$submit.show();
-		} );
-
-		ev.stopPropagation();
-		ev.preventDefault();
-	} );
-} );
-</script>
-<?php
 	}
 
 	function _page_content_hook() {
