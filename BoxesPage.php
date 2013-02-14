@@ -166,32 +166,51 @@ abstract class scbBoxesPage extends scbAdminPage {
 		) );
 
 		$registered = array();
+
 		foreach ( $this->boxes as $box_args ) {
-			foreach ( array( 'name', 'title', 'context', 'priority', 'args' ) as $i => $arg ) {
-				if ( isset( $box_args[$i] ) )
-					$$arg = $box_args[$i];
-			}
+			$box_args = self::numeric_to_assoc( $box_args, array( 'name', 'title', 'context', 'priority', 'args' ) );
 
-			if ( empty( $title ) )
-				$title = ucfirst( $name );
-			if ( empty( $context ) )
-				$context = 'normal';
-			if ( empty( $priority ) )
-				$priority = 'default';
-			if ( empty( $args ) )
-				$args = array();
+			$defaults = array(
+				'title' => ucfirst( $box_args['name'] ),
+				'context' => 'normal',
+				'priority' => 'default',
+				'args' => array()
+			);
+			$box_args = array_merge( $defaults, $box_args );
 
-			if ( isset( $registered[$name] ) ) {
-				if ( empty( $args ) )
+			$name = $box_args['name'];
+
+			if ( isset( $registered[ $name ] ) ) {
+				if ( empty( $box_args['args'] ) ) {
 					trigger_error( "Duplicate box name: $name", E_USER_NOTICE );
+				}
 
 				$name = $this->_increment( $name );
 			} else {
-				$registered[$name] = true;
+				$registered[ $name ] = true;
 			}
 
-			add_meta_box( $name, $title, array( $this, '_intermediate_callback' ), $this->pagehook, $context, $priority, $args );
+			add_meta_box(
+				$name,
+				$box_args['title'],
+				array( $this, '_intermediate_callback' ),
+				$this->pagehook,
+				$box_args['context'],
+				$box_args['priority'],
+				$box_args['args']
+			);
 		}
+	}
+
+	private static function numeric_to_assoc( $argv, $keys ) {
+		$args = array();
+
+		foreach ( $keys as $i => $key ) {
+			if ( isset( $argv[ $i ] ) )
+				$args[ $key ] = $argv[ $i ];
+		}
+
+		return $args;
 	}
 
 	// Since we don't pass an object to do_meta_boxes(),
