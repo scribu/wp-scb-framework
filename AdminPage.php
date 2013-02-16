@@ -9,6 +9,7 @@ abstract class scbAdminPage {
 	 * $parent (string)  (default: options-general.php)
 	 * $capability (string)  (default: 'manage_options')
 	 * $menu_title (string)  (default: $page_title)
+	 * $submenu_title (string)  (default: $menu_title)
 	 * $page_slug (string)  (default: sanitized $page_title)
 	 * $toplevel (string)  If not empty, will create a new top level menu (for expected values see http://codex.wordpress.org/Administration_Menus#Using_add_submenu_page)
 	 * - $icon_url (string)  URL to an icon for the top level menu
@@ -421,9 +422,18 @@ abstract class scbAdminPage {
 				$this->args['menu_title'],
 				$this->args['capability'],
 				$this->args['page_slug'],
-				array( $this, '_page_content_hook' ),
+				null,
 				$this->args['icon_url'],
 				$this->args['position']
+			);
+
+			add_submenu_page(
+				$this->args['page_slug'],
+				$this->args['page_title'],
+				$this->args['submenu_title'],
+				$this->args['capability'],
+				$this->args['page_slug'],
+				array( $this, '_page_content_hook' )
 			);
 		}
 
@@ -456,6 +466,9 @@ abstract class scbAdminPage {
 			'action_link'           => __( 'Settings', $this->textdomain ),
 			'admin_action_priority' => 10,
 		) );
+
+		if ( empty( $this->args['submenu_title'] ) )
+			$this->args['submenu_title'] = $this->args['menu_title'];
 
 		if ( empty( $this->args['page_slug'] ) )
 			$this->args['page_slug'] = sanitize_title_with_dashes( $this->args['menu_title'] );
