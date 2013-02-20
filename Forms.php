@@ -662,8 +662,13 @@ abstract class scbSingleChoiceField extends scbFormField {
 	protected function _render( $args ) {
 		$args = wp_parse_args( $args, array(
 			'numeric'  => false, // use numeric array instead of associative
-			'selected' => array( 'foo' ), // hack to make default blank
 		) );
+
+		if ( isset( $args['selected'] ) ) {
+			$args['selected'] = (string) $args['selected'];
+		} else {
+			$args['selected'] = array('foo');  // hack to make default blank
+		}
 
 		return $this->_render_specific( $args );
 	}
@@ -705,12 +710,14 @@ class scbSelectField extends scbSingleChoiceField {
 		if ( false !== $args['text'] ) {
 			$options[] = array(
 				'value'    => '',
-				'selected' => ( $args['selected'] == array( 'foo' ) ),
+				'selected' => ( $args['selected'] === array( 'foo' ) ),
 				'title'    => $args['text'],
 			);
 		}
 
 		foreach ( $args['choices'] as $value => $title ) {
+			$value = (string) $value;
+
 			$options[] = array(
 				'value'    => $value,
 				'selected' => ( $value == $args['selected'] ),
@@ -743,13 +750,15 @@ class scbRadiosField extends scbSelectField {
 	 */
 	protected function _render_specific( $args ) {
 
-		if ( array( 'foo' ) == $args['selected'] ) {
+		if ( array( 'foo' ) === $args['selected'] ) {
 			// radio buttons should always have one option selected
 			$args['selected'] = key( $args['choices'] );
 		}
 
 		$opts = '';
 		foreach ( $args['choices'] as $value => $title ) {
+			$value = (string) $value;
+
 			$single_input = scbFormField::_checkbox( array(
 				'name'     => $args['name'],
 				'type'     => 'radio',
