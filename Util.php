@@ -137,6 +137,26 @@ function scb_list_fold( $list, $key, $value ) {
 	return $r;
 }
 
+/**
+ * Splits a list into sets, grouped by the result of running each value through $fn.
+ *
+ * @param array List of items to be partitioned
+ * @param callback Function that takes an element and returns a string key
+ */
+function scb_list_group_by( $list, $fn ) {
+	$groups = array();
+
+	foreach ( $list as $item ) {
+		$key = call_user_func( $fn, $item );
+
+		if ( null === $key )
+			continue;
+
+		$groups[ $key ][] = $item;
+	}
+
+	return $groups;
+}
 
 //_____Minimalist HTML framework_____
 
