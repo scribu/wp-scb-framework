@@ -45,10 +45,26 @@ function scb_register_table( $key, $name = false ) {
 	$wpdb->$key = $wpdb->prefix . $name;
 }
 
-function scb_install_table( $key, $columns, $upgrade_method = 'dbDelta' ) {
+/**
+ * Runs the SQL query for installing/upgrading a table
+ *
+ * @param string $key The key used in scb_register_table()
+ * @param string $columns The SQL columns for the CREATE TABLE statement
+ * @param array $opts Various other options
+ */
+function scb_install_table( $key, $columns, $opts = array() ) {
 	global $wpdb;
 
 	$full_table_name = $wpdb->$key;
+
+	if ( is_string( $opts ) ) {
+		$opts = array( 'upgrade_method' => $opts );
+	}
+
+	$opts = wp_parse_args( $opts, array(
+		'upgrade_method' => 'dbDelta',
+		'table_options' => '',
+	) );
 
 	$charset_collate = '';
 	if ( $wpdb->has_cap( 'collation' ) ) {
@@ -58,16 +74,18 @@ function scb_install_table( $key, $columns, $upgrade_method = 'dbDelta' ) {
 			$charset_collate .= " COLLATE $wpdb->collate";
 	}
 
-	if ( 'dbDelta' == $upgrade_method ) {
+	$table_options = $charset_collate . ' ' . $opts['table_options'];
+
+	if ( 'dbDelta' == $opts['upgrade_method'] ) {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( "CREATE TABLE $full_table_name ( $columns ) $charset_collate" );
+		dbDelta( "CREATE TABLE $full_table_name ( $columns ) $table_options" );
 		return;
 	}
 
-	if ( 'delete_first' == $upgrade_method )
+	if ( 'delete_first' == $opts['upgrade_method'] )
 		$wpdb->query( "DROP TABLE IF EXISTS $full_table_name;" );
 
-	$wpdb->query( "CREATE TABLE IF NOT EXISTS $full_table_name ( $columns ) $charset_collate;" );
+	$wpdb->query( "CREATE TABLE IF NOT EXISTS $full_table_name ( $columns ) $table_options;" );
 }
 
 function scb_uninstall_table( $key ) {
