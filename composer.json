@@ -17,6 +17,6 @@
 	},
 	"autoload"   : {
 		"classmap": ["."],
-		"files"   : ["functions.php"]
+		"files"   : ["load-composer.php"]
 	}
 }
