@@ -12,7 +12,8 @@
 	],
 	"support"    : {
 		"issues": "https://github.com/scribu/wp-scb-framework/issues",
-		"source": "https://github.com/scribu/wp-scb-framework"
+		"source": "https://github.com/scribu/wp-scb-framework",
+		"wiki": "https://github.com/scribu/wp-scb-framework/wiki"
 	},
 	"autoload"   : {
 		"classmap": ["."],
