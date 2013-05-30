@@ -605,7 +605,7 @@ class scbTextField extends scbFormField {
 	 * @return string
 	 */
 	public function validate( $value ) {
-		$sanitize = isset( $this->sanitize ) ? $this->sanitize : 'wp_filter_kses';
+		$sanitize = isset( $this->sanitize ) ? $this->sanitize : 'wp_kses_data';
 
 		return call_user_func( $sanitize, $value, $this );
 	}
