@@ -213,7 +213,7 @@ abstract class scbAdminPage {
 
 		$this->options->set( $new_data );
 
-		$this->admin_msg();
+		add_action( 'admin_notices', array( $this, 'admin_msg' ) );
 
 		return true;
 	}
