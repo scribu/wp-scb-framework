@@ -174,7 +174,7 @@ class scbPostMetabox {
 	private function get_meta( $post_id ) {
 		$meta = get_post_custom( $post_id );
 		foreach ( $meta as $key => $values )
-			$meta[$key] = $meta[$key][0];
+			$meta[ $key ] = maybe_unserialize( $meta[ $key ][0] );
 
 		return $meta;
 	}
