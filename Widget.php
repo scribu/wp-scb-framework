@@ -24,8 +24,6 @@ abstract class scbWidget extends WP_Widget {
 
 	// A pre-filled method, for convenience
 	function widget( $args, $instance ) {
-		$instance = wp_parse_args( $instance, $this->defaults );
-
 		extract( $args );
 
 		echo $before_widget;
