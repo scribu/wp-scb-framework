@@ -48,8 +48,8 @@ abstract class scbWidget extends WP_Widget {
 	// See scbForms::input()
 	// Allows extra parameter $args['title']
 	protected function input( $args, $formdata = array() ) {
-        if ( $this->number == '__i__' )
-            $formdata = wp_parse_args( $formdata, $this->defaults );
+        if ( empty ( $formdata ) )
+            $formdata = $this->defaults;
 
 		$prefix = array( 'widget-' . $this->id_base, $this->number );
 
