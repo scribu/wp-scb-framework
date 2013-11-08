@@ -24,8 +24,6 @@ abstract class scbWidget extends WP_Widget {
 
 	// A pre-filled method, for convenience
 	function widget( $args, $instance ) {
-		$instance = wp_parse_args( $instance, $this->defaults );
-
 		extract( $args );
 
 		echo $before_widget;
@@ -50,6 +48,9 @@ abstract class scbWidget extends WP_Widget {
 	// See scbForms::input()
 	// Allows extra parameter $args['title']
 	protected function input( $args, $formdata = array() ) {
+        if ( empty ( $formdata ) )
+            $formdata = $this->defaults;
+
 		$prefix = array( 'widget-' . $this->id_base, $this->number );
 
 		$form = new scbForm( $formdata, $prefix );
