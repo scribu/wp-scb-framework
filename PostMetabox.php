@@ -72,7 +72,7 @@ class scbPostMetabox {
 		$error_fields = array();
 
 		if ( isset( $form_data['_error_data_' . $this->id ] ) ) {
-			$data = unserialize( $form_data['_error_data_' . $this->id ] );
+			$data = maybe_unserialize( $form_data['_error_data_' . $this->id ] );
 
 			$error_fields = $data['fields'];
 			$form_data = $data['data'];
