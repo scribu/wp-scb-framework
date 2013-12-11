@@ -28,7 +28,9 @@ class scbUtil {
 		$content = str_replace( array( "'", "\n" ), array( '"', '' ), ob_get_clean() );
 
 		echo "<script type='text/javascript'>\n";
+		echo "//<![CDATA[";
 		echo "jQuery(function ($) { $('head').prepend('$content'); });\n";
+		echo "//]]>";
 		echo "</script>";
 	}
 
