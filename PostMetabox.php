@@ -167,7 +167,7 @@ class scbPostMetabox {
 		return $post_data;
 	}
 
-	protected function validate_post_data( $post_data ) {
+	protected function validate_post_data( $post_data, $post_id ) {
 		return false;
 	}
 
