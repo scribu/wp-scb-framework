@@ -76,6 +76,8 @@ class scbPostMetabox {
 
 			$error_fields = $data['fields'];
 			$form_data = $data['data'];
+
+			$this->display_notices( $data['messages'], 'error' );
 		}
 
 		$form_data = $this->before_display( $form_data, $post );
@@ -102,12 +104,22 @@ class scbPostMetabox {
 		$input = scbForms::input( $row, $formdata );
 
 		// If row has an error, highlight it
-		$style = ( in_array( $row['name'], $errors ) ) ? 'style= "background-color: #FFCCCC"' : '';
+		$style = ( in_array( $row['name'], $errors ) ) ? 'style="background-color: #FFCCCC"' : '';
 
 		return html( 'tr',
 			html( "th $style scope='row'", $row['title'] ),
 			html( "td $style", $input )
 		);
+	}
+
+	// Displays notices
+	public function display_notices( $notices, $class = 'updated' ) {
+		// add inline class so the notices stays in metabox
+		$class .= ' inline';
+
+		foreach ( (array) $notices as $notice ) {
+			echo scb_admin_notice( $notice, $class );
+		}
 	}
 
 	// Display some extra HTML before the form
@@ -149,6 +161,7 @@ class scbPostMetabox {
 
 			$error_data = array(
 				'fields' => $is_valid->get_error_codes(),
+				'messages' => $is_valid->get_error_messages(),
 				'data' => $to_update
 			);
 			update_post_meta( $post_id, '_error_data_' . $this->id, $error_data );
