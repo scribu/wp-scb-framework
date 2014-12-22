@@ -13,13 +13,15 @@ abstract class scbWidget extends WP_Widget {
 		add_action( 'widgets_init', array( __CLASS__, '_scb_register' ) );
 
 		// for auto-uninstall
-		if ( $file && $base && class_exists( 'scbOptions' ) )
+		if ( $file && $base && class_exists( 'scbOptions' ) ) {
 			new scbOptions( "widget_$base", $file );
+		}
 	}
 
 	static function _scb_register() {
-		foreach ( self::$scb_widgets as $widget )
+		foreach ( self::$scb_widgets as $widget ) {
 			register_widget( $widget );
+		}
 	}
 
 	// A pre-filled method, for convenience
@@ -32,8 +34,9 @@ abstract class scbWidget extends WP_Widget {
 
 		$title = apply_filters( 'widget_title', isset( $instance['title'] ) ? $instance['title'] : '', $instance, $this->id_base );
 
-		if ( ! empty( $title ) )
+		if ( ! empty( $title ) ) {
 			echo $before_title . $title . $after_title;
+		}
 
 		$this->content( $instance );
 
@@ -41,7 +44,7 @@ abstract class scbWidget extends WP_Widget {
 	}
 
 	// This is where the actual widget content goes
-	function content( $instance ) {}
+	function content( $instance ) { }
 
 
 //_____HELPER METHODS_____
@@ -55,21 +58,25 @@ abstract class scbWidget extends WP_Widget {
 		$form = new scbForm( $formdata, $prefix );
 
 		// Add default class
-		if ( !isset( $args['extra'] ) && 'text' == $args['type'] )
+		if ( ! isset( $args['extra'] ) && 'text' == $args['type'] ) {
 			$args['extra'] = array( 'class' => 'widefat' );
+		}
 
 		// Add default label position
-		if ( !in_array( $args['type'], array( 'checkbox', 'radio' ) ) && empty( $args['desc_pos'] ) )
+		if ( ! in_array( $args['type'], array( 'checkbox', 'radio' ) ) && empty( $args['desc_pos'] ) ) {
 			$args['desc_pos'] = 'before';
+		}
 
 		$name = $args['name'];
 
-		if ( !is_array( $name ) && '[]' == substr( $name, -2 ) )
+		if ( ! is_array( $name ) && '[]' == substr( $name, -2 ) ) {
 			$name = array( substr( $name, 0, -2 ), '' );
+		}
 
 		$args['name'] = $name;
 
 		return $form->input( $args );
 	}
+
 }
 

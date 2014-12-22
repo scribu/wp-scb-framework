@@ -18,8 +18,9 @@ abstract class scbBoxesPage extends scbAdminPage {
 	}
 
 	function page_init() {
-		if ( !isset( $this->args['columns'] ) )
+		if ( ! isset( $this->args['columns'] ) ) {
 			$this->args['columns'] = 2;
+		}
 
 		parent::page_init();
 
@@ -79,29 +80,33 @@ abstract class scbBoxesPage extends scbAdminPage {
 			$hide2 = $hide3 = $hide4 = '';
 			switch ( $screen_layout_columns ) {
 				case 4:
-					if( !isset( $this->args['column_widths'] ) )
+					if ( ! isset( $this->args['column_widths'] ) ) {
 						$this->args['column_widths'] = array( 24.5, 24.5, 24.5, 24.5 );
+					}
 					break;
 				case 3:
-					if( !isset( $this->args['column_widths'] ) )
+					if ( ! isset( $this->args['column_widths'] ) ) {
 						$this->args['column_widths'] = array( 32.67, 32.67, 32.67 );
+					}
 					$hide4 = 'display:none;';
 					break;
 				case 2:
-					if( !isset( $this->args['column_widths'] ) )
+					if ( ! isset( $this->args['column_widths'] ) ) {
 						$this->args['column_widths'] = array( 49, 49 );
+					}
 					$hide3 = $hide4 = 'display:none;';
 					break;
 				default:
-					if( !isset( $this->args['column_widths'] ) )
+					if ( ! isset( $this->args['column_widths'] ) ) {
 						$this->args['column_widths'] = array( 98 );
+					}
 					$hide2 = $hide3 = $hide4 = 'display:none;';
 			}
 
 			$this->args['column_widths'] = array_pad( $this->args['column_widths'], 4, 0 );
 		}
 ?>
-<div id='<?php echo $this->pagehook ?>-widgets' class='metabox-holder'>
+<div id='<?php echo $this->pagehook; ?>-widgets' class='metabox-holder'>
 <?php
 	echo "\t<div class='postbox-container' style='width:{$this->args['column_widths'][0]}%'>\n";
 	do_meta_boxes( $this->pagehook, 'normal', '' );
@@ -125,8 +130,9 @@ abstract class scbBoxesPage extends scbAdminPage {
 	}
 
 	function form_handler() {
-		if ( empty( $_POST ) )
+		if ( empty( $_POST ) ) {
 			return;
+		}
 
 		check_admin_referer( $this->nonce );
 
@@ -136,8 +142,9 @@ abstract class scbBoxesPage extends scbAdminPage {
 
 			$handler = $box[0] . '_handler';
 
-			if ( method_exists( $this, $handler ) )
+			if ( method_exists( $this, $handler ) ) {
 				call_user_func_array( array( $this, $handler ), $args );
+			}
 		}
 	}
 
@@ -146,8 +153,9 @@ abstract class scbBoxesPage extends scbAdminPage {
 
 		$hook = str_replace( '-', '', $this->pagehook );
 
-		foreach ( array( 'metaboxhidden', 'closedpostboxes', 'wp_metaboxorder', 'screen_layout' ) as $option )
+		foreach ( array( 'metaboxhidden', 'closedpostboxes', 'wp_metaboxorder', 'screen_layout' ) as $option ) {
 			$keys[] = "'{$option}_{$hook}'";
+		}
 
 		$keys = '( ' . implode( ', ', $keys ) . ' )';
 
@@ -206,8 +214,9 @@ abstract class scbBoxesPage extends scbAdminPage {
 		$args = array();
 
 		foreach ( $keys as $i => $key ) {
-			if ( isset( $argv[ $i ] ) )
+			if ( isset( $argv[ $i ] ) ) {
 				$args[ $key ] = $argv[ $i ];
+			}
 		}
 
 		return $args;
@@ -223,10 +232,11 @@ abstract class scbBoxesPage extends scbAdminPage {
 
 	private function _increment( $name ) {
 		$parts = explode( '-', $name );
-		if ( isset( $parts[1] ) )
+		if ( isset( $parts[1] ) ) {
 			$parts[1]++;
-		else
+		} else {
 			$parts[1] = 2;
+		}
 
 		return implode( '-', $parts );
 	}
@@ -255,6 +265,4 @@ EOT
 <?php
 	}
 }
-
-
 

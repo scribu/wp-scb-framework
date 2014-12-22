@@ -20,14 +20,15 @@ class scbHooks {
 	}
 
 	private static function _print( $tag, $callback, $prio, $argc ) {
-		$static = !is_object( $callback[0] );
+		$static = ! is_object( $callback[0] );
 
-		if ( self::$mangle_name )
+		if ( self::$mangle_name ) {
 			$class = $static ? '__CLASS__' : '$this';
-		else if ( $static )
+		} else if ( $static ) {
 			$class = "'" . $callback[0] . "'";
-		else
+		} else {
 			$class = '$' . get_class( $callback[0] );
+		}
 
 		$func = "array( $class, '$callback[1]' )";
 
@@ -36,8 +37,9 @@ class scbHooks {
 		if ( $prio != 10 || $argc > 1 ) {
 			echo ", $prio";
 
-			if ( $argc > 1 )
+			if ( $argc > 1 ) {
 				echo ", $argc";
+			}
 		}
 
 		echo " );\n";
@@ -47,7 +49,7 @@ class scbHooks {
 		$reflection = new ReflectionClass( $class );
 
 		foreach ( $reflection->getMethods() as $method ) {
-			if ( $method->isPublic() && !$method->isConstructor() ) {
+			if ( $method->isPublic() && ! $method->isConstructor() ) {
 				$comment = $method->getDocComment();
 
 				if ( preg_match( '/@nohook[ \t\*\n]+/', $comment ) ) {
@@ -55,10 +57,11 @@ class scbHooks {
 				}
 
 				preg_match_all( '/@hook:?\s+([^\s]+)/', $comment, $matches ) ? $matches[1] : $method->name;
-				if ( empty( $matches[1] ) )
+				if ( empty( $matches[1] ) ) {
 					$hooks = array( $method->name );
-				else
+				} else {
 					$hooks = $matches[1];
+				}
 
 				$priority = preg_match( '/@priority:?\s+(\d+)/', $comment, $matches ) ? $matches[1] : 10;
 
@@ -67,6 +70,8 @@ class scbHooks {
 				}
 			}
 		}
+
 	}
+
 }
 

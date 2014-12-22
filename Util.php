@@ -8,8 +8,9 @@ class scbUtil {
 	static function do_scripts( $handles ) {
 		global $wp_scripts;
 
-		if ( ! is_a( $wp_scripts, 'WP_Scripts' ) )
+		if ( ! is_a( $wp_scripts, 'WP_Scripts' ) ) {
 			$wp_scripts = new WP_Scripts();
+		}
 
 		$wp_scripts->do_items( ( array ) $handles );
 	}
@@ -20,8 +21,9 @@ class scbUtil {
 
 		global $wp_styles;
 
-		if ( ! is_a( $wp_styles, 'WP_Styles' ) )
+		if ( ! is_a( $wp_styles, 'WP_Styles' ) ) {
 			$wp_styles = new WP_Styles();
+		}
 
 		ob_start();
 		$wp_styles->do_items( ( array ) $handles );
@@ -36,10 +38,11 @@ class scbUtil {
 
 	// Enable delayed activation; to be used with scb_init()
 	static function add_activation_hook( $plugin, $callback ) {
-		if ( defined( 'SCB_LOAD_MU' ) )
+		if ( defined( 'SCB_LOAD_MU' ) ) {
 			register_activation_hook( $plugin, $callback );
-		else
+		} else {
 			add_action( 'scb_activation_' . plugin_basename( $plugin ), $callback );
+		}
 	}
 
 	// For debugging
@@ -50,8 +53,9 @@ class scbUtil {
 	// Allows more than one uninstall hooks.
 	// Also prevents an UPDATE query on each page load.
 	static function add_uninstall_hook( $plugin, $callback ) {
-		if ( !is_admin() )
+		if ( ! is_admin() ) {
 			return;
+		}
 
 		register_uninstall_hook( $plugin, '__return_false' );	// dummy
 
@@ -99,8 +103,9 @@ class scbUtil {
 
 	// Prepare an array for an IN statement
 	static function array_to_sql( $values ) {
-		foreach ( $values as &$val )
+		foreach ( $values as &$val ) {
 			$val = "'" . esc_sql( trim( $val ) ) . "'";
+		}
 
 		return implode( ',', $values );
 	}
@@ -109,8 +114,9 @@ class scbUtil {
 	static function split_at( $delim, $str ) {
 		$i = strpos( $str, $delim );
 
-		if ( false === $i )
+		if ( false === $i ) {
 			return false;
+		}
 
 		$start = substr( $str, 0, $i );
 		$finish = substr( $str, $i );
@@ -129,11 +135,13 @@ function scb_list_fold( $list, $key, $value ) {
 	$r = array();
 
 	if ( is_array( reset( $list ) ) ) {
-		foreach ( $list as $item )
+		foreach ( $list as $item ) {
 			$r[ $item[ $key ] ] = $item[ $value ];
+		}
 	} else {
-		foreach ( $list as $item )
+		foreach ( $list as $item ) {
 			$r[ $item->$key ] = $item->$value;
+		}
 	}
 
 	return $r;
@@ -151,8 +159,9 @@ function scb_list_group_by( $list, $fn ) {
 	foreach ( $list as $item ) {
 		$key = call_user_func( $fn, $item );
 
-		if ( null === $key )
+		if ( null === $key ) {
 			continue;
+		}
 
 		$groups[ $key ][] = $item;
 	}
@@ -171,8 +180,9 @@ function scb_list_group_by( $list, $fn ) {
 function scb_register_table( $key, $name = false ) {
 	global $wpdb;
 
-	if ( !$name )
+	if ( ! $name ) {
 		$name = $key;
+	}
 
 	$wpdb->tables[] = $name;
 	$wpdb->$key = $wpdb->prefix . $name;
@@ -201,10 +211,12 @@ function scb_install_table( $key, $columns, $opts = array() ) {
 
 	$charset_collate = '';
 	if ( $wpdb->has_cap( 'collation' ) ) {
-		if ( ! empty( $wpdb->charset ) )
+		if ( ! empty( $wpdb->charset ) ) {
 			$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
-		if ( ! empty( $wpdb->collate ) )
+		}
+		if ( ! empty( $wpdb->collate ) ) {
 			$charset_collate .= " COLLATE $wpdb->collate";
+		}
 	}
 
 	$table_options = $charset_collate . ' ' . $opts['table_options'];
@@ -215,8 +227,9 @@ function scb_install_table( $key, $columns, $opts = array() ) {
 		return;
 	}
 
-	if ( 'delete_first' == $opts['upgrade_method'] )
+	if ( 'delete_first' == $opts['upgrade_method'] ) {
 		$wpdb->query( "DROP TABLE IF EXISTS $full_table_name;" );
+	}
 
 	$wpdb->query( "CREATE TABLE IF NOT EXISTS $full_table_name ( $columns ) $table_options;" );
 }
@@ -244,11 +257,13 @@ function html( $tag ) {
 		$closing = $tag;
 		$attributes = array_shift( $args );
 		foreach ( $attributes as $key => $value ) {
-			if ( false === $value )
+			if ( false === $value ) {
 				continue;
+			}
 
-			if ( true === $value )
+			if ( true === $value ) {
 				$value = $key;
+			}
 
 			$tag .= ' ' . $key . '="' . esc_attr( $value ) . '"';
 		}
@@ -269,21 +284,24 @@ endif;
 // Generate an <a> tag
 if ( ! function_exists( 'html_link' ) ):
 function html_link( $url, $title = '' ) {
-	if ( empty( $title ) )
+	if ( empty( $title ) ) {
 		$title = $url;
+	}
 
 	return html( 'a', array( 'href' => $url ), $title );
 }
 endif;
 
 function scb_get_query_flags( $wp_query = null ) {
-	if ( !$wp_query )
+	if ( ! $wp_query ) {
 		$wp_query = $GLOBALS['wp_query'];
+	}
 
 	$flags = array();
 	foreach ( get_object_vars( $wp_query ) as $key => $val ) {
-		if ( 'is_' == substr( $key, 0, 3 ) && $val )
+		if ( 'is_' == substr( $key, 0, 3 ) && $val ) {
 			$flags[] = substr( $key, 3 );
+		}
 	}
 
 	return $flags;

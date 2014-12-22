@@ -64,10 +64,11 @@ class scbOptions {
 	 * @return null
 	 */
 	public function set( $field, $value = '' ) {
-		if ( is_array( $field ) )
+		if ( is_array( $field ) ) {
 			$newdata = $field;
-		else
+		} else {
 			$newdata = array( $field => $value );
+		}
 
 		$this->update( array_merge( $this->get(), $newdata ) );
 	}
@@ -98,8 +99,9 @@ class scbOptions {
 	 * @return null
 	 */
 	public function update( $newdata, $clean = true ) {
-		if ( $clean )
+		if ( $clean ) {
 			$newdata = $this->_clean( $newdata );
+		}
 
 		update_option( $this->key, array_merge( $this->get(), $newdata ) );
 	}
@@ -143,7 +145,7 @@ class scbOptions {
 	// Magic method: isset( $options->field )
 	function __isset( $field ) {
 		$data = $this->get();
-		return isset( $data[$field] );
+		return isset( $data[ $field ] );
 	}
 }
 

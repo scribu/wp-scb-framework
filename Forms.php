@@ -41,8 +41,9 @@ class scbForms {
 	 */
 	static function form_table( $rows, $formdata = null ) {
 		$output = '';
-		foreach ( $rows as $row )
+		foreach ( $rows as $row ) {
 			$output .= self::table_row( $row, $formdata );
+		}
 
 		$output = self::form_table_wrap( $output );
 
@@ -60,8 +61,9 @@ class scbForms {
 	 */
 	static function form( $inputs, $formdata = null, $nonce ) {
 		$output = '';
-		foreach ( $inputs as $input )
+		foreach ( $inputs as $input ) {
 			$output .= self::input( $input, $formdata );
+		}
 
 		$output = self::form_wrap( $output, $nonce );
 
@@ -78,8 +80,9 @@ class scbForms {
 	 */
 	static function table( $rows, $formdata = null ) {
 		$output = '';
-		foreach ( $rows as $row )
+		foreach ( $rows as $row ) {
 			$output .= self::table_row( $row, $formdata );
+		}
 
 		$output = self::table_wrap( $output );
 
@@ -183,10 +186,11 @@ class scbForms {
 	 */
 	static function get_value( $name, $value, $fallback = null ) {
 		foreach ( (array) $name as $key ) {
-			if ( !isset( $value[ $key ] ) )
+			if ( ! isset( $value[ $key ] ) ) {
 				return $fallback;
+			}
 
-			$value = $value[$key];
+			$value = $value[ $key ];
 		}
 
 		return $value;
@@ -213,8 +217,9 @@ class scbForms {
 
 			$value = $fieldObj->validate( $value );
 
-			if ( null !== $value )
+			if ( null !== $value ) {
 				self::set_value( $to_update, $field['name'], $value );
+			}
 		}
 
 		return $to_update;
@@ -253,22 +258,25 @@ class scbForms {
 			$key = $field_args['name'];
 
 			if ( 'checkbox' == $field_args['type'] ) {
-				$new_values = isset( $data[$key] ) ? $data[$key] : array();
+				$new_values = isset( $data[ $key ] ) ? $data[ $key ] : array();
 
 				$old_values = get_metadata( $meta_type, $object_id, $key );
 
-				foreach ( array_diff( $new_values, $old_values ) as $value )
+				foreach ( array_diff( $new_values, $old_values ) as $value ) {
 					add_metadata( $meta_type, $object_id, $key, $value );
+				}
 
-				foreach ( array_diff( $old_values, $new_values ) as $value )
+				foreach ( array_diff( $old_values, $new_values ) as $value ) {
 					delete_metadata( $meta_type, $object_id, $key, $value );
+				}
 			} else {
-				$value = isset( $data[$key] ) ? $data[$key] : '';
+				$value = isset( $data[ $key ] ) ? $data[ $key ] : '';
 
-				if ( '' === $value )
+				if ( '' === $value ) {
 					delete_metadata( $meta_type, $object_id, $key );
-				else
+				} else {
 					update_metadata( $meta_type, $object_id, $key, $value );
+				}
 			}
 		}
 	}
@@ -283,11 +291,12 @@ class scbForms {
 
 		$final_key = array_pop( $name );
 
-		while ( !empty( $name ) ) {
+		while ( ! empty( $name ) ) {
 			$key = array_shift( $name );
 
-			if ( !isset( $arr[ $key ] ) )
+			if ( ! isset( $arr[ $key ] ) ) {
 				$arr[ $key ] = array();
+			}
 
 			$arr =& $arr[ $key ];
 		}
@@ -309,11 +318,13 @@ class scbForm {
 	 * @param string|boolean $prefix
 	 */
 	function __construct( $data, $prefix = false ) {
-		if ( is_array( $data ) )
+		if ( is_array( $data ) ) {
 			$this->data = $data;
+		}
 
-		if ( $prefix )
+		if ( $prefix ) {
 			$this->prefix = (array) $prefix;
+		}
 	}
 
 	/**
@@ -337,7 +348,7 @@ class scbForm {
 	function input( $args ) {
 		$value = scbForms::get_value( $args['name'], $this->data );
 
-		if ( !empty( $this->prefix ) ) {
+		if ( ! empty( $this->prefix ) ) {
 			$args['name'] = array_merge( $this->prefix, (array) $args['name'] );
 		}
 
@@ -382,8 +393,9 @@ abstract class scbFormField implements scbFormField_I {
 	 * @return mixed false on failure or instance of form class
 	 */
 	public static function create( $args ) {
-		if ( is_a( $args, 'scbFormField_I' ) )
+		if ( is_a( $args, 'scbFormField_I' ) ) {
 			return $args;
+		}
 
 		if ( empty( $args['name'] ) ) {
 			return trigger_error( 'Empty name', E_USER_WARNING );
@@ -399,8 +411,9 @@ abstract class scbFormField implements scbFormField_I {
 			unset( $args['values'] );
 		}
 
-		if ( isset( $args['extra'] ) && !is_array( $args['extra'] ) )
+		if ( isset( $args['extra'] ) && ! is_array( $args['extra'] ) ) {
 			$args['extra'] = shortcode_parse_atts( $args['extra'] );
+		}
 
 		$args = wp_parse_args( $args, array(
 			'desc'      => '',
@@ -410,23 +423,25 @@ abstract class scbFormField implements scbFormField_I {
 		) );
 
 		// depends on $args['desc']
-		if ( isset( $args['choices'] ) )
+		if ( isset( $args['choices'] ) ) {
 			self::_expand_choices( $args );
+		}
 
 		switch ( $args['type'] ) {
-		case 'radio':
-			return new scbRadiosField( $args );
-		case 'select':
-			return new scbSelectField( $args );
-		case 'checkbox':
-			if ( isset( $args['choices'] ) )
-				return new scbMultipleChoiceField( $args );
-			else
-				return new scbSingleCheckboxField( $args );
-		case 'custom':
-			return new scbCustomField( $args );
-		default:
-			return new scbTextField( $args );
+			case 'radio':
+				return new scbRadiosField( $args );
+			case 'select':
+				return new scbSelectField( $args );
+			case 'checkbox':
+				if ( isset( $args['choices'] ) ) {
+					return new scbMultipleChoiceField( $args );
+				} else {
+					return new scbSingleCheckboxField( $args );
+				}
+			case 'custom':
+				return new scbCustomField( $args );
+			default:
+				return new scbTextField( $args );
 		}
 	}
 
@@ -461,13 +476,15 @@ abstract class scbFormField implements scbFormField_I {
 	 * @return string
 	 */
 	public function render( $value = null ) {
-		if ( null === $value && isset( $this->default ) )
+		if ( null === $value && isset( $this->default ) ) {
 			$value = $this->default;
+		}
 
 		$args = $this->args;
 
-		if ( null !== $value )
+		if ( null !== $value ) {
 			$this->_set_value( $args, $value );
+		}
 
 		$args['name'] = scbForms::get_name( $args['name'] );
 
@@ -506,8 +523,9 @@ abstract class scbFormField implements scbFormField_I {
 
 		$args['extra']['checked'] = $args['checked'];
 
-		if ( is_null( $args['desc'] ) && ! is_bool( $args['value'] ) )
+		if ( is_null( $args['desc'] ) && ! is_bool( $args['value'] ) ) {
 			$args['desc'] = str_replace( '[]', '', $args['value'] );
+		}
 
 		return self::_input_gen( $args );
 	}
@@ -558,13 +576,15 @@ abstract class scbFormField implements scbFormField_I {
 	 * @return string
 	 */
 	protected static function add_desc( $input, $desc, $desc_pos ) {
-		if ( empty( $desc ) )
+		if ( empty( $desc ) ) {
 			return $input;
+		}
 
-		if ( 'before' == $desc_pos )
+		if ( 'before' == $desc_pos ) {
 			return $desc . ' ' . $input;
-		else
+		} else {
 			return $input . ' ' . $desc;
+		}
 	}
 
 	/**
@@ -573,11 +593,11 @@ abstract class scbFormField implements scbFormField_I {
 	private static function _expand_choices( &$args ) {
 		$choices =& $args['choices'];
 
-		if ( !empty( $choices ) && !self::is_associative( $choices ) ) {
+		if ( ! empty( $choices ) && ! self::is_associative( $choices ) ) {
 			if ( is_array( $args['desc'] ) ) {
 				$choices = array_combine( $choices, $args['desc'] );	// back-compat
 				$args['desc'] = false;
-			} elseif ( !isset( $args['numeric'] ) || !$args['numeric'] ) {
+			} else if ( ! isset( $args['numeric'] ) || ! $args['numeric'] ) {
 				$choices = array_combine( $choices, $choices );
 			}
 		}
@@ -622,8 +642,9 @@ class scbTextField extends scbFormField {
 			'extra'    => array( 'class' => 'regular-text' ),
 		) );
 
-		if ( ! isset( $args['extra']['id'] ) && ! is_array( $args['name'] ) && false === strpos( $args['name'], '[' ) )
+		if ( ! isset( $args['extra']['id'] ) && ! is_array( $args['name'] ) && false === strpos( $args['name'], '[' ) ) {
 			$args['extra']['id'] = $args['name'];
+		}
 
 		return scbFormField::_input_gen( $args );
 	}
@@ -648,8 +669,9 @@ abstract class scbSingleChoiceField extends scbFormField {
 	 * @return mixed|null
 	 */
 	public function validate( $value ) {
-		if ( isset( $this->choices[ $value ] ) )
+		if ( isset( $this->choices[ $value ] ) ) {
 			return $value;
+		}
 
 		return null;
 	}
@@ -667,7 +689,7 @@ abstract class scbSingleChoiceField extends scbFormField {
 		if ( isset( $args['selected'] ) ) {
 			$args['selected'] = (string) $args['selected'];
 		} else {
-			$args['selected'] = array('foo');  // hack to make default blank
+			$args['selected'] = array( 'foo' );  // hack to make default blank
 		}
 
 		return $this->_render_specific( $args );
@@ -800,8 +822,9 @@ class scbMultipleChoiceField extends scbFormField {
 			'checked' => null,
 		) );
 
-		if ( ! is_array( $args['checked'] ) )
+		if ( ! is_array( $args['checked'] ) ) {
 			$args['checked'] = array();
+		}
 
 		$opts = '';
 		foreach ( $args['choices'] as $value => $title ) {
@@ -858,8 +881,9 @@ class scbSingleCheckboxField extends scbFormField {
 
 		$args['extra']['checked'] = $args['checked'];
 
-		if ( is_null( $args['desc'] ) && ! is_bool( $args['value'] ) )
+		if ( is_null( $args['desc'] ) && ! is_bool( $args['value'] ) ) {
 			$args['desc'] = str_replace( '[]', '', $args['value'] );
+		}
 
 		return scbFormField::_input_gen( $args );
 	}

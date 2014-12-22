@@ -23,8 +23,9 @@ class scbCron {
 	function __construct( $file = false, $args ) {
 
 		// Set time & schedule
-		if ( isset( $args['time'] ) )
+		if ( isset( $args['time'] ) ) {
 			$this->time = $args['time'];
+		}
 
 		if ( isset( $args['interval'] ) ) {
 			$this->schedule = $args['interval'] . 'secs';
@@ -36,18 +37,19 @@ class scbCron {
 		// Set hook
 		if ( isset( $args['action'] ) ) {
 			$this->hook = $args['action'];
-		} elseif ( isset( $args['callback'] ) ) {
+		} else if ( isset( $args['callback'] ) ) {
 			$this->hook = self::_callback_to_string( $args['callback'] );
 			add_action( $this->hook, $args['callback'] );
-		} elseif ( method_exists( $this, 'callback' ) ) {
+		} else if ( method_exists( $this, 'callback' ) ) {
 			$this->hook = self::_callback_to_string( array( $this, 'callback' ) );
 			add_action( $this->hook, $args['callback'] );
 		} else {
 			trigger_error( '$action OR $callback not set', E_USER_WARNING );
 		}
 
-		if ( isset( $args['callback_args'] ) )
+		if ( isset( $args['callback_args'] ) ) {
 			$this->callback_args = (array) $args['callback_args'];
+		}
 
 		if ( $file && $this->schedule ) {
 			scbUtil::add_activation_hook( $file, array( $this, 'reset' ) );
@@ -99,8 +101,9 @@ class scbCron {
 	 * @param array $args List of arguments to pass to the callback
 	 */
 	function do_now( $args = null ) {
-		if ( is_null( $args ) )
+		if ( is_null( $args ) ) {
 			$args = $this->callback_args;
+		}
 
 		do_action_ref_array( $this->hook, $args );
 	}
@@ -111,8 +114,9 @@ class scbCron {
 	 * @param array $args  List of arguments to pass to the callback
 	 */
 	function do_once( $delay = 0, $args = null ) {
-		if ( is_null( $args ) )
+		if ( is_null( $args ) ) {
 			$args = $this->callback_args;
+		}
 
 		wp_clear_scheduled_hook( $this->hook, $args );
 		wp_schedule_single_event( time() + $delay, $this->hook, $args );
@@ -127,10 +131,11 @@ class scbCron {
 	 * @return array
 	 */
 	function _add_timing( $schedules ) {
-		if ( isset( $schedules[$this->schedule] ) )
+		if ( isset( $schedules[ $this->schedule ] ) ) {
 			return $schedules;
+		}
 
-		$schedules[$this->schedule] = array(
+		$schedules[ $this->schedule ] = array(
 			'interval' => $this->interval,
 			'display'  => $this->interval . ' seconds',
 		);
@@ -139,8 +144,9 @@ class scbCron {
 	}
 
 	protected function schedule() {
-		if ( ! $this->time )
+		if ( ! $this->time ) {
 			$this->time = time();
+		}
 
 		wp_schedule_event( $this->time, $this->schedule, $this->hook, $this->callback_args );
 	}
@@ -152,12 +158,15 @@ class scbCron {
 		$crons = _get_cron_array();
 
 		foreach ( $crons as $timestamp => $hooks ) {
-			foreach ( $hooks as $hook => $args )
-				if ( $hook == $name )
-					unset( $crons[$timestamp][$hook] );
+			foreach ( $hooks as $hook => $args ) {
+				if ( $hook == $name ) {
+					unset( $crons[ $timestamp ][ $hook ] );
+				}
+			}
 
-			if ( empty( $crons[$timestamp] ) )
-				unset( $crons[$timestamp] );
+			if ( empty( $crons[ $timestamp ] ) ) {
+				unset( $crons[ $timestamp ] );
+			}
 		}
 
 		_set_cron_array( $crons );
@@ -169,12 +178,13 @@ class scbCron {
 	 * @return string
 	 */
 	protected static function _callback_to_string( $callback ) {
-		if ( ! is_array( $callback ) )
+		if ( ! is_array( $callback ) ) {
 			$str = $callback;
-		elseif ( ! is_string( $callback[0] ) )
+		} else if ( ! is_string( $callback[0] ) ) {
 			$str = get_class( $callback[0] ) . '_' . $callback[1];
-		else
+		} else {
 			$str = $callback[0] . '::' . $callback[1];
+		}
 
 		$str .= '_hook';
 
