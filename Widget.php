@@ -1,12 +1,30 @@
 <?php
-
-// Adds compatibility methods between WP_Widget and scbForms
-
+/**
+ * Adds compatibility methods between WP_Widget and scbForms.
+ */
 abstract class scbWidget extends WP_Widget {
+
+	/**
+	 * Widget defaults.
+	 * @var array
+	 */
 	protected $defaults = array();
 
+	/**
+	 * Widgets to register.
+	 * @var array
+	 */
 	private static $scb_widgets = array();
 
+	/**
+	 * Initializes widget.
+	 *
+	 * @param string $class
+	 * @param string $file (optional)
+	 * @param string $base (optional)
+	 *
+	 * @return void
+	 */
 	public static function init( $class, $file = '', $base = '' ) {
 		self::$scb_widgets[] = $class;
 
@@ -18,13 +36,25 @@ abstract class scbWidget extends WP_Widget {
 		}
 	}
 
+	/**
+	 * Registers widgets.
+	 *
+	 * @return void
+	 */
 	public static function _scb_register() {
 		foreach ( self::$scb_widgets as $widget ) {
 			register_widget( $widget );
 		}
 	}
 
-	// A pre-filled method, for convenience
+	/**
+	 * Displays widget content.
+	 *
+	 * @param array $args Display arguments including before_title, after_title, before_widget, and after_widget.
+	 * @param array $instance The settings for the particular instance of the widget.
+	 *
+	 * @return void
+	 */
 	public function widget( $args, $instance ) {
 		$instance = wp_parse_args( $instance, $this->defaults );
 
@@ -43,15 +73,27 @@ abstract class scbWidget extends WP_Widget {
 		echo $after_widget;
 	}
 
-	// This is where the actual widget content goes
+	/**
+	 * This is where the actual widget content goes.
+	 *
+	 * @param array $instance The settings for the particular instance of the widget.
+	 *
+	 * @return void
+	 */
 	protected function content( $instance ) { }
 
 
 //_____HELPER METHODS_____
 
 
-	// See scbForms::input()
-	// Allows extra parameter $args['title']
+	/**
+	 * Generates a input form field.
+	 *
+	 * @param array $args
+	 * @param array $formdata (optional)
+	 *
+	 * @return string
+	 */
 	protected function input( $args, $formdata = array() ) {
 		$prefix = array( 'widget-' . $this->id_base, $this->number );
 
