@@ -50,13 +50,14 @@ class scbPostMetabox {
 		$args = wp_parse_args( $args, array(
 			'post_type' => 'post',
 			'context' => 'advanced',
-			'priority' => 'default'
+			'priority' => 'default',
 		) );
 
-		if ( is_string( $args['post_type'] ) )
+		if ( is_string( $args['post_type'] ) ) {
 			$args['post_type'] = array( $args['post_type'] );
-		$this->post_types = $args['post_type'];
+		}
 
+		$this->post_types = $args['post_type'];
 		$this->context = $args['context'];
 		$this->priority = $args['priority'];
 
@@ -70,21 +71,25 @@ class scbPostMetabox {
 	 * @return void
 	 */
 	final public function pre_register() {
-		if ( ! in_array( get_current_screen()->post_type, $this->post_types ) )
+		if ( ! in_array( get_current_screen()->post_type, $this->post_types ) ) {
 			return;
+		}
 
-		if ( ! $this->condition() )
+		if ( ! $this->condition() ) {
 			return;
+		}
 
-		if ( isset( $_GET['post'] ) )
+		if ( isset( $_GET['post'] ) ) {
 			$this->post_data = $this->get_meta( intval( $_GET['post'] ) );
+		}
 
 		add_action( 'add_meta_boxes', array( $this, 'register' ) );
 		add_action( 'save_post', array( $this, '_save_post' ), 10, 2 );
 
 		foreach ( $this->actions as $action ) {
-			if ( method_exists( $this, $action ) )
+			if ( method_exists( $this, $action ) ) {
 				add_action( $action, array( $this, $action ) );
+			}
 		}
 	}
 
@@ -127,8 +132,9 @@ class scbPostMetabox {
 	 */
 	public function display( $post ) {
 		$form_fields = $this->form_fields();
-		if ( ! $form_fields )
+		if ( ! $form_fields ) {
 			return;
+		}
 
 		$form_data = $this->post_data;
 		$error_fields = array();
@@ -245,14 +251,17 @@ class scbPostMetabox {
 	 * @return void
 	 */
 	final public function _save_post( $post_id, $post ) {
-		if ( ! isset( $_POST['action'] ) || $_POST['action'] != 'editpost' )
+		if ( ! isset( $_POST['action'] ) || $_POST['action'] != 'editpost' ) {
 			return;
+		}
 
-		if ( $post_id != $_POST['post_ID'] )
+		if ( ! isset( $_POST['post_ID'] ) || $_POST['post_ID'] != $post_id ) {
 			return;
+		}
 
-		if ( ! in_array( $post->post_type, $this->post_types ) )
+		if ( ! in_array( $post->post_type, $this->post_types ) ) {
 			return;
+		}
 
 		$this->save( $post->ID );
 	}
@@ -279,7 +288,7 @@ class scbPostMetabox {
 			$error_data = array(
 				'fields' => $is_valid->get_error_codes(),
 				'messages' => $is_valid->get_error_messages(),
-				'data' => $to_update
+				'data' => $to_update,
 			);
 			update_post_meta( $post_id, '_error_data_' . $this->id, $error_data );
 
@@ -311,7 +320,7 @@ class scbPostMetabox {
 	 * @param array $post_data
 	 * @param int $post_id
 	 *
-	 * @return bool|object A WP_Error object if posted dada are invalid.
+	 * @return bool|object A WP_Error object if posted data are invalid.
 	 */
 	protected function validate_post_data( $post_data, $post_id ) {
 		return false;
@@ -326,10 +335,12 @@ class scbPostMetabox {
 	 */
 	private function get_meta( $post_id ) {
 		$meta = get_post_custom( $post_id );
-		foreach ( $meta as $key => $values )
+		foreach ( $meta as $key => $values ) {
 			$meta[ $key ] = maybe_unserialize( $meta[ $key ][0] );
+		}
 
 		return $meta;
 	}
+
 }
 
