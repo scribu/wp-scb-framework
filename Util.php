@@ -5,7 +5,7 @@
 class scbUtil {
 
 	// Force script enqueue
-	static function do_scripts( $handles ) {
+	public static function do_scripts( $handles ) {
 		global $wp_scripts;
 
 		if ( ! is_a( $wp_scripts, 'WP_Scripts' ) ) {
@@ -16,7 +16,7 @@ class scbUtil {
 	}
 
 	// Force style enqueue
-	static function do_styles( $handles ) {
+	public static function do_styles( $handles ) {
 		self::do_scripts( 'jquery' );
 
 		global $wp_styles;
@@ -37,7 +37,7 @@ class scbUtil {
 	}
 
 	// Enable delayed activation; to be used with scb_init()
-	static function add_activation_hook( $plugin, $callback ) {
+	public static function add_activation_hook( $plugin, $callback ) {
 		if ( defined( 'SCB_LOAD_MU' ) ) {
 			register_activation_hook( $plugin, $callback );
 		} else {
@@ -46,13 +46,13 @@ class scbUtil {
 	}
 
 	// For debugging
-	static function do_activation( $plugin ) {
+	public static function do_activation( $plugin ) {
 		do_action( 'scb_activation_' . plugin_basename( $plugin ) );
 	}
 
 	// Allows more than one uninstall hooks.
 	// Also prevents an UPDATE query on each page load.
-	static function add_uninstall_hook( $plugin, $callback ) {
+	public static function add_uninstall_hook( $plugin, $callback ) {
 		if ( ! is_admin() ) {
 			return;
 		}
@@ -63,46 +63,46 @@ class scbUtil {
 	}
 
 	// For debugging
-	static function do_uninstall( $plugin ) {
+	public static function do_uninstall( $plugin ) {
 		do_action( 'uninstall_' . plugin_basename( $plugin ) );
 	}
 
 	// Get the current, full URL
-	static function get_current_url() {
+	public static function get_current_url() {
 		return ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 	}
 
 	// Apply a function to each element of a ( nested ) array recursively
-	static function array_map_recursive( $callback, $array ) {
+	public static function array_map_recursive( $callback, $array ) {
 		array_walk_recursive( $array, array( __CLASS__, 'array_map_recursive_helper' ), $callback );
 
 		return $array;
 	}
 
-	static function array_map_recursive_helper( &$val, $key, $callback ) {
+	public static function array_map_recursive_helper( &$val, $key, $callback ) {
 		$val = call_user_func( $callback, $val );
 	}
 
 	// Extract certain $keys from $array
-	static function array_extract( $array, $keys ) {
+	public static function array_extract( $array, $keys ) {
 		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, 'WP 3.1', 'wp_array_slice_assoc()' );
 		return wp_array_slice_assoc( $array, $keys );
 	}
 
 	// Extract a certain value from a list of arrays
-	static function array_pluck( $array, $key ) {
+	public static function array_pluck( $array, $key ) {
 		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, 'WP 3.1', 'wp_list_pluck()' );
 		return wp_list_pluck( $array, $key );
 	}
 
 	// Transform a list of objects into an associative array
-	static function objects_to_assoc( $objects, $key, $value ) {
+	public static function objects_to_assoc( $objects, $key, $value ) {
 		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, 'r41', 'scb_list_fold()' );
 		return scb_list_fold( $objects, $key, $value );
 	}
 
 	// Prepare an array for an IN statement
-	static function array_to_sql( $values ) {
+	public static function array_to_sql( $values ) {
 		foreach ( $values as &$val ) {
 			$val = "'" . esc_sql( trim( $val ) ) . "'";
 		}
@@ -111,7 +111,7 @@ class scbUtil {
 	}
 
 	// Example: split_at( '</', '<a></a>' ) => array( '<a>', '</a>' )
-	static function split_at( $delim, $str ) {
+	public static function split_at( $delim, $str ) {
 		$i = strpos( $str, $delim );
 
 		if ( false === $i ) {

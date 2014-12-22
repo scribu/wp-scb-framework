@@ -46,7 +46,7 @@ class scbLoad4 {
 		}
 	}
 
-	static function delayed_activation( $plugin ) {
+	public static function delayed_activation( $plugin ) {
 		$plugin_dir = dirname( $plugin );
 
 		if ( '.' == $plugin_dir ) {
@@ -63,7 +63,7 @@ class scbLoad4 {
 		}
 	}
 
-	static function load( $do_callbacks = true ) {
+	public static function load( $do_callbacks = true ) {
 		arsort( self::$candidates );
 
 		$file = key( self::$candidates );

@@ -7,7 +7,7 @@ class scbTable {
 	protected $columns;
 	protected $upgrade_method;
 
-	function __construct( $name, $file, $columns, $upgrade_method = 'dbDelta' ) {
+	public function __construct( $name, $file, $columns, $upgrade_method = 'dbDelta' ) {
 		$this->name = $name;
 		$this->columns = $columns;
 		$this->upgrade_method = $upgrade_method;
@@ -20,11 +20,11 @@ class scbTable {
 		}
 	}
 
-	function install() {
+	public function install() {
 		scb_install_table( $this->name, $this->columns, $this->upgrade_method );
 	}
 
-	function uninstall() {
+	public function uninstall() {
 		scb_uninstall_table( $this->name );
 	}
 }

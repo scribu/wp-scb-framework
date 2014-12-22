@@ -7,7 +7,7 @@ abstract class scbWidget extends WP_Widget {
 
 	private static $scb_widgets = array();
 
-	static function init( $class, $file = '', $base = '' ) {
+	public static function init( $class, $file = '', $base = '' ) {
 		self::$scb_widgets[] = $class;
 
 		add_action( 'widgets_init', array( __CLASS__, '_scb_register' ) );
@@ -18,14 +18,14 @@ abstract class scbWidget extends WP_Widget {
 		}
 	}
 
-	static function _scb_register() {
+	public static function _scb_register() {
 		foreach ( self::$scb_widgets as $widget ) {
 			register_widget( $widget );
 		}
 	}
 
 	// A pre-filled method, for convenience
-	function widget( $args, $instance ) {
+	public function widget( $args, $instance ) {
 		$instance = wp_parse_args( $instance, $this->defaults );
 
 		extract( $args );
@@ -44,7 +44,7 @@ abstract class scbWidget extends WP_Widget {
 	}
 
 	// This is where the actual widget content goes
-	function content( $instance ) { }
+	protected function content( $instance ) { }
 
 
 //_____HELPER METHODS_____

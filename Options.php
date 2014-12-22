@@ -120,7 +120,7 @@ class scbOptions {
 
 
 	// Saves an extra query
-	function _activation() {
+	public function _activation() {
 		add_option( $this->key, $this->defaults );
 	}
 
@@ -133,17 +133,17 @@ class scbOptions {
 	}
 
 	// Magic method: $options->field
-	function __get( $field ) {
+	public function __get( $field ) {
 		return $this->get( $field );
 	}
 
 	// Magic method: $options->field = $value
-	function __set( $field, $value ) {
+	public function __set( $field, $value ) {
 		$this->set( $field, $value );
 	}
 
 	// Magic method: isset( $options->field )
-	function __isset( $field ) {
+	public function __isset( $field ) {
 		$data = $this->get();
 		return isset( $data[ $field ] );
 	}

@@ -13,7 +13,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function input_with_value( $args, $value ) {
+	public static function input_with_value( $args, $value ) {
 		$field = scbFormField::create( $args );
 
 		return $field->render( $value );
@@ -25,7 +25,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function input( $args, $formdata = null ) {
+	public static function input( $args, $formdata = null ) {
 		$field = scbFormField::create( $args );
 
 		return $field->render( scbForms::get_value( $args['name'], $formdata ) );
@@ -39,7 +39,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function form_table( $rows, $formdata = null ) {
+	public static function form_table( $rows, $formdata = null ) {
 		$output = '';
 		foreach ( $rows as $row ) {
 			$output .= self::table_row( $row, $formdata );
@@ -59,7 +59,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function form( $inputs, $formdata = null, $nonce ) {
+	public static function form( $inputs, $formdata = null, $nonce ) {
 		$output = '';
 		foreach ( $inputs as $input ) {
 			$output .= self::input( $input, $formdata );
@@ -78,7 +78,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function table( $rows, $formdata = null ) {
+	public static function table( $rows, $formdata = null ) {
 		$output = '';
 		foreach ( $rows as $row ) {
 			$output .= self::table_row( $row, $formdata );
@@ -97,7 +97,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function table_row( $args, $formdata = null ) {
+	public static function table_row( $args, $formdata = null ) {
 		return self::row_wrap( $args['title'], self::input( $args, $formdata ) );
 	}
 
@@ -110,7 +110,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function form_table_wrap( $content, $nonce = 'update_options' ) {
+	public static function form_table_wrap( $content, $nonce = 'update_options' ) {
 		return self::form_wrap( self::table_wrap( $content ), $nonce );
 	}
 
@@ -120,7 +120,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function form_wrap( $content, $nonce = 'update_options' ) {
+	public static function form_wrap( $content, $nonce = 'update_options' ) {
 		return html( "form method='post' action=''",
 			$content,
 			wp_nonce_field( $nonce, '_wpnonce', $referer = true, $echo = false )
@@ -132,7 +132,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function table_wrap( $content ) {
+	public static function table_wrap( $content ) {
 		return html( "table class='form-table'", $content );
 	}
 
@@ -142,7 +142,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function row_wrap( $title, $content ) {
+	public static function row_wrap( $title, $content ) {
 		return html( 'tr',
 			html( "th scope='row'", $title ),
 			html( 'td', $content )
@@ -163,7 +163,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function get_name( $name ) {
+	public static function get_name( $name ) {
 		$name = (array) $name;
 
 		$name_str = array_shift( $name );
@@ -184,7 +184,7 @@ class scbForms {
 	 *
 	 * @return mixed
 	 */
-	static function get_value( $name, $value, $fallback = null ) {
+	public static function get_value( $name, $value, $fallback = null ) {
 		foreach ( (array) $name as $key ) {
 			if ( ! isset( $value[ $key ] ) ) {
 				return $fallback;
@@ -205,7 +205,7 @@ class scbForms {
 	 *
 	 * @return array
 	 */
-	static function validate_post_data( $fields, $data = null, $to_update = array() ) {
+	public static function validate_post_data( $fields, $data = null, $to_update = array() ) {
 		if ( null === $data ) {
 			$data = stripslashes_deep( $_POST );
 		}
@@ -317,7 +317,7 @@ class scbForm {
 	 * @param array          $data
 	 * @param string|boolean $prefix
 	 */
-	function __construct( $data, $prefix = false ) {
+	public function __construct( $data, $prefix = false ) {
 		if ( is_array( $data ) ) {
 			$this->data = $data;
 		}
@@ -332,7 +332,7 @@ class scbForm {
 	 *
 	 * @return scbForm
 	 */
-	function traverse_to( $path ) {
+	public function traverse_to( $path ) {
 		$data = scbForms::get_value( $path, $this->data );
 
 		$prefix = array_merge( $this->prefix, (array) $path );
@@ -345,7 +345,7 @@ class scbForm {
 	 *
 	 * @return string
 	 */
-	function input( $args ) {
+	public function input( $args ) {
 		$value = scbForms::get_value( $args['name'], $this->data );
 
 		if ( ! empty( $this->prefix ) ) {

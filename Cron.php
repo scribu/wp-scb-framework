@@ -20,7 +20,7 @@ class scbCron {
 	 *                          string $schedule OR number $interval
 	 *                          array $callback_args (optional)
 	 */
-	function __construct( $file = false, $args ) {
+	public function __construct( $file = false, $args ) {
 
 		// Set time & schedule
 		if ( isset( $args['time'] ) ) {
@@ -83,7 +83,7 @@ class scbCron {
 	/**
 	 * Reset the schedule
 	 */
-	function reset() {
+	public function reset() {
 		$this->unschedule();
 		$this->schedule();
 	}
@@ -91,7 +91,7 @@ class scbCron {
 	/**
 	 * Clear the cron job
 	 */
-	function unschedule() {
+	public function unschedule() {
 #		wp_clear_scheduled_hook( $this->hook, $this->callback_args );
 		self::really_clear_scheduled_hook( $this->hook );
 	}
@@ -130,7 +130,7 @@ class scbCron {
 	 *
 	 * @return array
 	 */
-	function _add_timing( $schedules ) {
+	public function _add_timing( $schedules ) {
 		if ( isset( $schedules[ $this->schedule ] ) ) {
 			return $schedules;
 		}

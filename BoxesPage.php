@@ -11,13 +11,13 @@ abstract class scbBoxesPage extends scbAdminPage {
 	*/
 	protected $boxes = array();
 
-	function __construct( $file = false, $options = null ) {
+	public function __construct( $file = false, $options = null ) {
 		parent::__construct( $file, $options );
 
 		scbUtil::add_uninstall_hook( $this->file, array( $this, 'uninstall' ) );
 	}
 
-	function page_init() {
+	public function page_init() {
 		if ( ! isset( $this->args['columns'] ) ) {
 			$this->args['columns'] = 2;
 		}
@@ -27,7 +27,7 @@ abstract class scbBoxesPage extends scbAdminPage {
 		add_action( 'load-' . $this->pagehook, array( $this, 'boxes_init' ) );
 	}
 
-	function default_css() {
+	protected function default_css() {
 ?>
 <style type="text/css">
 .postbox-container + .postbox-container {
@@ -71,7 +71,7 @@ abstract class scbBoxesPage extends scbAdminPage {
 <?php
 	}
 
-	function page_content() {
+	protected function page_content() {
 		$this->default_css();
 
 		global $screen_layout_columns;
@@ -124,12 +124,12 @@ abstract class scbBoxesPage extends scbAdminPage {
 <?php
 	}
 
-	function page_footer() {
+	protected function page_footer() {
 		parent::page_footer();
 		$this->_boxes_js_init();
 	}
 
-	function form_handler() {
+	protected function form_handler() {
 		if ( empty( $_POST ) ) {
 			return;
 		}
@@ -148,7 +148,7 @@ abstract class scbBoxesPage extends scbAdminPage {
 		}
 	}
 
-	function uninstall() {
+	public function uninstall() {
 		global $wpdb;
 
 		$hook = str_replace( '-', '', $this->pagehook );
@@ -165,7 +165,7 @@ abstract class scbBoxesPage extends scbAdminPage {
 		" );
 	}
 
-	function boxes_init() {
+	public function boxes_init() {
 		wp_enqueue_script( 'postbox' );
 
 		add_screen_option( 'layout_columns', array(
@@ -224,7 +224,7 @@ abstract class scbBoxesPage extends scbAdminPage {
 
 	// Since we don't pass an object to do_meta_boxes(),
 	// pass $box['args'] directly to each method.
-	function _intermediate_callback( $_, $box ) {
+	public function _intermediate_callback( $_, $box ) {
 		list( $name ) = explode( '-', $box['id'] );
 
 		call_user_func_array( array( $this, $name . '_box' ), $box['args'] );
@@ -242,7 +242,7 @@ abstract class scbBoxesPage extends scbAdminPage {
 	}
 
 	// Adds necesary code for JS to work
-	function _boxes_js_init() {
+	protected function _boxes_js_init() {
 		echo $this->js_wrap( <<<EOT
 jQuery( document ).ready( function( $ ){
 	// close postboxes that should be closed

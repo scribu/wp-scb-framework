@@ -49,7 +49,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return bool
 	 */
-	static function register( $class, $file, $options = null ) {
+	public static function register( $class, $file, $options = null ) {
 		if ( isset( self::$registered[ $class ] ) ) {
 			return false;
 		}
@@ -67,7 +67,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return bool
 	 */
-	static function replace( $old_class, $new_class ) {
+	public static function replace( $old_class, $new_class ) {
 		if ( ! isset( self::$registered[ $old_class ] ) ) {
 			return false;
 		}
@@ -83,7 +83,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return bool
 	 */
-	static function remove( $class ) {
+	public static function remove( $class ) {
 		if ( ! isset( self::$registered[ $class ] ) ) {
 			return false;
 		}
@@ -93,7 +93,7 @@ abstract class scbAdminPage {
 		return true;
 	}
 
-	static function _pages_init() {
+	public static function _pages_init() {
 		foreach ( self::$registered as $class => $args ) {
 			new $class( $args[0], $args[1] );
 		}
@@ -109,7 +109,7 @@ abstract class scbAdminPage {
 	 * @param string|bool $file
 	 * @param scbOptions  $options
 	 */
-	function __construct( $file = false, $options = null ) {
+	public function __construct( $file = false, $options = null ) {
 		if ( is_a( $options, 'scbOptions' ) ) {
 			$this->options = $options;
 		}
@@ -138,14 +138,14 @@ abstract class scbAdminPage {
 	/**
 	 * This is where all the page args can be set
 	 */
-	function setup() { }
+	protected function setup() { }
 
 	/**
 	 * Called when the page is loaded, but before any rendering.
 	 *
 	 * Useful for calling $screen->add_help_tab() etc.
 	 */
-	function page_loaded() {
+	public function page_loaded() {
 		$this->form_handler();
 	}
 
@@ -153,18 +153,18 @@ abstract class scbAdminPage {
 	 * This is where the css and js go
 	 * Both wp_enqueue_*() and inline code can be added
 	 */
-	function page_head() { }
+	public function page_head() { }
 
 	/**
 	 * This is where the contextual help goes
 	 * @return string
 	 */
-	function page_help() { }
+	protected function page_help() { }
 
 	/**
 	 * A generic page header
 	 */
-	function page_header() {
+	protected function page_header() {
 		echo "<div class='wrap'>\n";
 		screen_icon( $this->args['screen_icon'] );
 		echo html( 'h2', $this->args['page_title'] );
@@ -173,12 +173,12 @@ abstract class scbAdminPage {
 	/**
 	 * This is where the page content goes
 	 */
-	abstract function page_content();
+	abstract protected function page_content();
 
 	/**
 	 * A generic page footer
 	 */
-	function page_footer() {
+	protected function page_footer() {
 		echo "</div>\n";
 	}
 
@@ -190,7 +190,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return array
 	 */
-	function validate( $new_data, $old_data ) {
+	public function validate( $new_data, $old_data ) {
 		return $new_data;
 	}
 
@@ -199,7 +199,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return bool
 	 */
-	function form_handler() {
+	protected function form_handler() {
 		if ( empty( $_POST['submit'] ) && empty( $_POST['action'] ) ) {
 			return false;
 		}
@@ -230,7 +230,7 @@ abstract class scbAdminPage {
 	 * @param string $msg
 	 * @param string $class
 	 */
-	function admin_msg( $msg = '', $class = 'updated' ) {
+	public function admin_msg( $msg = '', $class = 'updated' ) {
 		if ( empty( $msg ) ) {
 			$msg = __( 'Settings <strong>saved</strong>.', $this->textdomain );
 		}
@@ -251,7 +251,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return string
 	 */
-	function submit_button( $value = '', $action = 'submit', $class = 'button' ) {
+	public function submit_button( $value = '', $action = 'submit', $class = 'button' ) {
 
 		$args = is_array( $value ) ? $value : compact( 'value', 'action', 'class' );
 		$args = wp_parse_args( $args, array(
@@ -283,7 +283,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return string
 	 */
-	function form_wrap( $content, $submit_button = true ) {
+	public function form_wrap( $content, $submit_button = true ) {
 		if ( is_array( $submit_button ) ) {
 			$content .= $this->submit_button( $submit_button );
 		} else if ( true === $submit_button ) {
@@ -308,7 +308,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return string
 	 */
-	function form_table( $rows, $formdata = false ) {
+	public function form_table( $rows, $formdata = false ) {
 		$output = '';
 		foreach ( $rows as $row ) {
 			$output .= $this->table_row( $row, $formdata );
@@ -326,7 +326,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return string
 	 */
-	function form_table_wrap( $content ) {
+	public function form_table_wrap( $content ) {
 		$output = $this->table_wrap( $content );
 		$output = $this->form_wrap( $output );
 
@@ -341,7 +341,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return string
 	 */
-	function table( $rows, $formdata = false ) {
+	public function table( $rows, $formdata = false ) {
 		$output = '';
 		foreach ( $rows as $row ) {
 			$output .= $this->table_row( $row, $formdata );
@@ -360,7 +360,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return string
 	 */
-	function table_row( $args, $formdata = false ) {
+	public function table_row( $args, $formdata = false ) {
 		return $this->row_wrap( $args['title'], $this->input( $args, $formdata ) );
 	}
 
@@ -395,7 +395,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return string
 	 */
-	function js_wrap( $string ) {
+	public function js_wrap( $string ) {
 		return html( "script type='text/javascript'", $string );
 	}
 
@@ -406,7 +406,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return string
 	 */
-	function css_wrap( $string ) {
+	public function css_wrap( $string ) {
 		return html( "style type='text/css'", $string );
 	}
 
@@ -417,7 +417,7 @@ abstract class scbAdminPage {
 	/**
 	 * Registers a page
 	 */
-	function page_init() {
+	public function page_init() {
 
 		if ( ! $this->args['toplevel'] ) {
 			$this->pagehook = add_submenu_page(
@@ -459,7 +459,7 @@ abstract class scbAdminPage {
 		add_action( 'admin_print_styles-' . $this->pagehook, array( $this, 'page_head' ) );
 	}
 
-	function option_init() {
+	public function option_init() {
 		register_setting( $this->option_name, $this->option_name, array( $this, 'validate' ) );
 	}
 
@@ -501,7 +501,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return string
 	 */
-	function _contextual_help( $help, $screen ) {
+	public function _contextual_help( $help, $screen ) {
 		if ( is_object( $screen ) ) {
 			$screen = $screen->id;
 		}
@@ -515,7 +515,7 @@ abstract class scbAdminPage {
 		return $help;
 	}
 
-	function _page_content_hook() {
+	public function _page_content_hook() {
 		$this->page_header();
 		$this->page_content();
 		$this->page_footer();
@@ -526,7 +526,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return array
 	 */
-	function _action_link( $links ) {
+	public function _action_link( $links ) {
 		$url = add_query_arg( 'page', $this->args['page_slug'], admin_url( $this->args['parent'] ) );
 
 		$links[] = html_link( $url, $this->args['action_link'] );
