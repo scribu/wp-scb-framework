@@ -1,7 +1,6 @@
 <?php
-
 /**
- * wp-cron job container
+ * WP Cron job container.
  */
 class scbCron {
 	protected $schedule;
@@ -12,13 +11,15 @@ class scbCron {
 	protected $callback_args = array();
 
 	/**
-	 * Create a new cron job
+	 * Create a new cron job.
 	 *
-	 * @param string|bool $file Reference to main plugin file
+	 * @param string|bool $file (optional) Reference to main plugin file
 	 * @param array       $args List of args:
 	 *                          string $action OR callback $callback
 	 *                          string $schedule OR number $interval
 	 *                          array $callback_args (optional)
+	 *
+	 * @return void
 	 */
 	public function __construct( $file = false, $args ) {
 
@@ -60,11 +61,13 @@ class scbCron {
 	}
 
 	/**
-	 * Change the interval of the cron job
+	 * Change the interval of the cron job.
 	 *
 	 * @param array $args List of args:
 	 *                    string $schedule OR number $interval
 	 *                    timestamp $time ( optional )
+	 *
+	 * @return void
 	 */
 	function reschedule( $args ) {
 
@@ -81,7 +84,9 @@ class scbCron {
 	}
 
 	/**
-	 * Reset the schedule
+	 * Reset the schedule.
+	 *
+	 * @return void
 	 */
 	public function reset() {
 		$this->unschedule();
@@ -89,7 +94,9 @@ class scbCron {
 	}
 
 	/**
-	 * Clear the cron job
+	 * Clear the cron job.
+	 *
+	 * @return void
 	 */
 	public function unschedule() {
 #		wp_clear_scheduled_hook( $this->hook, $this->callback_args );
@@ -97,8 +104,11 @@ class scbCron {
 	}
 
 	/**
-	 * Execute the job now
-	 * @param array $args List of arguments to pass to the callback
+	 * Execute the job now.
+	 *
+	 * @param array $args (optional) List of arguments to pass to the callback.
+	 *
+	 * @return void
 	 */
 	function do_now( $args = null ) {
 		if ( is_null( $args ) ) {
@@ -109,9 +119,12 @@ class scbCron {
 	}
 
 	/**
-	 * Execute the job with a given delay
-	 * @param int   $delay in seconds
-	 * @param array $args  List of arguments to pass to the callback
+	 * Execute the job with a given delay.
+	 *
+	 * @param int   $delay (optional) Delay in seconds.
+	 * @param array $args  (optional) List of arguments to pass to the callback.
+	 *
+	 * @return void
 	 */
 	function do_once( $delay = 0, $args = null ) {
 		if ( is_null( $args ) ) {
@@ -126,6 +139,8 @@ class scbCron {
 //_____INTERNAL METHODS_____
 
 	/**
+	 * Adds custom schedule timing.
+	 *
 	 * @param array $schedules
 	 *
 	 * @return array
@@ -143,6 +158,11 @@ class scbCron {
 		return $schedules;
 	}
 
+	/**
+	 * Schedule the job.
+	 *
+	 * @return void
+	 */
 	protected function schedule() {
 		if ( ! $this->time ) {
 			$this->time = time();
@@ -152,7 +172,11 @@ class scbCron {
 	}
 
 	/**
+	 * Clears scheduled job.
+	 *
 	 * @param string $name
+	 *
+	 * @return void
 	 */
 	protected static function really_clear_scheduled_hook( $name ) {
 		$crons = _get_cron_array();
@@ -173,6 +197,8 @@ class scbCron {
 	}
 
 	/**
+	 * Generates a hook name from given callback.
+	 *
 	 * @param callback $callback
 	 *
 	 * @return string
