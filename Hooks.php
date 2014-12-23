@@ -1,16 +1,40 @@
 <?php
-
+/**
+ * Automatic filter binding.
+ */
 class scbHooks {
 	private static $mangle_name;
 
+	/**
+	 * Adds.
+	 *
+	 * @param string $class
+	 *
+	 * @return void
+	 */
 	public static function add( $class ) {
 		self::_do( 'add_filter', $class );
 	}
 
+	/**
+	 * Removes.
+	 *
+	 * @param string $class
+	 *
+	 * @return void
+	 */
 	public static function remove( $class ) {
 		self::_do( 'remove_filter', $class );
 	}
 
+	/**
+	 * Prints debug.
+	 *
+	 * @param string $class
+	 * @param string $mangle_name (optional)
+	 *
+	 * @return void
+	 */
 	public static function debug( $class, $mangle_name = false ) {
 		self::$mangle_name = $mangle_name;
 
@@ -19,6 +43,16 @@ class scbHooks {
 		echo "</pre>";
 	}
 
+	/**
+	 * Prints.
+	 *
+	 * @param string $tag
+	 * @param array $callback
+	 * @param int $prio
+	 * @param int $argc
+	 *
+	 * @return void
+	 */
 	private static function _print( $tag, $callback, $prio, $argc ) {
 		$static = ! is_object( $callback[0] );
 
@@ -45,6 +79,14 @@ class scbHooks {
 		echo " );\n";
 	}
 
+	/**
+	 * Processes.
+	 *
+	 * @param string $action
+	 * @param string $class
+	 *
+	 * @return void
+	 */
 	private static function _do( $action, $class ) {
 		$reflection = new ReflectionClass( $class );
 
