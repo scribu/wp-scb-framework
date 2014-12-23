@@ -1,13 +1,14 @@
 <?php
-
 /**
- * Data-aware form generator
+ * Data-aware form generator.
  */
 class scbForms {
 
 	const TOKEN = '%input%';
 
 	/**
+	 * Generates form field.
+	 *
 	 * @param array|scbFormField_I $args
 	 * @param mixed                $value
 	 *
@@ -20,8 +21,10 @@ class scbForms {
 	}
 
 	/**
+	 * Generates form field.
+	 *
 	 * @param array|scbFormField_I $args
-	 * @param array                $formdata
+	 * @param array                $formdata (optional)
 	 *
 	 * @return string
 	 */
@@ -32,10 +35,10 @@ class scbForms {
 	}
 
 	/**
-	 * Generates a table wrapped in a form
+	 * Generates a table wrapped in a form.
 	 *
 	 * @param array $rows
-	 * @param array $formdata
+	 * @param array $formdata (optional)
 	 *
 	 * @return string
 	 */
@@ -51,10 +54,10 @@ class scbForms {
 	}
 
 	/**
-	 * Generates a form
+	 * Generates a form.
 	 *
 	 * @param array  $inputs
-	 * @param array  $formdata
+	 * @param array  $formdata (optional)
 	 * @param string $nonce
 	 *
 	 * @return string
@@ -71,10 +74,10 @@ class scbForms {
 	}
 
 	/**
-	 * Generates a table
+	 * Generates a table.
 	 *
 	 * @param array $rows
-	 * @param array $formdata
+	 * @param array $formdata (optional)
 	 *
 	 * @return string
 	 */
@@ -90,10 +93,10 @@ class scbForms {
 	}
 
 	/**
-	 * Generates a table row
+	 * Generates a table row.
 	 *
 	 * @param array $args
-	 * @param array $formdata
+	 * @param array $formdata (optional)
 	 *
 	 * @return string
 	 */
@@ -105,8 +108,10 @@ class scbForms {
 // ____________WRAPPERS____________
 
 	/**
+	 * Wraps a table in a form.
+	 *
 	 * @param string $content
-	 * @param string $nonce
+	 * @param string $nonce (optional)
 	 *
 	 * @return string
 	 */
@@ -115,8 +120,10 @@ class scbForms {
 	}
 
 	/**
+	 * Wraps a content in a form.
+	 *
 	 * @param string $content
-	 * @param string $nonce
+	 * @param string $nonce (optional)
 	 *
 	 * @return string
 	 */
@@ -128,6 +135,8 @@ class scbForms {
 	}
 
 	/**
+	 * Wraps a content in a table.
+	 *
 	 * @param string $content
 	 *
 	 * @return string
@@ -137,6 +146,8 @@ class scbForms {
 	}
 
 	/**
+	 * Wraps a content in a table row.
+	 *
 	 * @param string $title
 	 * @param string $content
 	 *
@@ -180,7 +191,7 @@ class scbForms {
 	 *
 	 * @param string $name     The name of the value
 	 * @param array  $value    The data that will be traversed
-	 * @param mixed  $fallback The value returned when the key is not found
+	 * @param mixed  $fallback (optional) The value returned when the key is not found
 	 *
 	 * @return mixed
 	 */
@@ -200,8 +211,8 @@ class scbForms {
 	 * Given a list of fields, validate some data.
 	 *
 	 * @param array $fields    List of args that would be sent to scbForms::input()
-	 * @param array $data      The data to validate. Defaults to $_POST
-	 * @param array $to_update Existing data to populate. Necessary for nested values
+	 * @param array $data      (optional) The data to validate. Defaults to $_POST
+	 * @param array $to_update (optional) Existing data to populate. Necessary for nested values
 	 *
 	 * @return array
 	 */
@@ -232,7 +243,7 @@ class scbForms {
 	 *
 	 * @param array  $args      Field arguments.
 	 * @param int    $object_id The object ID the metadata is attached to
-	 * @param string $meta_type
+	 * @param string $meta_type (optional)
 	 *
 	 * @return string
 	 */
@@ -248,10 +259,14 @@ class scbForms {
 	}
 
 	/**
+	 * Updates meta.
+	 *
 	 * @param array  $fields
 	 * @param array  $data
 	 * @param int    $object_id
-	 * @param string $meta_type
+	 * @param string $meta_type (optional)
+	 *
+	 * @return void
 	 */
 	static function update_meta( $fields, $data, $object_id, $meta_type = 'post' ) {
 		foreach ( $fields as $field_args ) {
@@ -282,9 +297,13 @@ class scbForms {
 	}
 
 	/**
+	 * Sets value using a reference.
+	 *
 	 * @param array  $arr
 	 * @param string $name
 	 * @param mixed  $value
+	 *
+	 * @return void
 	 */
 	private static function set_value( &$arr, $name, $value ) {
 		$name = (array) $name;
@@ -307,15 +326,19 @@ class scbForms {
 
 
 /**
- * A wrapper for scbForms, containing the formdata
+ * A wrapper for scbForms, containing the formdata.
  */
 class scbForm {
 	protected $data   = array();
 	protected $prefix = array();
 
 	/**
+	 * Constructor.
+	 *
 	 * @param array          $data
-	 * @param string|boolean $prefix
+	 * @param string|boolean $prefix (optional)
+	 *
+	 * @return void
 	 */
 	public function __construct( $data, $prefix = false ) {
 		if ( is_array( $data ) ) {
@@ -328,9 +351,11 @@ class scbForm {
 	}
 
 	/**
+	 * Traverses the form.
+	 *
 	 * @param string $path
 	 *
-	 * @return scbForm
+	 * @return object A scbForm
 	 */
 	public function traverse_to( $path ) {
 		$data = scbForms::get_value( $path, $this->data );
@@ -341,6 +366,8 @@ class scbForm {
 	}
 
 	/**
+	 * Generates form field.
+	 *
 	 * @param array $args
 	 *
 	 * @return string
@@ -362,9 +389,9 @@ class scbForm {
 interface scbFormField_I {
 
 	/**
-	 * Generate the corresponding HTML for a field
+	 * Generate the corresponding HTML for a field.
 	 *
-	 * @param mixed $value The value to use
+	 * @param mixed $value (optional) The value to use.
 	 *
 	 * @return string
 	 */
@@ -373,7 +400,7 @@ interface scbFormField_I {
 	/**
 	 * Validates a value against a field.
 	 *
-	 * @param mixed $value The value to check
+	 * @param mixed $value The value to check.
 	 *
 	 * @return mixed null if the validation failed, sanitized value otherwise.
 	 */
@@ -388,6 +415,8 @@ abstract class scbFormField implements scbFormField_I {
 	protected $args;
 
 	/**
+	 * Creates form field.
+	 *
 	 * @param array|scbFormField_I $args
 	 *
 	 * @return mixed false on failure or instance of form class
@@ -446,13 +475,19 @@ abstract class scbFormField implements scbFormField_I {
 	}
 
 	/**
+	 * Constructor.
+	 *
 	 * @param array $args
+	 *
+	 * @return void
 	 */
 	protected function __construct( $args ) {
 		$this->args = $args;
 	}
 
 	/**
+	 * Magic method: $field->arg
+	 *
 	 * @param string $key
 	 *
 	 * @return mixed
@@ -462,6 +497,8 @@ abstract class scbFormField implements scbFormField_I {
 	}
 
 	/**
+	 * Magic method: isset( $field->arg )
+	 *
 	 * @param string $key
 	 *
 	 * @return bool
@@ -471,7 +508,9 @@ abstract class scbFormField implements scbFormField_I {
 	}
 
 	/**
-	 * @param mixed $value
+	 * Generate the corresponding HTML for a field.
+	 *
+	 * @param mixed $value (optional)
 	 *
 	 * @return string
 	 */
@@ -500,14 +539,14 @@ abstract class scbFormField implements scbFormField_I {
 	abstract protected function _set_value( &$args, $value );
 
 	/**
-	 * The actual rendering
+	 * The actual rendering.
 	 *
 	 * @param array $args
 	 */
 	abstract protected function _render( $args );
 
 	/**
-	 * Handle args for a single checkbox or radio input
+	 * Handle args for a single checkbox or radio input.
 	 *
 	 * @param array $args
 	 *
@@ -531,7 +570,7 @@ abstract class scbFormField implements scbFormField_I {
 	}
 
 	/**
-	 * Generate html with the final args
+	 * Generate html with the final args.
 	 *
 	 * @param array $args
 	 *
@@ -558,6 +597,8 @@ abstract class scbFormField implements scbFormField_I {
 	}
 
 	/**
+	 * Adds label.
+	 *
 	 * @param string $input
 	 * @param string $desc
 	 * @param string $desc_pos
@@ -569,6 +610,8 @@ abstract class scbFormField implements scbFormField_I {
 	}
 
 	/**
+	 * Adds description.
+	 *
 	 * @param string $input
 	 * @param string $desc
 	 * @param string $desc_pos
@@ -604,6 +647,8 @@ abstract class scbFormField implements scbFormField_I {
 	}
 
 	/**
+	 * Checks if passes array is associative.
+	 *
 	 * @param array $array
 	 *
 	 * @return bool
@@ -620,6 +665,8 @@ abstract class scbFormField implements scbFormField_I {
 class scbTextField extends scbFormField {
 
 	/**
+	 * Sanitizes value.
+	 *
 	 * @param string $value
 	 *
 	 * @return string
@@ -631,6 +678,8 @@ class scbTextField extends scbFormField {
 	}
 
 	/**
+	 * Generate the corresponding HTML for a field.
+	 *
 	 * @param array $args
 	 *
 	 * @return string
@@ -650,8 +699,12 @@ class scbTextField extends scbFormField {
 	}
 
 	/**
+	 * Sets value using a reference.
+	 *
 	 * @param array  $args
 	 * @param string $value
+	 *
+	 * @return void
 	 */
 	protected function _set_value( &$args, $value ) {
 		$args['value'] = $value;
@@ -664,6 +717,8 @@ class scbTextField extends scbFormField {
 abstract class scbSingleChoiceField extends scbFormField {
 
 	/**
+	 * Validates a value against a field.
+	 *
 	 * @param mixed $value
 	 *
 	 * @return mixed|null
@@ -677,6 +732,8 @@ abstract class scbSingleChoiceField extends scbFormField {
 	}
 
 	/**
+	 * Generate the corresponding HTML for a field.
+	 *
 	 * @param array $args
 	 *
 	 * @return string
@@ -696,14 +753,20 @@ abstract class scbSingleChoiceField extends scbFormField {
 	}
 
 	/**
-	 * @param array $args
-	 * @param mixed $value
+	 * Sets value using a reference.
+	 *
+	 * @param array  $args
+	 * @param string $value
+	 *
+	 * @return void
 	 */
 	protected function _set_value( &$args, $value ) {
 		$args['selected'] = $value;
 	}
 
 	/**
+	 * Generate the corresponding HTML for a field.
+	 *
 	 * @param array $args
 	 *
 	 * @return string
@@ -717,6 +780,8 @@ abstract class scbSingleChoiceField extends scbFormField {
 class scbSelectField extends scbSingleChoiceField {
 
 	/**
+	 * Generate the corresponding HTML for a field.
+	 *
 	 * @param array $args
 	 *
 	 * @return string
@@ -766,6 +831,8 @@ class scbSelectField extends scbSingleChoiceField {
 class scbRadiosField extends scbSelectField {
 
 	/**
+	 * Generate the corresponding HTML for a field.
+	 *
 	 * @param array $args
 	 *
 	 * @return string
@@ -803,6 +870,8 @@ class scbRadiosField extends scbSelectField {
 class scbMultipleChoiceField extends scbFormField {
 
 	/**
+	 * Validates a value against a field.
+	 *
 	 * @param mixed $value
 	 *
 	 * @return array
@@ -812,6 +881,8 @@ class scbMultipleChoiceField extends scbFormField {
 	}
 
 	/**
+	 * Generate the corresponding HTML for a field.
+	 *
 	 * @param array $args
 	 *
 	 * @return string
@@ -844,8 +915,12 @@ class scbMultipleChoiceField extends scbFormField {
 	}
 
 	/**
-	 * @param array $args
-	 * @param mixed $value
+	 * Sets value using a reference.
+	 *
+	 * @param array  $args
+	 * @param string $value
+	 *
+	 * @return void
 	 */
 	protected function _set_value( &$args, $value ) {
 		$args['checked'] = (array) $value;
@@ -858,6 +933,8 @@ class scbMultipleChoiceField extends scbFormField {
 class scbSingleCheckboxField extends scbFormField {
 
 	/**
+	 * Validates a value against a field.
+	 *
 	 * @param mixed $value
 	 *
 	 * @return boolean
@@ -867,6 +944,8 @@ class scbSingleCheckboxField extends scbFormField {
 	}
 
 	/**
+	 * Generate the corresponding HTML for a field.
+	 *
 	 * @param array $args
 	 *
 	 * @return string
@@ -889,8 +968,12 @@ class scbSingleCheckboxField extends scbFormField {
 	}
 
 	/**
-	 * @param array $args
-	 * @param mixed $value
+	 * Sets value using a reference.
+	 *
+	 * @param array  $args
+	 * @param string $value
+	 *
+	 * @return void
 	 */
 	protected function _set_value( &$args, $value ) {
 		$args['checked'] = ( $value || ( isset( $args['value'] ) && $value == $args['value'] ) );
@@ -905,7 +988,11 @@ class scbCustomField implements scbFormField_I {
 	protected $args;
 
 	/**
+	 * Constructor.
+	 *
 	 * @param array $args
+	 *
+	 * @return void
 	 */
 	function __construct( $args ) {
 		$this->args = wp_parse_args( $args, array(
@@ -915,6 +1002,8 @@ class scbCustomField implements scbFormField_I {
 	}
 
 	/**
+	 * Magic method: $field->arg
+	 *
 	 * @param string $key
 	 *
 	 * @return mixed
@@ -924,6 +1013,8 @@ class scbCustomField implements scbFormField_I {
 	}
 
 	/**
+	 * Magic method: isset( $field->arg )
+	 *
 	 * @param string $key
 	 *
 	 * @return boolean
@@ -933,7 +1024,9 @@ class scbCustomField implements scbFormField_I {
 	}
 
 	/**
-	 * @param mixed $value
+	 * Generate the corresponding HTML for a field.
+	 *
+	 * @param mixed $value (optional)
 	 *
 	 * @return string
 	 */
@@ -942,6 +1035,8 @@ class scbCustomField implements scbFormField_I {
 	}
 
 	/**
+	 * Sanitizes value.
+	 *
 	 * @param mixed $value
 	 *
 	 * @return mixed
