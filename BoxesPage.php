@@ -1,7 +1,7 @@
 <?php
-
-// Admin screen with metaboxes base class
-
+/**
+ * Admin screen with metaboxes base class.
+ */
 abstract class scbBoxesPage extends scbAdminPage {
 	/*
 		A box definition looks like this:
@@ -11,12 +11,25 @@ abstract class scbBoxesPage extends scbAdminPage {
 	*/
 	protected $boxes = array();
 
+	/**
+	 * Constructor.
+	 *
+	 * @param string|bool $file (optional)
+	 * @param object $options (optional) A scbOptions object.
+	 *
+	 * @return void
+	 */
 	public function __construct( $file = false, $options = null ) {
 		parent::__construct( $file, $options );
 
 		scbUtil::add_uninstall_hook( $this->file, array( $this, 'uninstall' ) );
 	}
 
+	/**
+	 * Registers a page.
+	 *
+	 * @return void
+	 */
 	public function page_init() {
 		if ( ! isset( $this->args['columns'] ) ) {
 			$this->args['columns'] = 2;
@@ -27,6 +40,11 @@ abstract class scbBoxesPage extends scbAdminPage {
 		add_action( 'load-' . $this->pagehook, array( $this, 'boxes_init' ) );
 	}
 
+	/**
+	 * Prints default CSS styles.
+	 *
+	 * @return void
+	 */
 	protected function default_css() {
 ?>
 <style type="text/css">
@@ -71,6 +89,11 @@ abstract class scbBoxesPage extends scbAdminPage {
 <?php
 	}
 
+	/**
+	 * Displays page content.
+	 *
+	 * @return void
+	 */
 	protected function page_content() {
 		$this->default_css();
 
@@ -124,11 +147,21 @@ abstract class scbBoxesPage extends scbAdminPage {
 <?php
 	}
 
+	/**
+	 * Displays page footer.
+	 *
+	 * @return void
+	 */
 	protected function page_footer() {
 		parent::page_footer();
 		$this->_boxes_js_init();
 	}
 
+	/**
+	 * Handles option saving.
+	 *
+	 * @return void
+	 */
 	protected function form_handler() {
 		if ( empty( $_POST ) ) {
 			return;
@@ -148,6 +181,11 @@ abstract class scbBoxesPage extends scbAdminPage {
 		}
 	}
 
+	/**
+	 * Uninstalls boxes.
+	 *
+	 * @return void
+	 */
 	public function uninstall() {
 		global $wpdb;
 
@@ -165,6 +203,11 @@ abstract class scbBoxesPage extends scbAdminPage {
 		" );
 	}
 
+	/**
+	 * Adds boxes.
+	 *
+	 * @return void
+	 */
 	public function boxes_init() {
 		wp_enqueue_script( 'postbox' );
 
@@ -210,6 +253,14 @@ abstract class scbBoxesPage extends scbAdminPage {
 		}
 	}
 
+	/**
+	 * Transforms numeric array to associative.
+	 *
+	 * @param array $argv
+	 * @param array $keys
+	 *
+	 * @return array
+	 */
 	private static function numeric_to_assoc( $argv, $keys ) {
 		$args = array();
 
@@ -222,14 +273,28 @@ abstract class scbBoxesPage extends scbAdminPage {
 		return $args;
 	}
 
-	// Since we don't pass an object to do_meta_boxes(),
-	// pass $box['args'] directly to each method.
+	/**
+	 * Since we don't pass an object to do_meta_boxes(),
+	 * pass $box['args'] directly to each method.
+	 *
+	 * @param string $_
+	 * @param array $box
+	 *
+	 * @return void
+	 */
 	public function _intermediate_callback( $_, $box ) {
 		list( $name ) = explode( '-', $box['id'] );
 
 		call_user_func_array( array( $this, $name . '_box' ), $box['args'] );
 	}
 
+	/**
+	 * Adds/Increments ID in box name.
+	 *
+	 * @param string $name
+	 *
+	 * @return string
+	 */
 	private function _increment( $name ) {
 		$parts = explode( '-', $name );
 		if ( isset( $parts[1] ) ) {
@@ -241,7 +306,11 @@ abstract class scbBoxesPage extends scbAdminPage {
 		return implode( '-', $parts );
 	}
 
-	// Adds necesary code for JS to work
+	/**
+	 * Adds necesary code for JS to work.
+	 *
+	 * @return void
+	 */
 	protected function _boxes_js_init() {
 		echo $this->js_wrap( <<<EOT
 jQuery( document ).ready( function( $ ){
