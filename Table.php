@@ -23,7 +23,7 @@ class scbTable {
 	protected $upgrade_method;
 
 	/**
-	 * Setups table.
+	 * Sets up table.
 	 *
 	 * @param string $name Table name.
 	 * @param string $file Reference to main plugin file.

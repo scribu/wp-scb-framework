@@ -69,7 +69,7 @@ class scbCron {
 	 *
 	 * @return void
 	 */
-	function reschedule( $args ) {
+	public function reschedule( $args ) {
 
 		if ( $args['schedule'] && $this->schedule != $args['schedule'] ) {
 			$this->schedule = $args['schedule'];
@@ -110,7 +110,7 @@ class scbCron {
 	 *
 	 * @return void
 	 */
-	function do_now( $args = null ) {
+	public function do_now( $args = null ) {
 		if ( is_null( $args ) ) {
 			$args = $this->callback_args;
 		}
@@ -126,7 +126,7 @@ class scbCron {
 	 *
 	 * @return void
 	 */
-	function do_once( $delay = 0, $args = null ) {
+	public function do_once( $delay = 0, $args = null ) {
 		if ( is_null( $args ) ) {
 			$args = $this->callback_args;
 		}

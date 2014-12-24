@@ -400,7 +400,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return mixed
 	 */
-	function __call( $method, $args ) {
+	public function __call( $method, $args ) {
 		if ( in_array( $method, array( 'input', 'form' ) ) ) {
 			if ( empty( $args[1] ) && isset( $this->options ) ) {
 				$args[1] = $this->options->get();

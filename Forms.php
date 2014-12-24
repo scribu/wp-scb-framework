@@ -247,7 +247,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	static function input_from_meta( $args, $object_id, $meta_type = 'post' ) {
+	public static function input_from_meta( $args, $object_id, $meta_type = 'post' ) {
 		$single = ( 'checkbox' != $args['type'] );
 
 		$key = (array) $args['name'];
@@ -259,16 +259,16 @@ class scbForms {
 	}
 
 	/**
-	 * Updates meta.
+	 * Updates metadata for passed list of fields.
 	 *
 	 * @param array  $fields
 	 * @param array  $data
-	 * @param int    $object_id
-	 * @param string $meta_type (optional)
+	 * @param int    $object_id The object ID the metadata is attached to
+	 * @param string $meta_type (optional) Defaults to 'post'
 	 *
 	 * @return void
 	 */
-	static function update_meta( $fields, $data, $object_id, $meta_type = 'post' ) {
+	public static function update_meta( $fields, $data, $object_id, $meta_type = 'post' ) {
 		foreach ( $fields as $field_args ) {
 			$key = $field_args['name'];
 
@@ -597,7 +597,7 @@ abstract class scbFormField implements scbFormField_I {
 	}
 
 	/**
-	 * Adds label.
+	 * Wraps a form field in a label, and position field description.
 	 *
 	 * @param string $input
 	 * @param string $desc
@@ -610,7 +610,7 @@ abstract class scbFormField implements scbFormField_I {
 	}
 
 	/**
-	 * Adds description.
+	 * Adds description before/after the form field.
 	 *
 	 * @param string $input
 	 * @param string $desc
@@ -647,7 +647,7 @@ abstract class scbFormField implements scbFormField_I {
 	}
 
 	/**
-	 * Checks if passes array is associative.
+	 * Checks if passed array is associative.
 	 *
 	 * @param array $array
 	 *
