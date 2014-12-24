@@ -35,7 +35,7 @@ class scbPostMetabox {
 	protected $actions = array( 'admin_enqueue_scripts', 'post_updated_messages' );
 
 	/**
-	 * Setups metabox.
+	 * Sets up metabox.
 	 *
 	 * @param string $id
 	 * @param string $title
