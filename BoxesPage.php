@@ -85,6 +85,10 @@ abstract class scbBoxesPage extends scbAdminPage {
 	padding: 0 !important;
 	margin-bottom: 0 !important;
 }
+.meta-box-sortables {
+	min-height: 100px;
+	width: 100%;
+}
 </style>
 <?php
 	}
