@@ -573,7 +573,7 @@ abstract class scbAdminPage {
 	 *
 	 * @return array
 	 */
-	function _action_link( $links ) {
+	public function _action_link( $links ) {
 		$url = add_query_arg( 'page', $this->args['page_slug'], admin_url( $this->args['parent'] ) );
 
 		$links[] = html_link( $url, $this->args['action_link'] );
