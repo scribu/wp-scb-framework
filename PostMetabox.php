@@ -293,7 +293,7 @@ class scbPostMetabox {
 			update_post_meta( $post_id, '_error_data_' . $this->id, $error_data );
 
 			$location = add_query_arg( 'message', 1, get_edit_post_link( $post_id, 'url' ) );
-			wp_redirect( apply_filters( 'redirect_post_location', $location, $post_id ) );
+			wp_redirect( esc_url_raw( apply_filters( 'redirect_post_location', $location, $post_id ) ) );
 			exit;
 		}
 

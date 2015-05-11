@@ -425,7 +425,7 @@ function html_link( $url, $title = '' ) {
 		$title = $url;
 	}
 
-	return html( 'a', array( 'href' => $url ), $title );
+	return html( 'a', array( 'href' => esc_url( $url ) ), $title );
 }
 endif;
 
