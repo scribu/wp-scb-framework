@@ -606,6 +606,10 @@ abstract class scbFormField implements scbFormField_I {
 	 * @return string
 	 */
 	protected static function add_label( $input, $desc, $desc_pos ) {
+		if ( empty( $desc ) ) {
+			return $input;
+		}
+
 		return html( 'label', self::add_desc( $input, $desc, $desc_pos ) ) . "\n";
 	}
 
