@@ -107,58 +107,6 @@ class scbUtil {
 	}
 
 	/**
-	 * Extract certain $keys from $array.
-	 *
-	 * @deprecated WP 3.1
-	 * @deprecated Use wp_array_slice_assoc()
-	 * @see wp_array_slice_assoc()
-	 *
-	 * @param array $array
-	 * @param array $keys
-	 *
-	 * @return array
-	 */
-	public static function array_extract( $array, $keys ) {
-		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, 'WP 3.1', 'wp_array_slice_assoc()' );
-		return wp_array_slice_assoc( $array, $keys );
-	}
-
-	/**
-	 * Extract a certain value from a list of arrays.
-	 *
-	 * @deprecated WP 3.1
-	 * @deprecated Use wp_list_pluck()
-	 * @see wp_list_pluck()
-	 *
-	 * @param array $array
-	 * @param string $key
-	 *
-	 * @return array
-	 */
-	public static function array_pluck( $array, $key ) {
-		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, 'WP 3.1', 'wp_list_pluck()' );
-		return wp_list_pluck( $array, $key );
-	}
-
-	/**
-	 * Transform a list of objects into an associative array.
-	 *
-	 * @deprecated r41
-	 * @deprecated Use scb_list_fold()
-	 * @see scb_list_fold()
-	 *
-	 * @param array $objects
-	 * @param string $key
-	 * @param string $value
-	 *
-	 * @return array
-	 */
-	public static function objects_to_assoc( $objects, $key, $value ) {
-		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, 'r41', 'scb_list_fold()' );
-		return scb_list_fold( $objects, $key, $value );
-	}
-
-	/**
 	 * Prepare an array for an IN statement.
 	 *
 	 * @param array $values
