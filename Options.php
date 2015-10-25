@@ -36,7 +36,7 @@ class scbOptions {
 		$this->defaults = $defaults;
 
 		if ( $file ) {
-			scbUtil::add_activation_hook( $file, array( $this, '_activation' ) );
+			register_activation_hook( $file, array( $this, '_activation' ) );
 			scbUtil::add_uninstall_hook( $file, array( $this, 'delete' ) );
 		}
 	}

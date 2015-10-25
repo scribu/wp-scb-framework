@@ -49,34 +49,6 @@ class scbUtil {
 	}
 
 	/**
-	 * Enable delayed plugin activation. To be used with scb_init()
-	 *
-	 * @param string $plugin
-	 * @param string|array $callback
-	 *
-	 * @return void
-	 */
-	public static function add_activation_hook( $plugin, $callback ) {
-		if ( defined( 'SCB_LOAD_MU' ) ) {
-			register_activation_hook( $plugin, $callback );
-		} else {
-			add_action( 'scb_activation_' . plugin_basename( $plugin ), $callback );
-		}
-	}
-
-	/**
-	 * Execute activation hook.
-	 * For debugging.
-	 *
-	 * @param string $plugin
-	 *
-	 * @return void
-	 */
-	public static function do_activation( $plugin ) {
-		do_action( 'scb_activation_' . plugin_basename( $plugin ) );
-	}
-
-	/**
 	 * Allows more than one uninstall hooks.
 	 * Also prevents an UPDATE query on each page load.
 	 *

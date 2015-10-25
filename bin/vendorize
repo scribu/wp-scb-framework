@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+	echo "Usage: $(basename $0) PLUGIN_ID";
+	exit 1;
+fi;
+
+PLUGIN_ID=$1
+
+sedf () {
+    if [ $# -eq 0 ]; then
+        echo "Usage: sedf s/old/new/g ['*.js']";
+        return;
+    fi;
+    local COMMAND=$1;
+    local NAME=${2-'*.*'};
+    while read -r file; do
+        sed -i '' "$COMMAND" $file;
+    done < <(find . -type f -not -path "*/.*" -and -name "$NAME")
+}
+
+sedf "s/scb/${PLUGIN_ID}_scb/g" '*.php';
