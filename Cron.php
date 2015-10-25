@@ -53,7 +53,7 @@ class scbCron {
 		}
 
 		if ( $file && $this->schedule ) {
-			scbUtil::add_activation_hook( $file, array( $this, 'reset' ) );
+			register_activation_hook( $file, array( $this, 'reset' ) );
 			register_deactivation_hook( $file, array( $this, 'unschedule' ) );
 		}
 
