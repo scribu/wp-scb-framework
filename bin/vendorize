@@ -8,6 +8,12 @@ fi;
 PLUGIN_ID=$1
 
 sedf () {
+	if [[ $(uname -s) == 'Darwin' ]]; then
+		local ioption='-i .bak'
+	else
+		local ioption='-i'
+	fi
+
     if [ $# -eq 0 ]; then
         echo "Usage: sedf s/old/new/g ['*.js']";
         return;
@@ -15,7 +21,7 @@ sedf () {
     local COMMAND=$1;
     local NAME=${2-'*.*'};
     while read -r file; do
-        sed -i '' "$COMMAND" $file;
+        sed $ioption "$COMMAND" $file;
     done < <(find . -type f -not -path "*/.*" -and -name "$NAME")
 }
 
