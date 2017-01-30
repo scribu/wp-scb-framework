@@ -17,6 +17,6 @@
 	},
 	"autoload"   : {
 		"classmap": ["."],
-		"files"   : ["load-composer.php", "Util.php"]
+		"files"   : ["load.php"]
 	}
 }
