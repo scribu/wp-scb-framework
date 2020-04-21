@@ -135,7 +135,7 @@ abstract class scbAdminPage {
 		}
 
 		add_action( 'admin_menu', array( $this, 'page_init' ), $this->args['admin_action_priority'] );
-		add_filter( 'contextual_help', array( $this, '_contextual_help' ), 10, 2 );
+		add_filter( 'current_screen', array( $this, '_contextual_help' ), 10, 1 );
 
 		if ( $file ) {
 			$this->file = $file;
@@ -175,7 +175,7 @@ abstract class scbAdminPage {
 	/**
 	 * This is where the contextual help goes.
 	 *
-	 * @return string
+	 * @return array|string		Array of arguments, see WP_Screen::add_help_tab( array $args ). Or the content string.
 	 */
 	protected function page_help() { }
 
@@ -534,23 +534,27 @@ abstract class scbAdminPage {
 	/**
 	 * Adds contextual help.
 	 *
-	 * @param string        $help
 	 * @param string|object $screen
-	 *
-	 * @return string
 	 */
-	public function _contextual_help( $help, $screen ) {
-		if ( is_object( $screen ) ) {
-			$screen = $screen->id;
-		}
+	public function _contextual_help( $screen ) {
+		if ( ! is_object( $screen ) )
+			return;
 
 		$actual_help = $this->page_help();
 
-		if ( $screen == $this->pagehook && $actual_help ) {
-			return $actual_help;
+		if ( $screen->id == $this->pagehook && $actual_help ) {
+			// String to array $actual_help
+			$actual_help = is_array( $actual_help ) ? $actual_help : array(
+				'content' => $actual_help,
+			);
+			$actual_help = wp_parse_args( $actual_help, array(
+				'id'      => $this->args['page_slug'],
+				'title'   => $this->args['menu_title'],
+				'content' => '',
+			) );
+			// Add help tab
+			$screen->add_help_tab( $actual_help );
 		}
-
-		return $help;
 	}
 
 	/**
