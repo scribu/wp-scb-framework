@@ -31,7 +31,12 @@ class scbHooks {
 	 * Prints debug.
 	 *
 	 * @param string $class
-	 * @param string $mangle_name (optional)
+	 * @param string $mangle_name (not mandatory)
+	
+	 
+	 
+	 
+	
 	 *
 	 * @return void
 	 */
@@ -93,6 +98,10 @@ class scbHooks {
 		foreach ( $reflection->getMethods() as $method ) {
 			if ( $method->isPublic() && ! $method->isConstructor() ) {
 				$comment = $method->getDocComment();
+				
+				
+				
+				
 
 				if ( preg_match( '/@nohook[ \t\*\n]+/', $comment ) ) {
 					continue;
