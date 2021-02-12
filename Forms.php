@@ -62,7 +62,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	public static function form( $inputs, $formdata = null, $nonce ) {
+	public static function form( $inputs, $formdata = null, $nonce = 'update_options' ) {
 		$output = '';
 		foreach ( $inputs as $input ) {
 			$output .= self::input( $input, $formdata );
@@ -842,6 +842,9 @@ class scbRadiosField extends scbSelectField {
 	 * @return string
 	 */
 	protected function _render_specific( $args ) {
+		$args = wp_parse_args( $args, array(
+			'extra' => array(),
+		) );
 
 		if ( array( 'foo' ) === $args['selected'] ) {
 			// radio buttons should always have one option selected
@@ -857,6 +860,7 @@ class scbRadiosField extends scbSelectField {
 				'type'     => 'radio',
 				'value'    => $value,
 				'checked'  => ( $value == $args['selected'] ),
+				'extra'    => $args['extra'],
 				'desc'     => $title,
 				'desc_pos' => 'after',
 			) );
@@ -895,6 +899,7 @@ class scbMultipleChoiceField extends scbFormField {
 		$args = wp_parse_args( $args, array(
 			'numeric' => false, // use numeric array instead of associative
 			'checked' => null,
+			'extra'   => array(),
 		) );
 
 		if ( ! is_array( $args['checked'] ) ) {
@@ -908,6 +913,7 @@ class scbMultipleChoiceField extends scbFormField {
 				'type'     => 'checkbox',
 				'value'    => $value,
 				'checked'  => in_array( $value, $args['checked'] ),
+				'extra'    => $args['extra'],
 				'desc'     => $title,
 				'desc_pos' => 'after',
 			) );

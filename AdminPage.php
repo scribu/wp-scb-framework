@@ -135,7 +135,7 @@ abstract class scbAdminPage {
 		}
 
 		add_action( 'admin_menu', array( $this, 'page_init' ), $this->args['admin_action_priority'] );
-		add_filter( 'contextual_help', array( $this, '_contextual_help' ), 10, 2 );
+		add_action( 'current_screen', array( $this, '_contextual_help_compat' ) );
 
 		if ( $file ) {
 			$this->file = $file;
@@ -551,6 +551,20 @@ abstract class scbAdminPage {
 		}
 
 		return $help;
+	}
+
+	/**
+	 * Sets the old string-based contextual help for the screen for backward compatibility.
+	 *
+	 * @param WP_Screen $screen
+	 */
+	public function _contextual_help_compat( $screen ) {
+
+		$actual_help = $this->_contextual_help( '', $screen );
+
+		if ( $screen->id == $this->pagehook && $actual_help ) {
+			$screen::add_old_compat_help( $screen, $actual_help );
+		}
 	}
 
 	/**
