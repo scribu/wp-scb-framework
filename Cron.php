@@ -21,7 +21,7 @@ class scbCron {
 	 *
 	 * @return void
 	 */
-	public function __construct( $file = false, $args ) {
+	public function __construct( $file = false, $args = [] ) {
 
 		// Set time & schedule
 		if ( isset( $args['time'] ) ) {

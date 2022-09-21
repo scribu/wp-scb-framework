@@ -62,7 +62,7 @@ class scbForms {
 	 *
 	 * @return string
 	 */
-	public static function form( $inputs, $formdata = null, $nonce ) {
+	public static function form( $inputs, $formdata = null, $nonce = '' ) {
 		$output = '';
 		foreach ( $inputs as $input ) {
 			$output .= self::input( $input, $formdata );
